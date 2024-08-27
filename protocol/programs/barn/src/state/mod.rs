@@ -1,10 +1,13 @@
 use anchor_lang::prelude::*;
 
+use crate::error::BarnError;
+
 #[account]
 #[derive(InitSpace)]
 pub struct Authority {
     pub signer: Pubkey,
     pub profile: Pubkey,
+    pub bump: u8,
 }
 
 #[account]
@@ -14,10 +17,31 @@ pub struct Profile {
     #[max_len(50)]
     pub uri: String,
     #[max_len(32)]
-    pub seed: Vec<u8>,
+    pub seed: String,
     pub sponsor: bool,
     pub count: u32,
     pub bump: u8,
+}
+
+impl Profile {
+    pub fn approve_sponsor(&mut self) -> Result<()> {
+        self.sponsor = true;
+        Ok(())
+    }
+
+    pub fn change_authority(
+        &mut self,
+        current_authority: &Pubkey,
+        new_authority: &Pubkey,
+    ) -> Result<()> {
+        require_keys_eq!(
+            self.authority,
+            current_authority.key(),
+            BarnError::AuthorityMismatch
+        );
+        self.authority = new_authority.key();
+        Ok(())
+    }
 }
 
 #[account]
@@ -28,7 +52,7 @@ pub struct GrantProgram {
     pub uri: String,
     pub id: u32,
     pub count: u32,
-    pub bump: u8
+    pub bump: u8,
 }
 
 #[account]

@@ -13,7 +13,15 @@ pub mod demo_program {
 
     use super::*;
 
-    pub fn create_user(ctx: Context<CreateUser>) -> Result<()> {
-        instructions::create_user(ctx)
+    pub fn create_user(ctx: Context<CreateUser>, seed: String, uri: String) -> Result<()> {
+        ctx.accounts.create_user(seed, uri, &ctx.bumps)
+    }
+    
+    pub fn approve_sponsor(ctx: Context<ApproveSponsor>) -> Result<()> {
+        ctx.accounts.approve_sponsor()
+    }
+
+    pub fn reset_profile_authority(ctx: Context<ResetProfileAuthority>) -> Result<()> {
+        ctx.accounts.reset_profile_authority(&ctx.bumps)
     }
 }
