@@ -8,19 +8,19 @@ skip-lint = false
 
 [programs]
 [programs.localnet]
-demo_program = "9r5mFwaKhxmyp6iBQeo3fHXP2J1bGneySwyLmvSq1Ggd"
+barn = "9r5mFwaKhxmyp6iBQeo3fHXP2J1bGneySwyLmvSq1Ggd"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
 cluster = "localnet"
-wallet = "~/.config/solana/id.json"
+wallet = "~/.config/solana/deployer.json"
 
 [scripts]
 test = "ts-mocha -p ./protocol/ts/tsconfig.node.json -t 1000000 protocol/ts/tests/**/*.test.ts"
-demo_program = "ts-mocha -p ./protocol/ts/tsconfig.node.json -t 1000000 protocol/ts/tests/demo-program.test.ts"
+barn = "ts-mocha -p ./protocol/ts/tsconfig.node.json -t 1000000 protocol/ts/tests/demo-program.test.ts"
 
 [workspace]
-members = [ "protocol/programs/demo-program" ]
+members = [ "protocol/programs/*" ]
 types = "protocol/ts/src/idl"
