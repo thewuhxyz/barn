@@ -17,6 +17,15 @@ pub enum BarnError {
     #[msg("Grant already awarded to project")]
     GrantAlreadyAwarded,
     
+    #[msg("Milestone already confirmed")]
+    MilestoneAlreadyConfirmed,
+    
+    #[msg("Milestone not confirmed")]
+    MilestoneNotConfirmed,
+    
+    #[msg("Milestone already paid")]
+    MilestoneAlreadyPaid,
+    
     #[msg("Overflow occured")]
     OverflowOccured,
 }

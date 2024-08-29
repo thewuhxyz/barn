@@ -3,7 +3,6 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_interface::Mint;
 
 #[derive(Accounts)]
-#[instruction(seed: String)]
 pub struct AwardGrant<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
@@ -18,7 +17,7 @@ pub struct AwardGrant<'info> {
     #[account(
         has_one=authority,
         constraint=profile.sponsor==true@BarnError::NotASponsor,
-        seeds=[b"profile", seed.as_bytes()],
+        seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]
     pub profile: Account<'info, Profile>,

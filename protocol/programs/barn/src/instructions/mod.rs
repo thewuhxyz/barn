@@ -18,3 +18,7 @@ pub use award_grant::*;
 
 pub mod add_grant_milestone;
 pub use add_grant_milestone::*;
+
+pub mod update_grant_milestone;
+pub use update_grant_milestone::*;
+

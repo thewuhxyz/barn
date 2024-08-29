@@ -2,7 +2,6 @@ use crate::{error::BarnError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-#[instruction(seed: String)]
 pub struct AddGrantProgram<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
@@ -17,7 +16,7 @@ pub struct AddGrantProgram<'info> {
     #[account(
         has_one=authority,
         constraint=profile.sponsor==true@BarnError::NotASponsor,
-        seeds=[b"profile", seed.as_bytes()],
+        seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]
     pub profile: Account<'info, Profile>,
