@@ -23,9 +23,15 @@ pub enum BarnError {
     #[msg("Milestone not confirmed")]
     MilestoneNotConfirmed,
     
+    #[msg("Milestone not accepted")]
+    MilestoneNotAccepted,
+    
     #[msg("Milestone already paid")]
     MilestoneAlreadyPaid,
     
     #[msg("Overflow occured")]
     OverflowOccured,
+    
+    #[msg("Approved amount exceeded")]
+    ApprovedAmountExceeded,
 }

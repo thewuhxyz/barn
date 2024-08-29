@@ -11,9 +11,6 @@ declare_id!("9r5mFwaKhxmyp6iBQeo3fHXP2J1bGneySwyLmvSq1Ggd");
 
 #[program]
 pub mod barn {
-
-    use self::state::MilestoneRevisionConfig;
-
     use super::*;
 
     pub fn create_user(ctx: Context<CreateUser>, seed: String, uri: String) -> Result<()> {
@@ -36,20 +33,28 @@ pub mod barn {
         ctx.accounts.add_milestone(uri, amount, &ctx.bumps)
     }
 
-    pub fn revise_grant_milestone(ctx: Context<UpdateGrantMilestone>, config: MilestoneRevisionConfig) -> Result<()> {
+    pub fn revise_grant_milestone(
+        ctx: Context<UpdateGrantMilestone>,
+        config: MilestoneRevisionConfig,
+    ) -> Result<()> {
         ctx.accounts.revise_milestone(config)
     }
-    
-    pub fn submit_grant_milestone(ctx: Context<UpdateGrantMilestone>) -> Result<()> {
-        ctx.accounts.submit_milestone()
+
+    pub fn review_grant_milestone(ctx: Context<UpdateGrantMilestone>) -> Result<()> {
+        ctx.accounts.review_milestone()
     }
-    
+
     pub fn reject_grant_milestone(ctx: Context<UpdateGrantMilestone>) -> Result<()> {
         ctx.accounts.accept_milestone()
     }
 
     pub fn accept_grant_milestone(ctx: Context<UpdateGrantMilestone>) -> Result<()> {
         ctx.accounts.accept_milestone()
+    }
+    
+    pub fn settle_grant_milestone(ctx: Context<SettleGrantMilestone>) -> Result<()> {
+        ctx.accounts.settle_milestone()?;
+        ctx.accounts.pay_out()
     }
 
     pub fn approve_sponsor(ctx: Context<ApproveSponsor>) -> Result<()> {

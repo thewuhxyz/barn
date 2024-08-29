@@ -65,7 +65,7 @@ impl Profile {
         require_eq!(self.sponsor, false, BarnError::NotADev);
         Ok(())
     }
-    
+
     pub fn require_sponsor(&self) -> Result<()> {
         require_eq!(self.sponsor, true, BarnError::NotASponsor);
         Ok(())
@@ -116,6 +116,22 @@ impl Grant {
             .ok_or(BarnError::OverflowOccured)?;
         Ok(())
     }
+
+    pub fn settle_milestone(&mut self, amount: u64) -> Result<()> {
+        let paid_out = self
+            .paid_out
+            .checked_add(amount)
+            .ok_or(BarnError::OverflowOccured)?;
+
+        require_gte!(
+            self.approved_amount,
+            paid_out,
+            BarnError::ApprovedAmountExceeded
+        );
+
+        self.paid_out = paid_out;
+        Ok(())
+    }
 }
 
 #[account]
@@ -143,7 +159,7 @@ pub struct GrantMilestone {
     pub grant: Pubkey,
     pub id: u32,
     pub amount: u64,
-    #[max_len(50)]
+    #[max_len(50)] // todo: Adjust max lenght
     pub uri: String,
     pub state: MilestoneState, // maybe u8
     pub bump: u8,
@@ -165,7 +181,7 @@ impl GrantMilestone {
         Ok(())
     }
 
-    pub fn submit(&mut self) -> Result<()> {
+    pub fn review(&mut self) -> Result<()> {
         require!(
             !self.state.confirmed(),
             BarnError::MilestoneAlreadyConfirmed
@@ -193,7 +209,9 @@ impl GrantMilestone {
         Ok(())
     }
 
-    pub fn pay(&mut self) -> Result<()> {
+    pub fn settle(&mut self) -> Result<()> {
+        // make sure it is not rejected already
+        require!(self.is_rejected(), BarnError::MilestoneNotAccepted);
         // make sure it is not paid already
         require!(self.is_paid(), BarnError::MilestoneAlreadyPaid);
         // make sure it is accepted
@@ -205,6 +223,14 @@ impl GrantMilestone {
 
     pub fn is_paid(&self) -> bool {
         self.state.paid()
+    }
+    
+    pub fn is_rejected(&self) -> bool {
+        self.state.rejected()
+    }
+    
+    pub fn is_accepted(&self) -> bool {
+        self.state.accepted()
     }
 }
 
@@ -219,11 +245,21 @@ pub enum MilestoneState {
 
 impl MilestoneState {
     pub fn confirmed(&self) -> bool {
-        self == &MilestoneState::Accepted || self == &MilestoneState::Paid
+        self == &MilestoneState::Rejected
+            || self == &MilestoneState::Accepted
+            || self == &MilestoneState::Paid
     }
 
     pub fn paid(&self) -> bool {
         self == &MilestoneState::Paid
+    }
+    
+    pub fn rejected(&self) -> bool {
+        self == &MilestoneState::Rejected
+    }
+    
+    pub fn accepted(&self) -> bool {
+        self == &MilestoneState::Accepted
     }
 }
 

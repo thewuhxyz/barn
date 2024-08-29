@@ -21,19 +21,7 @@ pub struct UpdateGrantMilestone<'info> {
     pub profile: Account<'info, Profile>,
 
     #[account(
-        seeds=[b"project", project.profile.key().as_ref(), project.id.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub project: Account<'info, Project>,
-
-    #[account(
-        seeds=[b"grant-program", profile.key().as_ref(), grant_program.id.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub grant_program: Account<'info, GrantProgram>,
-
-    #[account(
-        seeds=[b"grant", grant.program.key().as_ref(), grant_program.count.to_le_bytes().as_ref()],
+        seeds=[b"grant", grant.program.as_ref(), grant.id.to_le_bytes().as_ref()],
         bump
     )]
     pub grant: Account<'info, Grant>,
@@ -48,13 +36,13 @@ pub struct UpdateGrantMilestone<'info> {
 
 impl<'info> UpdateGrantMilestone<'info> {
     pub fn revise_milestone(&mut self, config: MilestoneRevisionConfig) -> Result<()> {
-        self.profile.require_dev()?;
+        // self.profile.require_dev()?;
         self.grant_milestone.revise(config)
     }
 
-    pub fn submit_milestone(&mut self) -> Result<()> {
-        self.profile.require_dev()?;
-        self.grant_milestone.submit()
+    pub fn review_milestone(&mut self) -> Result<()> {
+        // self.profile.require_dev()?;
+        self.grant_milestone.review()
     }
     
     pub fn reject_milestone(&mut self) -> Result<()> {

@@ -47,7 +47,3 @@ impl<'info> CreateUser<'info> {
         Ok(())
     }
 }
-
-// pub fn create_user(ctx: Context<CreateUser>) -> Result<()> {
-//     Ok(())
-// }

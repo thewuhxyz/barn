@@ -22,3 +22,5 @@ pub use add_grant_milestone::*;
 pub mod update_grant_milestone;
 pub use update_grant_milestone::*;
 
+pub mod settle_grant_milestone;
+pub use settle_grant_milestone::*;
