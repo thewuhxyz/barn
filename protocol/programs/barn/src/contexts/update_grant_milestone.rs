@@ -28,7 +28,7 @@ pub struct UpdateGrantMilestone<'info> {
 
     #[account(
         mut,
-        seeds=[b"grant-milestone", grant.key().as_ref(), grant.active_milestone.to_le_bytes().as_ref()],
+        seeds=[b"grant-milestone", grant.key().as_ref(), grant_milestone.id.to_le_bytes().as_ref()],
         bump
     )]
     pub grant_milestone: Account<'info, GrantMilestone>,

@@ -147,7 +147,7 @@ pub struct Project {
 
 impl Project {
     pub fn receive_grant(&mut self, grant: &Pubkey) -> Result<()> {
-        require!(self.grant == None, BarnError::GrantAlreadyAwarded);
+        require!(self.grant.is_none(), BarnError::GrantAlreadyAwarded);
         self.grant = Some(grant.key());
         Ok(())
     }

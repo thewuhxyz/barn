@@ -1,5 +1,5 @@
 
-import { type DemoProgram  } from "./demo_program"
-import DemoProgramIDLJson from "./demo_program.json"
+import { type Barn  } from "./barn"
+import BarnIDLJson from "./barn.json"
 
-export { type DemoProgram , DemoProgramIDLJson }
+export { type Barn , BarnIDLJson }

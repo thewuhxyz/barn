@@ -16,7 +16,7 @@ pub struct AwardGrant<'info> {
 
     #[account(
         has_one=authority,
-        constraint=profile.sponsor==true@BarnError::NotASponsor,
+        constraint=profile.sponsor@BarnError::NotASponsor,
         seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]

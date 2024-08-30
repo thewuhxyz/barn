@@ -15,7 +15,7 @@ pub struct AddGrantMilestone<'info> {
 
     #[account(
         has_one=authority,
-        constraint=profile.sponsor==false@BarnError::NotADev,
+        constraint=!profile.sponsor@BarnError::NotADev,
         seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]

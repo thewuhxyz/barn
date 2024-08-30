@@ -15,7 +15,7 @@ pub struct AddGrantProgram<'info> {
 
     #[account(
         has_one=authority,
-        constraint=profile.sponsor==true@BarnError::NotASponsor,
+        constraint=profile.sponsor@BarnError::NotASponsor,
         seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]
@@ -34,7 +34,7 @@ pub struct AddGrantProgram<'info> {
 }
 
 impl<'info> AddGrantProgram<'info> {
-    pub fn add_project(&mut self, uri: String, bumps: &AddGrantProgramBumps) -> Result<()> {
+    pub fn add_grant_program(&mut self, uri: String, bumps: &AddGrantProgramBumps) -> Result<()> {
         self.grant_program.set_inner(GrantProgram {
             bump: bumps.grant_program,
             profile: self.profile.key(),
