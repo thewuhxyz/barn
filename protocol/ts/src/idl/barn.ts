@@ -73,6 +73,38 @@ export type Barn = {
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -88,13 +120,47 @@ export type Barn = {
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "grant"
+                "path": "grantProgram"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grantProgram",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "grantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "grantProgram"
               }
             ]
           }
@@ -200,7 +266,6 @@ export type Barn = {
         },
         {
           "name": "project",
-          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -226,42 +291,10 @@ export type Barn = {
                 "account": "project"
               }
             ]
-          }
-        },
-        {
-          "name": "grantProgram",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  114,
-                  97,
-                  110,
-                  116,
-                  45,
-                  112,
-                  114,
-                  111,
-                  103,
-                  114,
-                  97,
-                  109
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "profile"
-              },
-              {
-                "kind": "account",
-                "path": "grant_program.id",
-                "account": "grantProgram"
-              }
-            ]
-          }
+          },
+          "relations": [
+            "grant"
+          ]
         },
         {
           "name": "grant",
@@ -284,8 +317,8 @@ export type Barn = {
               },
               {
                 "kind": "account",
-                "path": "grant_program.count",
-                "account": "grantProgram"
+                "path": "grant.id",
+                "account": "grant"
               }
             ]
           }
@@ -321,7 +354,7 @@ export type Barn = {
               },
               {
                 "kind": "account",
-                "path": "grant.active_milestone",
+                "path": "grant.count",
                 "account": "grant"
               }
             ]
@@ -907,6 +940,38 @@ export type Barn = {
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -922,13 +987,47 @@ export type Barn = {
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "grant"
+                "path": "grantProgram"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grantProgram",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "grantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "grantProgram"
               }
             ]
           }
@@ -1033,6 +1132,38 @@ export type Barn = {
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -1048,13 +1179,47 @@ export type Barn = {
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "grant"
+                "path": "grantProgram"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grantProgram",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "grantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "grantProgram"
               }
             ]
           }
@@ -1159,6 +1324,38 @@ export type Barn = {
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -1174,13 +1371,47 @@ export type Barn = {
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "grant"
+                "path": "grantProgram"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grantProgram",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "grantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "grantProgram"
               }
             ]
           }
@@ -1547,36 +1778,46 @@ export type Barn = {
     },
     {
       "code": 6004,
+      "name": "profileMismatch",
+      "msg": "Profile does not match profile provided"
+    },
+    {
+      "code": 6005,
+      "name": "grantMismatch",
+      "msg": "Project grant does not match grant provided"
+    },
+    {
+      "code": 6006,
       "name": "grantAlreadyAwarded",
       "msg": "Grant already awarded to project"
     },
     {
-      "code": 6005,
+      "code": 6007,
       "name": "milestoneAlreadyConfirmed",
       "msg": "Milestone already confirmed"
     },
     {
-      "code": 6006,
+      "code": 6008,
       "name": "milestoneNotConfirmed",
       "msg": "Milestone not confirmed"
     },
     {
-      "code": 6007,
+      "code": 6009,
       "name": "milestoneNotAccepted",
       "msg": "Milestone not accepted"
     },
     {
-      "code": 6008,
+      "code": 6010,
       "name": "milestoneAlreadyPaid",
       "msg": "Milestone already paid"
     },
     {
-      "code": 6009,
+      "code": 6011,
       "name": "overflowOccured",
       "msg": "Overflow occured"
     },
     {
-      "code": 6010,
+      "code": 6012,
       "name": "approvedAmountExceeded",
       "msg": "Approved amount exceeded"
     }
@@ -1620,7 +1861,7 @@ export type Barn = {
             "type": "u32"
           },
           {
-            "name": "activeMilestone",
+            "name": "count",
             "type": "u32"
           },
           {

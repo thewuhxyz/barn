@@ -67,6 +67,38 @@
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "Project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -82,13 +114,47 @@
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "Grant"
+                "path": "grant_program"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "Grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grant_program",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "GrantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "GrantProgram"
               }
             ]
           }
@@ -194,7 +260,6 @@
         },
         {
           "name": "project",
-          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -220,42 +285,10 @@
                 "account": "Project"
               }
             ]
-          }
-        },
-        {
-          "name": "grant_program",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  114,
-                  97,
-                  110,
-                  116,
-                  45,
-                  112,
-                  114,
-                  111,
-                  103,
-                  114,
-                  97,
-                  109
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "profile"
-              },
-              {
-                "kind": "account",
-                "path": "grant_program.id",
-                "account": "GrantProgram"
-              }
-            ]
-          }
+          },
+          "relations": [
+            "grant"
+          ]
         },
         {
           "name": "grant",
@@ -278,8 +311,8 @@
               },
               {
                 "kind": "account",
-                "path": "grant_program.count",
-                "account": "GrantProgram"
+                "path": "grant.id",
+                "account": "Grant"
               }
             ]
           }
@@ -315,7 +348,7 @@
               },
               {
                 "kind": "account",
-                "path": "grant.active_milestone",
+                "path": "grant.count",
                 "account": "Grant"
               }
             ]
@@ -901,6 +934,38 @@
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "Project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -916,13 +981,47 @@
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "Grant"
+                "path": "grant_program"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "Grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grant_program",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "GrantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "GrantProgram"
               }
             ]
           }
@@ -1027,6 +1126,38 @@
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "Project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -1042,13 +1173,47 @@
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "Grant"
+                "path": "grant_program"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "Grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grant_program",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "GrantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "GrantProgram"
               }
             ]
           }
@@ -1153,6 +1318,38 @@
           ]
         },
         {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "Project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "Project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
           "name": "grant",
           "pda": {
             "seeds": [
@@ -1168,13 +1365,47 @@
               },
               {
                 "kind": "account",
-                "path": "grant.program",
-                "account": "Grant"
+                "path": "grant_program"
               },
               {
                 "kind": "account",
                 "path": "grant.id",
                 "account": "Grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grant_program",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "GrantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "GrantProgram"
               }
             ]
           }
@@ -1541,36 +1772,46 @@
     },
     {
       "code": 6004,
+      "name": "ProfileMismatch",
+      "msg": "Profile does not match profile provided"
+    },
+    {
+      "code": 6005,
+      "name": "GrantMismatch",
+      "msg": "Project grant does not match grant provided"
+    },
+    {
+      "code": 6006,
       "name": "GrantAlreadyAwarded",
       "msg": "Grant already awarded to project"
     },
     {
-      "code": 6005,
+      "code": 6007,
       "name": "MilestoneAlreadyConfirmed",
       "msg": "Milestone already confirmed"
     },
     {
-      "code": 6006,
+      "code": 6008,
       "name": "MilestoneNotConfirmed",
       "msg": "Milestone not confirmed"
     },
     {
-      "code": 6007,
+      "code": 6009,
       "name": "MilestoneNotAccepted",
       "msg": "Milestone not accepted"
     },
     {
-      "code": 6008,
+      "code": 6010,
       "name": "MilestoneAlreadyPaid",
       "msg": "Milestone already paid"
     },
     {
-      "code": 6009,
+      "code": 6011,
       "name": "OverflowOccured",
       "msg": "Overflow occured"
     },
     {
-      "code": 6010,
+      "code": 6012,
       "name": "ApprovedAmountExceeded",
       "msg": "Approved amount exceeded"
     }
@@ -1614,7 +1855,7 @@
             "type": "u32"
           },
           {
-            "name": "active_milestone",
+            "name": "count",
             "type": "u32"
           },
           {

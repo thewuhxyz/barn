@@ -9,35 +9,29 @@ pub struct AddGrantMilestone<'info> {
     #[account(
         has_one=profile,
         seeds=[signer.key().as_ref()],
-        bump,
+        bump=authority.bump,
     )]
     pub authority: Account<'info, Authority>,
 
     #[account(
         has_one=authority,
-        constraint=!profile.sponsor@BarnError::NotADev,
+        constraint = !profile.sponsor @ BarnError::NotADev,
         seeds=[b"profile", profile.seed.as_bytes()],
-        bump
+        bump=profile.bump,
     )]
     pub profile: Account<'info, Profile>,
 
     #[account(
-        mut,
         seeds=[b"project", project.profile.key().as_ref(), project.id.to_le_bytes().as_ref()],
-        bump
+        bump=project.bump,
+        constraint=project.is_grant_by(grant.key()) @ BarnError::GrantMismatch
     )]
     pub project: Account<'info, Project>,
 
     #[account(
-        mut,
-        seeds=[b"grant-program", profile.key().as_ref(), grant_program.id.to_le_bytes().as_ref()],
-        bump
-    )]
-    pub grant_program: Account<'info, GrantProgram>,
-
-    #[account(
-        seeds=[b"grant", grant.program.key().as_ref(), grant_program.count.to_le_bytes().as_ref()],
-        bump
+        seeds=[b"grant", grant.program.key().as_ref(), grant.id.to_le_bytes().as_ref()],
+        bump=grant.bump,
+        has_one=project,
     )]
     pub grant: Account<'info, Grant>,
 
@@ -45,7 +39,7 @@ pub struct AddGrantMilestone<'info> {
         init,
         payer=signer,
         space=8+GrantMilestone::INIT_SPACE,
-        seeds=[b"grant-milestone", grant.key().as_ref(), grant.active_milestone.to_le_bytes().as_ref()],
+        seeds=[b"grant-milestone", grant.key().as_ref(), grant.count.to_le_bytes().as_ref()],
         bump
     )]
     pub grant_milestone: Account<'info, GrantMilestone>,
@@ -64,9 +58,8 @@ impl<'info> AddGrantMilestone<'info> {
             bump: bumps.grant_milestone,
             grant: self.grant.key(),
             uri,
-            id: self.grant.active_milestone,
+            id: self.grant.count,
             amount,
-            // paid: false,
             state: MilestoneState::InProgress,
         });
 

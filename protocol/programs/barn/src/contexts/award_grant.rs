@@ -63,7 +63,7 @@ impl<'info> AwardGrant<'info> {
             project: self.project.key(),
             uri,
             id: self.grant_program.count,
-            active_milestone: 0,
+            count: 0,
             payment_mint: self.payment_mint.key(),
             approved_amount,
             paid_out: 0,
