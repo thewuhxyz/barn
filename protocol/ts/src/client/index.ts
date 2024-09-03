@@ -1,4 +1,7 @@
 export * from "./instruction"
+export * from "./transaction"
+export * from "./rpc"
+export * from "./methods"
 export * from "./client"
 export * from "./account"
 export * from "./helpers"

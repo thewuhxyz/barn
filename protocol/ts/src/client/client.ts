@@ -1,24 +1,29 @@
 import { AnchorProvider, Program } from "@coral-xyz/anchor";
-import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import { BarnInstructon } from "./instruction";
 import { Barn, BarnIDLJson } from "../idl";
-import { BN } from "bn.js";
+import BN from "bn.js";
 import {
 	getAssociatedTokenAddressSync,
 	getMint,
 	Mint,
 } from "@solana/spl-token";
-import { toAmount } from "./helpers";
 import { AuthorityAccount, BarnAccount, ProfileAccount } from "./account";
-
+import { type BarnMethod, BarnMethods } from "./methods";
 export class BarnClient {
 	program: Program<Barn>;
+
 	constructor(public provider: AnchorProvider) {
 		this.program = new Program(BarnIDLJson as Barn, provider);
 	}
 
 	get connection() {
 		return this.provider.connection;
+	}
+
+	get signer(): PublicKey {
+		if (!this.provider.publicKey) throw "wallet not connected";
+		return this.provider.publicKey;
 	}
 
 	async getUserProfile(user: PublicKey): Promise<ProfileAccount | null> {
@@ -32,212 +37,166 @@ export class BarnClient {
 		return await BarnAccount.authority(this.program, signer);
 	}
 
-	async approveSponsorIx({
-		admin,
-		sponsor,
-	}: {
-		admin: PublicKey;
-		sponsor: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.approveSponsor(this.program, {
-			signer: sponsor,
-			admin,
-		});
-	}
-
-	async createUserIx({
-		uri,
-		signer,
-	}: {
-		uri: string;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.createUser(this.program, {
+	createUser({ uri }: { uri: string }): BarnMethod {
+		return BarnMethods.createUser(this.program, {
 			seed: this.generateRandomSeed(),
 			uri,
-			signer,
+			signer: this.signer,
 		});
 	}
 
-	async addProjectIx({
-		uri,
-		signer,
-	}: {
-		uri: string;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.addProject(this.program, {
+	addProject({ uri }: { uri: string }): BarnMethod {
+		return BarnMethods.addProject(this.program, {
 			uri,
-			signer,
+			signer: this.signer,
 		});
 	}
 
-	async addGrantProgramIx({
-		uri,
-		signer,
-	}: {
-		uri: string;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.addGrantProgram(this.program, {
+	addGrantProgram({ uri }: { uri: string }): BarnMethod {
+		return BarnMethods.addGrantProgram(this.program, {
 			uri,
-			signer,
+			signer: this.signer,
 		});
 	}
 
-	async awardGrantIx({
+	awardGrant({
 		uri,
 		approvedAmount,
-		signer,
 		paymentMint,
 		grantProgram,
 		project,
 	}: {
 		uri: string;
-		approvedAmount: number;
+		approvedAmount: BN;
 		paymentMint: PublicKey;
 		grantProgram: PublicKey;
 		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		const mint = await this.getMintAccount(paymentMint);
-		return BarnInstructon.awardGrant(this.program, {
+	}): BarnMethod {
+		// const mint = await this.getMintAccount(paymentMint);
+		return BarnMethods.awardGrant(this.program, {
 			uri,
-			signer,
+			signer: this.signer,
 			paymentMint,
-			approvedAmount: new BN(toAmount(approvedAmount, mint.decimals)),
+			approvedAmount,
 			grantProgram,
 			project,
 		});
 	}
 
-	async addGrantMilestoneIx({
+	addGrantMilestone({
 		uri,
 		amount,
-		signer,
 		grant,
 		project,
 	}: {
 		uri: string;
-		amount: number;
+		amount: BN;
 		grant: PublicKey;
 		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		const grantAccount = await BarnAccount.grant(this.program, grant);
+	}): BarnMethod {
+		// const grantAccount = await BarnAccount.grant(this.program, grant);
 
-		if (!grantAccount) throw "grant account does not exist";
+		// if (!grantAccount) throw "grant account does not exist";
 
-		return BarnInstructon.addGrantMilestone(this.program, {
+		return BarnMethods.addGrantMilestone(this.program, {
 			uri,
-			signer,
+			signer: this.signer,
 			grant,
-			amount: new BN(toAmount(amount, grantAccount.paymentDecimals)),
+			amount,
 			project,
 		});
 	}
 
-	async reviseGrantMilestoneIx({
+	reviseGrantMilestone({
 		uri,
 		amount,
-		signer,
 		grant,
 		grantMilestone,
 	}: {
 		uri: string | null;
-		amount: number | null;
+		amount: BN | null;
 		grant: PublicKey;
 		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		const grantAccount = await BarnAccount.grant(this.program, grant);
+	}): BarnMethod {
+		// const grantAccount = await BarnAccount.grant(this.program, grant);
 
-		if (!grantAccount) throw "grant account does not exist";
+		// if (!grantAccount) throw "grant account does not exist";
 
-		return BarnInstructon.reviseGrantMilestone(this.program, {
+		return BarnMethods.reviseGrantMilestone(this.program, {
 			uri,
-			signer,
+			signer: this.signer,
 			grant,
-			amount:
-				amount !== null
-					? new BN(toAmount(amount, grantAccount.paymentDecimals))
-					: amount,
+			amount,
 			grantMilestone,
 		});
 	}
 
-	async reviewGrantMilestoneIx({
-		signer,
+	reviewGrantMilestone({
 		grant,
 		grantMilestone,
 	}: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.reviewGrantMilestone(this.program, {
-			signer,
+	}): BarnMethod {
+		return BarnMethods.reviewGrantMilestone(this.program, {
+			signer: this.signer,
 			grant,
 			grantMilestone,
 		});
 	}
 
-	async rejectGrantMilestoneIx({
-		signer,
+	rejectGrantMilestone({
 		grant,
 		grantMilestone,
 	}: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.rejectGrantMilestone(this.program, {
-			signer,
+	}): BarnMethod {
+		return BarnMethods.rejectGrantMilestone(this.program, {
+			signer: this.signer,
 			grant,
 			grantMilestone,
 		});
 	}
 
-	async acceptGrantMilestoneIx({
-		signer,
+	acceptGrantMilestone({
 		grant,
 		grantMilestone,
 	}: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.acceptGrantMilestone(this.program, {
-			signer,
+	}): BarnMethod {
+		return BarnMethods.acceptGrantMilestone(this.program, {
+			signer: this.signer,
 			grant,
 			grantMilestone,
 		});
 	}
 
-	async settleGrantMilestoneIx({
-		signer,
+	settleGrantMilestone({
 		grant,
 		grantMilestone,
 		to,
 		tokenProgram,
+    paymentMint
 	}: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
-		signer: PublicKey;
+    paymentMint: PublicKey;
 		to: PublicKey;
 		tokenProgram: PublicKey;
-	}): Promise<TransactionInstruction> {
-		const grantAccount = await BarnAccount.grant(this.program, grant);
+	}): BarnMethod {
+		// const grantAccount = await BarnAccount.grant(this.program, grant);
 
-		if (!grantAccount) throw "grant account does not exist";
+		// if (!grantAccount) throw "grant account does not exist";
 
-		const { paymentMint } = grantAccount;
+		// const { paymentMint } = grantAccount;
 
-		return BarnInstructon.settleGrantMilestone(this.program, {
-			signer,
+		return BarnMethods.settleGrantMilestone(this.program, {
+			signer: this.signer,
 			grant,
 			grantMilestone,
-			signerTokenAccount: this.getAtaAddress(paymentMint, signer),
+			signerTokenAccount: this.getAtaAddress(paymentMint, this.signer),
 			paymentMint,
 			to,
 			tokenProgram,

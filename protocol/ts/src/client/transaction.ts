@@ -1,38 +1,38 @@
 import { Program } from "@coral-xyz/anchor";
 import { Barn } from "../idl";
-import { PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import type BN from "bn.js";
 
-export class BarnInstructon {
+export class BarnTransaction {
 	constructor(private program: Program<Barn>) {}
 
 	async createUser(args: {
 		seed: string;
 		uri: string;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.createUser(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.createUser(this.program, args);
 	}
 
 	async approveSponsor(args: {
 		admin: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.approveSponsor(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.approveSponsor(this.program, args);
 	}
 
 	async addProject(args: {
 		uri: string;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.addProject(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.addProject(this.program, args);
 	}
 
 	async addGrantProgram(args: {
 		uri: string;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.addGrantProgram(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.addGrantProgram(this.program, args);
 	}
 
 	async awardGrant(args: {
@@ -42,8 +42,8 @@ export class BarnInstructon {
 		grantProgram: PublicKey;
 		project: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.awardGrant(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.awardGrant(this.program, args);
 	}
 
 	async addGrantMilestone(args: {
@@ -52,8 +52,8 @@ export class BarnInstructon {
 		grant: PublicKey;
 		project: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.addGrantMilestone(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.addGrantMilestone(this.program, args);
 	}
 
 	async reviseGrantMilestone(args: {
@@ -62,32 +62,32 @@ export class BarnInstructon {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.reviseGrantMilestone(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.reviseGrantMilestone(this.program, args);
 	}
 
 	async reviewGrantMilestone(args: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.reviewGrantMilestone(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.reviewGrantMilestone(this.program, args);
 	}
 
 	async acceptGrantMilestone(args: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.acceptGrantMilestone(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.acceptGrantMilestone(this.program, args);
 	}
 
 	async rejectGrantMilestone(args: {
 		grant: PublicKey;
 		grantMilestone: PublicKey;
 		signer: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.rejectGrantMilestone(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.rejectGrantMilestone(this.program, args);
 	}
 
 	async settleGrantMilestone(args: {
@@ -98,8 +98,8 @@ export class BarnInstructon {
 		signerTokenAccount: PublicKey;
 		paymentMint: PublicKey;
 		tokenProgram: PublicKey;
-	}): Promise<TransactionInstruction> {
-		return BarnInstructon.settleGrantMilestone(this.program, args);
+	}): Promise<Transaction> {
+		return BarnTransaction.settleGrantMilestone(this.program, args);
 	}
 
 	static async createUser(
@@ -113,13 +113,13 @@ export class BarnInstructon {
 			uri: string;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.createUser(seed, uri)
 			.accounts({
 				signer,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async approveSponsor(
@@ -131,14 +131,14 @@ export class BarnInstructon {
 			admin: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.approveSponsor()
 			.accounts({
 				signer,
 				admin,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async addProject(
@@ -150,13 +150,13 @@ export class BarnInstructon {
 			uri: string;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.addProject(uri)
 			.accounts({
 				signer,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async addGrantProgram(
@@ -168,13 +168,13 @@ export class BarnInstructon {
 			uri: string;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.addGrantProgram(uri)
 			.accounts({
 				signer,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async awardGrant(
@@ -194,7 +194,7 @@ export class BarnInstructon {
 			project: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.awardGrant(uri, approvedAmount)
 			.accountsPartial({
@@ -203,7 +203,7 @@ export class BarnInstructon {
 				grantProgram,
 				project,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async addGrantMilestone(
@@ -221,7 +221,7 @@ export class BarnInstructon {
 			project: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.addGrantMilestone(uri, amount)
 			.accountsPartial({
@@ -229,7 +229,7 @@ export class BarnInstructon {
 				project,
 				grant,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async reviseGrantMilestone(
@@ -247,7 +247,7 @@ export class BarnInstructon {
 			grantMilestone: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.reviseGrantMilestone({ uri, amount })
 			.accountsPartial({
@@ -255,7 +255,7 @@ export class BarnInstructon {
 				grant,
 				grantMilestone,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async reviewGrantMilestone(
@@ -269,7 +269,7 @@ export class BarnInstructon {
 			grantMilestone: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.reviewGrantMilestone()
 			.accountsPartial({
@@ -277,7 +277,7 @@ export class BarnInstructon {
 				grant,
 				grantMilestone,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async acceptGrantMilestone(
@@ -291,7 +291,7 @@ export class BarnInstructon {
 			grantMilestone: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.acceptGrantMilestone()
 			.accountsPartial({
@@ -299,7 +299,7 @@ export class BarnInstructon {
 				grant,
 				grantMilestone,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async rejectGrantMilestone(
@@ -313,7 +313,7 @@ export class BarnInstructon {
 			grantMilestone: PublicKey;
 			signer: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.rejectGrantMilestone()
 			.accountsPartial({
@@ -321,7 +321,7 @@ export class BarnInstructon {
 				grant,
 				grantMilestone,
 			})
-			.instruction();
+			.transaction();
 	}
 
 	static async settleGrantMilestone(
@@ -343,7 +343,7 @@ export class BarnInstructon {
 			paymentMint: PublicKey;
 			tokenProgram: PublicKey;
 		}
-	): Promise<TransactionInstruction> {
+	): Promise<Transaction> {
 		return program.methods
 			.settleGrantMilestone()
 			.accountsPartial({
@@ -355,6 +355,6 @@ export class BarnInstructon {
 				paymentMint,
 				tokenProgram,
 			})
-			.instruction();
+			.transaction();
 	}
 }
