@@ -9,7 +9,7 @@ import {
 	Mint,
 } from "@solana/spl-token";
 import { toAmount } from "./helpers";
-import { BarnAccount } from "./account";
+import { AuthorityAccount, BarnAccount, ProfileAccount } from "./account";
 
 export class BarnClient {
 	program: Program<Barn>;
@@ -21,7 +21,18 @@ export class BarnClient {
 		return this.provider.connection;
 	}
 
-	async approveSponsor({
+	async getUserProfile(user: PublicKey): Promise<ProfileAccount | null> {
+		const authority = await this.getUserAuthority(user);
+		if (!authority) return authority;
+		const { profile } = authority;
+		return await BarnAccount.profile(this.program, profile);
+	}
+
+	async getUserAuthority(signer: PublicKey): Promise<AuthorityAccount | null> {
+		return await BarnAccount.authority(this.program, signer);
+	}
+
+	async approveSponsorIx({
 		admin,
 		sponsor,
 	}: {
@@ -34,7 +45,7 @@ export class BarnClient {
 		});
 	}
 
-	async createUser({
+	async createUserIx({
 		uri,
 		signer,
 	}: {
@@ -48,7 +59,7 @@ export class BarnClient {
 		});
 	}
 
-	async addProject({
+	async addProjectIx({
 		uri,
 		signer,
 	}: {
@@ -61,7 +72,7 @@ export class BarnClient {
 		});
 	}
 
-	async addGrantProgram({
+	async addGrantProgramIx({
 		uri,
 		signer,
 	}: {
@@ -74,7 +85,7 @@ export class BarnClient {
 		});
 	}
 
-	async awardGrant({
+	async awardGrantIx({
 		uri,
 		approvedAmount,
 		signer,
@@ -100,7 +111,7 @@ export class BarnClient {
 		});
 	}
 
-	async addGrantMilestone({
+	async addGrantMilestoneIx({
 		uri,
 		amount,
 		signer,
@@ -126,7 +137,7 @@ export class BarnClient {
 		});
 	}
 
-	async reviseGrantMilestone({
+	async reviseGrantMilestoneIx({
 		uri,
 		amount,
 		signer,
@@ -155,7 +166,7 @@ export class BarnClient {
 		});
 	}
 
-	async reviewGrantMilestone({
+	async reviewGrantMilestoneIx({
 		signer,
 		grant,
 		grantMilestone,
@@ -171,7 +182,7 @@ export class BarnClient {
 		});
 	}
 
-	async rejectGrantMilestone({
+	async rejectGrantMilestoneIx({
 		signer,
 		grant,
 		grantMilestone,
@@ -187,7 +198,7 @@ export class BarnClient {
 		});
 	}
 
-	async acceptGrantMilestone({
+	async acceptGrantMilestoneIx({
 		signer,
 		grant,
 		grantMilestone,
@@ -203,7 +214,7 @@ export class BarnClient {
 		});
 	}
 
-	async settleGrantMilestone({
+	async settleGrantMilestoneIx({
 		signer,
 		grant,
 		grantMilestone,
@@ -227,7 +238,7 @@ export class BarnClient {
 			grant,
 			grantMilestone,
 			signerTokenAccount: this.getAtaAddress(paymentMint, signer),
-      paymentMint,
+			paymentMint,
 			to,
 			tokenProgram,
 		});
