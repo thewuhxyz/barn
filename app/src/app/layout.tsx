@@ -1,20 +1,20 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import { Providers, WalletButton } from "@/context"
-import "./globals.css"
-import Link from "next/link"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Providers, WalletButton } from "@/context";
+import "./globals.css";
+import Link from "next/link";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Create Anchor dApp",
-	description: "Create Anchor dApp",
-}
+	title: "Barn",
+	description: "Solana Grants Manager",
+};
 
 export default function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode
+	children: React.ReactNode;
 }>) {
 	return (
 		<html lang="en">
@@ -23,9 +23,7 @@ export default function RootLayout({
 					<main className="mx-auto max-w-6xl p-2 min-h-screen flex flex-col">
 						<header className="mx-auto flex w-full max-w-3xl justify-between py-4 pb-16">
 							<Link href="/">
-								<p className="text-3xl cursor-default">
-									CAdAPP <span className="text-sm">next.js</span>
-								</p>
+								<p className="text-3xl cursor-default">Barn</p>
 							</Link>
 							<WalletButton />
 						</header>
@@ -34,5 +32,5 @@ export default function RootLayout({
 				</Providers>
 			</body>
 		</html>
-	)
+	);
 }
