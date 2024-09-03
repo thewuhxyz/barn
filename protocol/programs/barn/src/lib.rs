@@ -21,6 +21,10 @@ pub mod barn {
         ctx.accounts.add_project(uri, &ctx.bumps)
     }
 
+    pub fn add_grant_program(ctx: Context<AddGrantProgram>, uri: String) -> Result<()> {
+        ctx.accounts.add_grant_program(uri,  &ctx.bumps)
+    }
+
     pub fn award_grant(ctx: Context<AwardGrant>, uri: String, approved_amount: u64) -> Result<()> {
         ctx.accounts.award_grant(uri, approved_amount, &ctx.bumps)
     }

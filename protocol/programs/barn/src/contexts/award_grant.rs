@@ -16,7 +16,7 @@ pub struct AwardGrant<'info> {
 
     #[account(
         has_one=authority,
-        constraint=profile.sponsor==true@BarnError::NotASponsor,
+        constraint=profile.sponsor@BarnError::NotASponsor,
         seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]
@@ -63,7 +63,7 @@ impl<'info> AwardGrant<'info> {
             project: self.project.key(),
             uri,
             id: self.grant_program.count,
-            active_milestone: 0,
+            count: 0,
             payment_mint: self.payment_mint.key(),
             approved_amount,
             paid_out: 0,

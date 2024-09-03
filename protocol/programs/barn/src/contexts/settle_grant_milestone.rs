@@ -1,8 +1,16 @@
 use crate::state::*;
-use anchor_lang::prelude::*;
+use anchor_lang::{
+    prelude::*,
+    system_program::{transfer, Transfer},
+};
 use anchor_spl::{
     associated_token::AssociatedToken,
-    token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
+    token::spl_token::native_mint,
+    token_2022::spl_token_2022::native_mint as native_mint_2022,
+    token_interface::{
+        sync_native, transfer_checked, Mint, SyncNative, TokenAccount, TokenInterface,
+        TransferChecked,
+    },
 };
 
 #[derive(Accounts)]
@@ -38,18 +46,14 @@ pub struct SettleGrantMilestone<'info> {
 
     #[account(
         mut,
-        seeds=[b"grant-milestone", grant.key().as_ref(), grant.active_milestone.to_le_bytes().as_ref()],
+        seeds=[b"grant-milestone", grant.key().as_ref(), grant_milestone.id.to_le_bytes().as_ref()],
         bump=grant_milestone.bump,
     )]
     pub grant_milestone: Account<'info, GrantMilestone>,
 
-    #[account(
-        mut,
-        associated_token::authority=signer,
-        associated_token::mint=payment_mint,
-        associated_token::token_program=token_program
-    )]
-    pub signer_token_account: InterfaceAccount<'info, TokenAccount>,
+    ///CHECK: no extra checks in case of wrapped sol
+    #[account(mut)]
+    pub signer_token_account: UncheckedAccount<'info>,
 
     #[account(
         init_if_needed,
@@ -77,11 +81,19 @@ impl<'info> SettleGrantMilestone<'info> {
     }
 
     pub fn pay_out(&mut self) -> Result<()> {
+        if is_native_mint(&self.payment_mint.key()) {
+            self.transfer_sol()
+        } else {
+            self.transfer_token()
+        }
+    }
+
+    fn transfer_token(&mut self) -> Result<()> {
         let cpi_accounts = TransferChecked {
             authority: self.signer.to_account_info(),
-            from: self.signer.to_account_info(),
-            to: self.signer.to_account_info(),
-            mint: self.signer.to_account_info(),
+            from: self.signer_token_account.to_account_info(),
+            to: self.to_token_account.to_account_info(),
+            mint: self.payment_mint.to_account_info(),
         };
 
         let _cpi_program = self.token_program.to_account_info();
@@ -94,4 +106,28 @@ impl<'info> SettleGrantMilestone<'info> {
             self.payment_mint.decimals,
         )
     }
+
+    fn transfer_sol(&mut self) -> Result<()> {
+        let cpi_accounts = Transfer {
+            from: self.signer.to_account_info(),
+            to: self.to_token_account.to_account_info(),
+        };
+
+        let cpi_program = self.system_program.to_account_info();
+
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+
+        transfer(cpi_ctx, self.grant_milestone.amount)?;
+
+        sync_native(CpiContext::new(
+            self.token_program.to_account_info(),
+            SyncNative {
+                account: self.to_token_account.to_account_info(),
+            },
+        ))
+    }
+}
+
+fn is_native_mint(id: &Pubkey) -> bool {
+    native_mint::check_id(id) || native_mint_2022::check_id(id)
 }

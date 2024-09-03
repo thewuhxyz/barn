@@ -39,7 +39,7 @@ export function WalletContextProvider({
 }: {
 	children: React.ReactNode
 }) {
-	const endpoint = "http://localhost:8899"
+	const endpoint = process.env.NEXT_PUBLIC_RPC_ENDPOINT!
 
 	return (
 		<ConnectionProvider endpoint={endpoint}>

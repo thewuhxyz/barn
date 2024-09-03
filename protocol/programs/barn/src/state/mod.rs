@@ -99,7 +99,7 @@ pub struct Grant {
     pub project: Pubkey,
     pub program: Pubkey,
     pub id: u32,
-    pub active_milestone: u32,
+    pub count: u32,
     #[max_len(50)]
     pub uri: String,
     pub payment_mint: Pubkey,
@@ -110,8 +110,8 @@ pub struct Grant {
 
 impl Grant {
     pub fn add_milestone(&mut self) -> Result<()> {
-        self.active_milestone = self
-            .active_milestone
+        self.count = self
+            .count
             .checked_add(1)
             .ok_or(BarnError::OverflowOccured)?;
         Ok(())
@@ -147,9 +147,13 @@ pub struct Project {
 
 impl Project {
     pub fn receive_grant(&mut self, grant: &Pubkey) -> Result<()> {
-        require!(self.grant == None, BarnError::GrantAlreadyAwarded);
+        require!(self.grant.is_none(), BarnError::GrantAlreadyAwarded);
         self.grant = Some(grant.key());
         Ok(())
+    }
+
+    pub fn is_grant_by(&self, grant: Pubkey) -> bool {
+        self.grant.is_some_and(|g| g == grant)
     }
 }
 
@@ -161,7 +165,7 @@ pub struct GrantMilestone {
     pub amount: u64,
     #[max_len(50)] // todo: Adjust max lenght
     pub uri: String,
-    pub state: MilestoneState, // maybe u8
+    pub state: MilestoneState, // todo: u8
     pub bump: u8,
 }
 
@@ -224,11 +228,11 @@ impl GrantMilestone {
     pub fn is_paid(&self) -> bool {
         self.state.paid()
     }
-    
+
     pub fn is_rejected(&self) -> bool {
         self.state.rejected()
     }
-    
+
     pub fn is_accepted(&self) -> bool {
         self.state.accepted()
     }
@@ -253,11 +257,11 @@ impl MilestoneState {
     pub fn paid(&self) -> bool {
         self == &MilestoneState::Paid
     }
-    
+
     pub fn rejected(&self) -> bool {
         self == &MilestoneState::Rejected
     }
-    
+
     pub fn accepted(&self) -> bool {
         self == &MilestoneState::Accepted
     }

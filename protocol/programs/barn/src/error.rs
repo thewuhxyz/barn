@@ -14,6 +14,12 @@ pub enum BarnError {
     #[msg("Dev profile cannot be sponsor. Projects already exists for Dev profile")]
     ProfileCannotBeSponsor,
     
+    #[msg("Profile does not match profile provided")]
+    ProfileMismatch,
+
+    #[msg("Project grant does not match grant provided")]
+    GrantMismatch,
+
     #[msg("Grant already awarded to project")]
     GrantAlreadyAwarded,
     
