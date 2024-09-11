@@ -1,6 +1,6 @@
 "use client";
 
-import { BarnClient, BarnMethod } from "@barn/protocol";
+import { BarnClient } from "@barn/protocol";
 import {
 	useQuery,
 	useMutation,
@@ -13,40 +13,216 @@ import { GoToExplorer } from "@/components/solana";
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 
-function useSendBarnTransaction() {
-	const sendBarnTransaction = (
-		barnMethod: BarnMethod,
-		invalidateFn?: () => Promise<void>
-	) => {
-		const mutation = useMutation({
-			mutationFn: barnMethod.rpc,
-			onSuccess: (tx) => {
-				invalidateFn && invalidateFn();
-				toast.success("Transaction successful!", {
-					action: <GoToExplorer tx={tx} cluster="custom" />,
-					className: "w-max",
-				});
-			},
-			onError: (e) => {
-				console.error("error:", e);
-				toast.error(`Transaction failed. ${e.message}`);
-			},
-		});
+function useBarnRPC() {
+	const { barn } = useBarn();
 
-		return mutation.mutate;
+	const createUser = useMutation({
+		mutationFn: barn.rpc.createUser,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const approveSponsor = useMutation({
+		mutationFn: barn.rpc.approveSponsor,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const acceptGrantMilestone = useMutation({
+		mutationFn: barn.rpc.acceptGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const addGrantMilestone = useMutation({
+		mutationFn: barn.rpc.addGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const addGrantProgram = useMutation({
+		mutationFn: barn.rpc.addGrantProgram,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const addProject = useMutation({
+		mutationFn: barn.rpc.addProject,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const awardGrant = useMutation({
+		mutationFn: barn.rpc.awardGrant,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const rejectGrantMilestone = useMutation({
+		mutationFn: barn.rpc.rejectGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const reviewGrantMilestone = useMutation({
+		mutationFn: barn.rpc.reviewGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const reviseGrantMilestone = useMutation({
+		mutationFn: barn.rpc.reviseGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const settleGrantMilestone = useMutation({
+		mutationFn: barn.rpc.settleGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	return {
+		acceptGrantMilestone,
+		addGrantMilestone,
+		addGrantProgram,
+		addProject,
+		approveSponsor,
+		awardGrant,
+		createUser,
+		rejectGrantMilestone,
+		reviewGrantMilestone,
+		reviseGrantMilestone,
+		settleGrantMilestone,
 	};
-
-	return { sendBarnTransaction };
 }
 
-
-
 function useBarnState() {
-  // all projects
-  // user profile
-  // all projects for user
-  // all grants for user
-  // 
+	const { barn } = useBarn();
+	const { publicKey } = useWallet();
+	// all projects
+	const allProjects = useQuery({
+		queryKey: ["all-projects"],
+		queryFn: barn.account.getAllProjectAccounts,
+	});
+
+	// user profile
+	const userProfile = useQuery({
+		queryKey: ["profile", { publicKey: publicKey?.toBase58() ?? null }],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
+			const [_, { publicKey }] = queryKey;
+			return publicKey
+				? barn.account.getUserProfile(new PublicKey(publicKey))
+				: null;
+		},
+	});
+
+	// all projects for user
+	const userProjects = useQuery({
+		queryKey: ["profile", { publicKey: publicKey?.toBase58() ?? null }],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
+			const [_, { publicKey }] = queryKey;
+			return publicKey
+				? barn.account
+						.getUserProjects(new PublicKey(publicKey))
+				: null;
+		},
+	});
+
+	// all grants for user
+	//
 }
 
 // function useBarnAccounts() {

@@ -2,8 +2,9 @@ import { Program } from "@coral-xyz/anchor";
 import { Barn } from "../idl";
 import { PublicKey } from "@solana/web3.js";
 import type BN from "bn.js";
+import { BarnMethods, IBarnMethods } from "./methods";
 
-export class BarnRPC {
+export class BarnRPC implements IBarnMethods<string> {
 	constructor(private program: Program<Barn>) {}
 
 	async createUser(args: {
@@ -11,28 +12,25 @@ export class BarnRPC {
 		uri: string;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.createUser(this.program, args);
+		return BarnMethods.createUser(this.program, args).rpc();
 	}
 
 	async approveSponsor(args: {
 		admin: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.approveSponsor(this.program, args);
+		return BarnMethods.approveSponsor(this.program, args).rpc();
 	}
 
-	async addProject(args: {
-		uri: string;
-		signer: PublicKey;
-	}): Promise<string> {
-		return BarnRPC.addProject(this.program, args);
+	async addProject(args: { uri: string; signer: PublicKey }): Promise<string> {
+		return BarnMethods.addProject(this.program, args).rpc();
 	}
 
 	async addGrantProgram(args: {
 		uri: string;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.addGrantProgram(this.program, args);
+		return BarnMethods.addGrantProgram(this.program, args).rpc();
 	}
 
 	async awardGrant(args: {
@@ -43,7 +41,7 @@ export class BarnRPC {
 		project: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.awardGrant(this.program, args);
+		return BarnMethods.awardGrant(this.program, args).rpc();
 	}
 
 	async addGrantMilestone(args: {
@@ -53,7 +51,7 @@ export class BarnRPC {
 		project: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.addGrantMilestone(this.program, args);
+		return BarnMethods.addGrantMilestone(this.program, args).rpc();
 	}
 
 	async reviseGrantMilestone(args: {
@@ -63,7 +61,7 @@ export class BarnRPC {
 		grantMilestone: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.reviseGrantMilestone(this.program, args);
+		return BarnMethods.reviseGrantMilestone(this.program, args).rpc();
 	}
 
 	async reviewGrantMilestone(args: {
@@ -71,7 +69,7 @@ export class BarnRPC {
 		grantMilestone: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.reviewGrantMilestone(this.program, args);
+		return BarnMethods.reviewGrantMilestone(this.program, args).rpc();
 	}
 
 	async acceptGrantMilestone(args: {
@@ -79,7 +77,7 @@ export class BarnRPC {
 		grantMilestone: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.acceptGrantMilestone(this.program, args);
+		return BarnMethods.acceptGrantMilestone(this.program, args).rpc();
 	}
 
 	async rejectGrantMilestone(args: {
@@ -87,7 +85,7 @@ export class BarnRPC {
 		grantMilestone: PublicKey;
 		signer: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.rejectGrantMilestone(this.program, args);
+		return BarnMethods.rejectGrantMilestone(this.program, args).rpc();
 	}
 
 	async settleGrantMilestone(args: {
@@ -99,262 +97,6 @@ export class BarnRPC {
 		paymentMint: PublicKey;
 		tokenProgram: PublicKey;
 	}): Promise<string> {
-		return BarnRPC.settleGrantMilestone(this.program, args);
-	}
-
-	static async createUser(
-		program: Program<Barn>,
-		{
-			seed,
-			uri,
-			signer,
-		}: {
-			seed: string;
-			uri: string;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.createUser(seed, uri)
-			.accounts({
-				signer,
-			})
-			.rpc();
-	}
-
-	static async approveSponsor(
-		program: Program<Barn>,
-		{
-			admin,
-			signer,
-		}: {
-			admin: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.approveSponsor()
-			.accounts({
-				signer,
-				admin,
-			})
-			.rpc();
-	}
-
-	static async addProject(
-		program: Program<Barn>,
-		{
-			uri,
-			signer,
-		}: {
-			uri: string;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.addProject(uri)
-			.accounts({
-				signer,
-			})
-			.rpc();
-	}
-
-	static async addGrantProgram(
-		program: Program<Barn>,
-		{
-			uri,
-			signer,
-		}: {
-			uri: string;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.addGrantProgram(uri)
-			.accounts({
-				signer,
-			})
-			.rpc();
-	}
-
-	static async awardGrant(
-		program: Program<Barn>,
-		{
-			uri,
-			approvedAmount,
-			grantProgram,
-			project,
-			paymentMint,
-			signer,
-		}: {
-			uri: string;
-			approvedAmount: BN;
-			paymentMint: PublicKey;
-			grantProgram: PublicKey;
-			project: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.awardGrant(uri, approvedAmount)
-			.accountsPartial({
-				paymentMint,
-				signer,
-				grantProgram,
-				project,
-			})
-			.rpc();
-	}
-
-	static async addGrantMilestone(
-		program: Program<Barn>,
-		{
-			uri,
-			amount,
-			grant,
-			project,
-			signer,
-		}: {
-			uri: string;
-			amount: BN;
-			grant: PublicKey;
-			project: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.addGrantMilestone(uri, amount)
-			.accountsPartial({
-				signer,
-				project,
-				grant,
-			})
-			.rpc();
-	}
-
-	static async reviseGrantMilestone(
-		program: Program<Barn>,
-		{
-			uri,
-			amount,
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			uri: string | null;
-			amount: BN | null;
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.reviseGrantMilestone({ uri, amount })
-			.accountsPartial({
-				signer,
-				grant,
-				grantMilestone,
-			})
-			.rpc();
-	}
-
-	static async reviewGrantMilestone(
-		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.reviewGrantMilestone()
-			.accountsPartial({
-				signer,
-				grant,
-				grantMilestone,
-			})
-			.rpc();
-	}
-
-	static async acceptGrantMilestone(
-		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.acceptGrantMilestone()
-			.accountsPartial({
-				signer,
-				grant,
-				grantMilestone,
-			})
-			.rpc();
-	}
-
-	static async rejectGrantMilestone(
-		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.rejectGrantMilestone()
-			.accountsPartial({
-				signer,
-				grant,
-				grantMilestone,
-			})
-			.rpc();
-	}
-
-	static async settleGrantMilestone(
-		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-			signerTokenAccount,
-			paymentMint,
-			to,
-			tokenProgram,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			to: PublicKey;
-			signer: PublicKey;
-			signerTokenAccount: PublicKey;
-			paymentMint: PublicKey;
-			tokenProgram: PublicKey;
-		}
-	): Promise<string> {
-		return program.methods
-			.settleGrantMilestone()
-			.accountsPartial({
-				to,
-				signer,
-				grant,
-				grantMilestone,
-				signerTokenAccount,
-				paymentMint,
-				tokenProgram,
-			})
-			.rpc();
+		return BarnMethods.settleGrantMilestone(this.program, args).rpc();
 	}
 }

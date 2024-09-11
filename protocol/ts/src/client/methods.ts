@@ -19,24 +19,15 @@ export class BarnMethods {
 		return BarnMethods.createUser(this.program, args);
 	}
 
-	approveSponsor(args: {
-		admin: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	approveSponsor(args: { admin: PublicKey; signer: PublicKey }): BarnMethod {
 		return BarnMethods.approveSponsor(this.program, args);
 	}
 
-	addProject(args: {
-		uri: string;
-		signer: PublicKey;
-	}): BarnMethod {
+	addProject(args: { uri: string; signer: PublicKey }): BarnMethod {
 		return BarnMethods.addProject(this.program, args);
 	}
 
-	addGrantProgram(args: {
-		uri: string;
-		signer: PublicKey;
-	}): BarnMethod {
+	addGrantProgram(args: { uri: string; signer: PublicKey }): BarnMethod {
 		return BarnMethods.addGrantProgram(this.program, args);
 	}
 
@@ -337,4 +328,71 @@ export interface BarnMethod {
 	rpc: (config?: ConfirmOptions) => Promise<string>;
 	transaction: () => Promise<Transaction>;
 	instruction: () => Promise<TransactionInstruction>;
+}
+
+export interface IBarnMethods<T> {
+	createUser(args: {
+		seed: string;
+		uri: string;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	approveSponsor(args: { admin: PublicKey; signer: PublicKey }): Promise<T>;
+
+	addProject(args: { uri: string; signer: PublicKey }): Promise<T>;
+
+	addGrantProgram(args: { uri: string; signer: PublicKey }): Promise<T>;
+
+	awardGrant(args: {
+		uri: string;
+		approvedAmount: BN;
+		paymentMint: PublicKey;
+		grantProgram: PublicKey;
+		project: PublicKey;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	addGrantMilestone(args: {
+		uri: string;
+		amount: BN;
+		grant: PublicKey;
+		project: PublicKey;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	reviseGrantMilestone(args: {
+		uri: string | null;
+		amount: BN | null;
+		grant: PublicKey;
+		grantMilestone: PublicKey;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	reviewGrantMilestone(args: {
+		grant: PublicKey;
+		grantMilestone: PublicKey;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	acceptGrantMilestone(args: {
+		grant: PublicKey;
+		grantMilestone: PublicKey;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	rejectGrantMilestone(args: {
+		grant: PublicKey;
+		grantMilestone: PublicKey;
+		signer: PublicKey;
+	}): Promise<T>;
+
+	settleGrantMilestone(args: {
+		grant: PublicKey;
+		grantMilestone: PublicKey;
+		to: PublicKey;
+		signer: PublicKey;
+		signerTokenAccount: PublicKey;
+		paymentMint: PublicKey;
+		tokenProgram: PublicKey;
+	}): Promise<T>;
 }
