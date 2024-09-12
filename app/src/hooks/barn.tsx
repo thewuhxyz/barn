@@ -13,7 +13,7 @@ import { GoToExplorer } from "@/components/solana";
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 
-function useBarnRPC() {
+export function useBarnRPC() {
 	const { barn } = useBarn();
 
 	const createUser = useMutation({
@@ -185,7 +185,7 @@ function useBarnRPC() {
 	};
 }
 
-function useBarnState() {
+export function useBarnState() {
 	const { barn } = useBarn();
 	const { publicKey } = useWallet();
 	// all projects
@@ -215,46 +215,15 @@ function useBarnState() {
 		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
 			const [_, { publicKey }] = queryKey;
 			return publicKey
-				? barn.account
-						.getUserProjects(new PublicKey(publicKey))
+				? barn.account.getUserProjects(new PublicKey(publicKey))
 				: null;
 		},
 	});
 
-	// all grants for user
-	//
+	return { allProjects, userProfile, userProjects };
 }
 
-// function useBarnAccounts() {
-// 	const { barn } = useBarn();
-// 	const { publicKey } = useWallet();
-// 	const queryClient = useQueryClient();
-
-// 	const { data, error, isLoading } = useQuery({
-// 		queryKey: ["counter", { publicKey: publicKey?.toBase58() ?? null }],
-// 		queryFn: ({
-// 			queryKey,
-// 		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
-// 			const [_, { publicKey }] = queryKey;
-// 			return publicKey
-// 				? program.account.counter.fetchNullable(
-// 						counterPda(new anchor.web3.PublicKey(publicKey))
-// 					)
-// 				: null;
-// 		},
-// 	});
-
-// 	return {
-// 		counter: data,
-// 		error,
-// 		isLoading,
-// 		invalidate,
-// 		createCounter: createCounterMutation.mutate,
-// 		incrementCount: incrementCountMutation.mutate,
-// 	};
-// }
-
-function useBarn() {
+export function useBarn() {
 	const { connection } = useConnection();
 	const { publicKey, signTransaction, signAllTransactions } = useWallet();
 
