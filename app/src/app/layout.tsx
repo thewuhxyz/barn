@@ -25,6 +25,23 @@ export default function RootLayout({
 							<Link href="/">
 								<p className="text-3xl cursor-default">Barn</p>
 							</Link>
+							<nav className="flex space-x-8 items-center text-muted-foreground">
+								<ul>
+									<Link href="/">
+										<p className="cursor-default hover:text-primary">Home</p>
+									</Link>
+								</ul>
+								<ul>
+									<Link href="/program">
+										<p className="cursor-default hover:text-primary">Grants</p>
+									</Link>
+								</ul>
+								<ul>
+									<Link href="/profile">
+										<p className="cursor-default hover:text-primary">Profile</p>
+									</Link>
+								</ul>
+							</nav>
 							<WalletButton />
 						</header>
 						{children}
