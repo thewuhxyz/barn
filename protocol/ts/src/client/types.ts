@@ -7,7 +7,11 @@ export type CreateUserArgs = {
 	signer: PublicKey;
 };
 
-export type ApproveSponsorArgs = { admin: PublicKey; signer: PublicKey };
+export type ApproveSponsorArgs = {
+	admin: PublicKey;
+	signer: PublicKey;
+	profile: PublicKey;
+};
 
 export type AddProjectArgs = {
 	uri: string;

@@ -606,10 +606,14 @@
                 "path": "signer"
               }
             ]
-          }
+          },
+          "relations": [
+            "profile"
+          ]
         },
         {
           "name": "profile",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -630,7 +634,10 @@
                 "account": "Profile"
               }
             ]
-          }
+          },
+          "relations": [
+            "authority"
+          ]
         }
       ],
       "args": []

@@ -1,12 +1,20 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { ProjectCard } from "@/components/barn";
 import { GrantCard, MilestoneCard } from "@/components/barn/profile";
+import { useBarnGrant, useBarnProject } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 
 export default function Project({ params }: { params: { address: string } }) {
 	const projectPk = params.address;
+
+	const { project } = useBarnProject(projectPk);
+
+	const {
+		grant: { data: grant },
+		milestonePks: { data: milestones },
+	} = useBarnGrant(project.data?.grant?.toBase58() ?? null);
+
 	return (
 		<main className="flex-1 flex flex-col items-center justify-center space-y-16">
 			<ProjectCard publicKey={new PublicKey(projectPk)} />

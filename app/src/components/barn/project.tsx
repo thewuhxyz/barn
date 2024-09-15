@@ -4,11 +4,12 @@ import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useBarnRPC, useBarnUser } from "@/hooks/barn";
+import { useBarn, useBarnRPC, useBarnUser } from "@/hooks/barn";
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { PublicKey } from "@solana/web3.js";
 
 export function CreateUserProfile() {
 	const [userName, setUserName] = useState("");
@@ -39,6 +40,48 @@ export function CreateUserProfile() {
 				/>
 				<Button className="w-full" onClick={handleCreateUser}>
 					Create
+				</Button>
+			</PopoverContent>
+		</Popover>
+	);
+}
+
+export function ApproveSponsor() {
+	const [sponsor, setSponsor] = useState("");
+	const { approveSponsor } = useBarnRPC();
+	const wallet = useAnchorWallet();
+	const barn = useBarn();
+
+	async function handleCreateUser() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			let signer = new PublicKey(sponsor);
+			const profile = await barn.account.getUserProfile(signer);
+			return approveSponsor({
+				admin: wallet.publicKey,
+				signer: new PublicKey(sponsor),
+				profile: profile!.profile,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Popover>
+			<PopoverTrigger className={cn(buttonVariants())}>
+				Approve Sponsor
+			</PopoverTrigger>
+			<PopoverContent>
+				<Input
+					id="approve"
+					type="text"
+					value={sponsor}
+					onChange={(e) => setSponsor(e.target.value)}
+					placeholder="Enter Sponsor"
+				/>
+				<Button className="w-full" onClick={handleCreateUser}>
+					Approve
 				</Button>
 			</PopoverContent>
 		</Popover>

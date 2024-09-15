@@ -9,12 +9,15 @@ pub struct ApproveSponsor<'info> {
     pub signer: UncheckedAccount<'info>,
 
     #[account(
+        has_one=profile,
         seeds=[signer.key().as_ref()],
         bump=authority.bump,
     )]
     pub authority: Account<'info, Authority>,
 
     #[account(
+        mut,
+        has_one=authority,
         seeds=[b"profile", profile.seed.as_bytes()],
         bump
     )]

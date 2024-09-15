@@ -612,10 +612,14 @@ export type Barn = {
                 "path": "signer"
               }
             ]
-          }
+          },
+          "relations": [
+            "profile"
+          ]
         },
         {
           "name": "profile",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -636,7 +640,10 @@ export type Barn = {
                 "account": "profile"
               }
             ]
-          }
+          },
+          "relations": [
+            "authority"
+          ]
         }
       ],
       "args": []

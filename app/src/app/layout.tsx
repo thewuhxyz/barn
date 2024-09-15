@@ -41,6 +41,11 @@ export default function RootLayout({
 										<p className="cursor-default hover:text-primary">Profile</p>
 									</Link>
 								</ul>
+								<ul>
+									<Link href="/admin">
+										<p className="cursor-default hover:text-primary">Admin</p>
+									</Link>
+								</ul>
 							</nav>
 							<WalletButton />
 						</header>
