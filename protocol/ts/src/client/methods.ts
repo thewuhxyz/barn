@@ -7,6 +7,19 @@ import {
 	TransactionInstruction,
 } from "@solana/web3.js";
 import type BN from "bn.js";
+import {
+	AcceptGrantMilestoneArgs,
+	AddGrantMilestoneArgs,
+	AddGrantProgramArgs,
+	AddProjectArgs,
+	ApproveSponsorArgs,
+	AwardGrantArgs,
+	CreateUserArgs,
+	RejectGrantMilestoneArgs,
+	ReviewGrantMilestoneArgs,
+	ReviseGrantMilestoneArgs,
+	SettleGrantMilestoneArgs,
+} from "./types";
 
 export class BarnMethods {
 	constructor(private program: Program<Barn>) {}
@@ -331,68 +344,25 @@ export interface BarnMethod {
 }
 
 export interface IBarnMethods<T> {
-	createUser(args: {
-		seed: string;
-		uri: string;
-		signer: PublicKey;
-	}): Promise<T>;
+	createUser(args: CreateUserArgs): Promise<T>;
 
-	approveSponsor(args: { admin: PublicKey; signer: PublicKey }): Promise<T>;
+	approveSponsor(args: ApproveSponsorArgs): Promise<T>;
 
-	addProject(args: { uri: string; signer: PublicKey }): Promise<T>;
+	addProject(args: AddProjectArgs): Promise<T>;
 
-	addGrantProgram(args: { uri: string; signer: PublicKey }): Promise<T>;
+	addGrantProgram(args: AddGrantProgramArgs): Promise<T>;
 
-	awardGrant(args: {
-		uri: string;
-		approvedAmount: BN;
-		paymentMint: PublicKey;
-		grantProgram: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<T>;
+	awardGrant(args: AwardGrantArgs): Promise<T>;
 
-	addGrantMilestone(args: {
-		uri: string;
-		amount: BN;
-		grant: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<T>;
+	addGrantMilestone(args: AddGrantMilestoneArgs): Promise<T>;
 
-	reviseGrantMilestone(args: {
-		uri: string | null;
-		amount: BN | null;
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<T>;
+	reviseGrantMilestone(args: ReviseGrantMilestoneArgs): Promise<T>;
 
-	reviewGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<T>;
+	reviewGrantMilestone(args: ReviewGrantMilestoneArgs): Promise<T>;
 
-	acceptGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<T>;
+	acceptGrantMilestone(args: AcceptGrantMilestoneArgs): Promise<T>;
 
-	rejectGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<T>;
+	rejectGrantMilestone(args: RejectGrantMilestoneArgs): Promise<T>;
 
-	settleGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		to: PublicKey;
-		signer: PublicKey;
-		signerTokenAccount: PublicKey;
-		paymentMint: PublicKey;
-		tokenProgram: PublicKey;
-	}): Promise<T>;
+	settleGrantMilestone(args: SettleGrantMilestoneArgs): Promise<T>;
 }

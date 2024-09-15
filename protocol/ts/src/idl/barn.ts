@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/barn.json`.
  */
 export type Barn = {
-  "address": "9r5mFwaKhxmyp6iBQeo3fHXP2J1bGneySwyLmvSq1Ggd",
+  "address": "Aoofv5iGzdDeyySpT9QsiFaK7Db7SKyycb7nTEU1oTYE",
   "metadata": {
     "name": "barn",
     "version": "0.1.0",

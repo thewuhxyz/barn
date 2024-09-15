@@ -49,7 +49,8 @@ export class BarnAccount {
 	}
 
 	async getUserAuthority(signer: PublicKey): Promise<AuthorityAccount | null> {
-		return await this.authority(signer);
+
+		return await this.authority(this.authorityAddress(signer));
 	}
 
 	async getAllProjects(): Promise<PublicKey[]> {

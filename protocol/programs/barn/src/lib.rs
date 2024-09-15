@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 use contexts::*;
 use state::*;
 
-declare_id!("9r5mFwaKhxmyp6iBQeo3fHXP2J1bGneySwyLmvSq1Ggd");
+declare_id!("Aoofv5iGzdDeyySpT9QsiFaK7Db7SKyycb7nTEU1oTYE");
 
 #[program]
 pub mod barn {

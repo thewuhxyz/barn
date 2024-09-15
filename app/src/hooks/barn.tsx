@@ -12,12 +12,17 @@ import { toast } from "sonner";
 import { GoToExplorer } from "@/components/solana";
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
+import type { CreateUserArgs } from "@barn/protocol";
+
+export function useBarnUser() {}
 
 export function useBarnRPC() {
-	const { barn } = useBarn();
+	const barn = useBarn();
+
+	const doCreateUser = (args: CreateUserArgs) => barn.rpc.createUser(args);
 
 	const createUser = useMutation({
-		mutationFn: barn.rpc.createUser,
+		mutationFn: doCreateUser,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -186,8 +191,11 @@ export function useBarnRPC() {
 }
 
 export function useBarnState() {
-	const { barn } = useBarn();
+	const barn = useBarn();
 	const { publicKey } = useWallet();
+	
+	const getUserProfile = (pubkey: string) =>
+		barn.account.getUserProfile(new PublicKey(pubkey));
 	// all projects
 	const allProjects = useQuery({
 		queryKey: ["all-projects"],
@@ -240,5 +248,5 @@ export function useBarn() {
 
 	const provider = new AnchorProvider(connection, wallet(), {});
 
-	return { barn: new BarnClient(provider) };
+	return new BarnClient(provider);
 }
