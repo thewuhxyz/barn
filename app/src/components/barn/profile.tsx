@@ -10,15 +10,23 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from ".";
+import { useBarnUser } from "@/hooks/barn";
 
 export type ProjectCardProps = {};
 
 export function AllUserProjects() {
+	const {
+		projectsPks: { data: projectsPks },
+	} = useBarnUser();
+
+	if (!projectsPks || !projectsPks.length) return <p>No Projects For User</p>;
+
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{Array.from({ length: 10 }).map((_, i) => (
-				<ProjectCard key={i} />
-			))}
+			{projectsPks.map((pk) => {
+				console.log("pk:", pk.toBase58());
+				return <ProjectCard key={pk.toBase58()} publicKey={pk} />;
+			})}
 		</div>
 	);
 }
@@ -27,7 +35,7 @@ export function AllUserGrants() {
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{Array.from({ length: 10 }).map((_, i) => (
-				<GrantCard key={i}/>
+				<GrantCard key={i} />
 			))}
 		</div>
 	);
@@ -44,16 +52,21 @@ export function Notifications() {
 }
 
 export function ProfileCard() {
+	const { profile: userProfile } = useBarnUser();
+	const { data: profile } = userProfile;
+	if (!profile) {
+		return "Create a Profile";
+	}
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<CardTitle>Name: Username</CardTitle>
+				<CardTitle>username: {profile.seed}</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<CardDescription>Authority: "Authority"</CardDescription>
-				<CardDescription>Profile: "Profile"</CardDescription>
-				<CardDescription>Github: {"<github_url>"}</CardDescription>
-				<CardDescription>Grants: "no_of_grants"</CardDescription>
+				<CardDescription>
+					Authority: {profile.authority.toBase58()}
+				</CardDescription>
+				<CardDescription>Projects: {profile.count}</CardDescription>
 			</CardContent>
 		</Card>
 	);

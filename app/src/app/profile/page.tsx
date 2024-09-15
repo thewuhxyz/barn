@@ -7,17 +7,23 @@ import {
 	Notifications,
 	ProfileCard,
 } from "@/components/barn/profile";
-import { useBarnState } from "@/hooks/barn";
-import { CreateUserProfile } from "@/components/barn/project";
+import { useBarnUser } from "@/hooks/barn";
+import { AddNewProject, CreateUserProfile } from "@/components/barn/project";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletButton } from "@/context";
 
 export default function Profile() {
-	const { userProfile } = useBarnState();
-	const { data: profile } = userProfile;
+	const { publicKey } = useWallet();
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
 	return (
-		<main className="flex-1 flex flex-col items-center justify-center space-y-16">
+		<main className="flex flex-col items-center space-y-16">
 			{profile ? (
 				<>
 					<ProfileCard />
+					<AddNewProject />
 					<Tabs
 						defaultValue="grants"
 						className="flex w-full flex-col items-center justify-center space-y-8 max-w-6xl"
@@ -38,8 +44,13 @@ export default function Profile() {
 						</TabsContent>
 					</Tabs>
 				</>
-			) : (
+			) : publicKey ? (
 				<CreateUserProfile />
+			) : (
+				<>
+					<p>Connect wallet to create a profile</p>
+					<WalletButton />
+				</>
 			)}
 		</main>
 	);

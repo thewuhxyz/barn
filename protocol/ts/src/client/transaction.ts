@@ -3,6 +3,7 @@ import { Barn } from "../idl";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import type BN from "bn.js";
 import { BarnMethods, IBarnMethods } from "./methods";
+import { AddProjectArgs } from "./types";
 
 export class BarnTransaction implements IBarnMethods<Transaction> {
 	constructor(private program: Program<Barn>) {}
@@ -22,10 +23,7 @@ export class BarnTransaction implements IBarnMethods<Transaction> {
 		return BarnMethods.approveSponsor(this.program, args).transaction();
 	}
 
-	async addProject(args: {
-		uri: string;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async addProject(args: AddProjectArgs): Promise<Transaction> {
 		return BarnMethods.addProject(this.program, args).transaction();
 	}
 

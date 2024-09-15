@@ -516,6 +516,7 @@ export type Barn = {
         },
         {
           "name": "profile",
+          "writable": true,
           "pda": {
             "seeds": [
               {

@@ -36,7 +36,7 @@ export class BarnMethods {
 		return BarnMethods.approveSponsor(this.program, args);
 	}
 
-	addProject(args: { uri: string; signer: PublicKey }): BarnMethod {
+	addProject(args: AddProjectArgs): BarnMethod {
 		return BarnMethods.addProject(this.program, args);
 	}
 
@@ -138,7 +138,7 @@ export class BarnMethods {
 			signer: PublicKey;
 		}
 	): BarnMethod {
-		return program.methods.approveSponsor().accounts({
+		return program.methods.approveSponsor().accountsPartial({
 			signer,
 			admin,
 		});
@@ -149,13 +149,12 @@ export class BarnMethods {
 		{
 			uri,
 			signer,
-		}: {
-			uri: string;
-			signer: PublicKey;
-		}
+			profile
+		}: AddProjectArgs
 	): BarnMethod {
-		return program.methods.addProject(uri).accounts({
+		return program.methods.addProject(uri).accountsPartial({
 			signer,
+			profile
 		});
 	}
 
@@ -169,7 +168,7 @@ export class BarnMethods {
 			signer: PublicKey;
 		}
 	): BarnMethod {
-		return program.methods.addGrantProgram(uri).accounts({
+		return program.methods.addGrantProgram(uri).accountsPartial({
 			signer,
 		});
 	}

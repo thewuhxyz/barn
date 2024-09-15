@@ -510,6 +510,7 @@
         },
         {
           "name": "profile",
+          "writable": true,
           "pda": {
             "seeds": [
               {

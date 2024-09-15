@@ -11,7 +11,7 @@ export class BarnAccount {
 	async getUserProjects(signer: PublicKey): Promise<ProjectAccount[] | null> {
 		const authority = await this.getUserAuthority(signer);
 		if (!authority) return authority;
-		
+
 		const profile = await this.profile(authority.profile);
 		if (!profile) return profile;
 
@@ -41,15 +41,53 @@ export class BarnAccount {
 		return projects;
 	}
 
-	async getUserProfile(user: PublicKey): Promise<ProfileAccount | null> {
+	async getUserProjectsPks(signer: PublicKey): Promise<PublicKey[] | null> {
+		const authority = await this.getUserAuthority(signer);
+		if (!authority) return authority;
+
+		const profile = await this.profile(authority.profile);
+		if (!profile) return profile;
+
+		const { count } = profile;
+		if (!count) return null;
+
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.projectAddress(authority.profile, i)
+		);
+
+		return projectPks;
+	}
+	
+	async getProjectPks(projectPk: PublicKey, count: number): Promise<PublicKey[] | null> {
+
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.projectAddress(projectPk, i)
+		);
+
+		return projectPks;
+	}
+	
+	async getGrantMilestonesPks(grantPk: PublicKey, count: number): Promise<PublicKey[] | null> {
+
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.grantMilestoneAddress(grantPk, i)
+		);
+
+		return projectPks;
+	}
+
+	async getUserProfile(
+		user: PublicKey
+	): Promise<(ProfileAccount & AuthorityAccount) | null> {
 		const authority = await this.getUserAuthority(user);
 		if (!authority) return authority;
 		const { profile } = authority;
-		return await this.profile(profile);
+		const profileAccount = await this.profile(profile);
+		if (!profileAccount) return profileAccount;
+		return { ...profileAccount, ...authority };
 	}
 
 	async getUserAuthority(signer: PublicKey): Promise<AuthorityAccount | null> {
-
 		return await this.authority(this.authorityAddress(signer));
 	}
 
