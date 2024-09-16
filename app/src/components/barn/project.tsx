@@ -89,7 +89,6 @@ export function ApproveSponsor() {
 }
 
 export function AddNewProject() {
-	const [userName, setUserName] = useState("");
 	const { addProject } = useBarnRPC();
 	const wallet = useAnchorWallet();
 	const {
@@ -110,71 +109,56 @@ export function AddNewProject() {
 		}
 	}
 
-	return (
-		<Button onClick={handleAddProject}>Add New Project</Button>
-		// <Popover>
-		// 	<PopoverTrigger className={cn(buttonVariants())}>
-		// 		Add New Project
-		// 	</PopoverTrigger>
-		// 	<PopoverContent>
-		// 		<Button className="w-full" onClick={handleAddProject}>
-		// 			Create Project
-		// 		</Button>
-		// 	</PopoverContent>
-		// </Popover>
-	);
+	return <Button onClick={handleAddProject}>Add New Project</Button>;
 }
 
 export function AddGrantProgram() {
-	const [userName, setUserName] = useState("");
 	const { addGrantProgram } = useBarnRPC();
 	const wallet = useAnchorWallet();
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
 
-	function handleAddProject() {
-		if (!wallet) throw "wallet not connected";
-		return addGrantProgram({ uri: "", signer: wallet.publicKey });
+	function handleAddGrantProgram() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "profile not created";
+			return addGrantProgram({
+				uri: "some.json",
+				signer: wallet.publicKey,
+				profile: profile.profile,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
 	}
 
-	return (
-		<Popover>
-			<PopoverTrigger>Create User Profile</PopoverTrigger>
-			<PopoverContent>
-				<Input
-					id="amount"
-					type="number"
-					value={userName}
-					onChange={(e) => setUserName(e.target.value)}
-					className="col-span-3"
-				/>
-				<Button onClick={handleAddProject}>Create</Button>
-			</PopoverContent>
-		</Popover>
-	);
+	return <Button onClick={handleAddGrantProgram}>Add New Grant Program</Button>;
 }
 
-export function awardGrant() {
-	const [userName, setUserName] = useState("");
-	const { addGrantProgram } = useBarnRPC();
-	const wallet = useAnchorWallet();
+// export function awardGrant() {
+// 	const [userName, setUserName] = useState("");
+// 	const { awardGrant } = useBarnRPC();
+// 	const wallet = useAnchorWallet();
 
-	function handleAddProject() {
-		if (!wallet) throw "wallet not connected";
-		return addGrantProgram({ uri: "", signer: wallet.publicKey });
-	}
+// 	function handleAddProject() {
+// 		if (!wallet) throw "wallet not connected";
+// 		return awardGrant({ uri: "", signer: wallet.publicKey });
+// 	}
 
-	return (
-		<Popover>
-			<PopoverTrigger>Create User Profile</PopoverTrigger>
-			<PopoverContent>
-				<Input
-					id="amount"
-					type="number"
-					value={userName}
-					onChange={(e) => setUserName(e.target.value)}
-					className="col-span-3"
-				/>
-				<Button onClick={handleAddProject}>Create</Button>
-			</PopoverContent>
-		</Popover>
-	);
-}
+// 	return (
+// 		<Popover>
+// 			<PopoverTrigger>Create User Profile</PopoverTrigger>
+// 			<PopoverContent>
+// 				<Input
+// 					id="amount"
+// 					type="number"
+// 					value={userName}
+// 					onChange={(e) => setUserName(e.target.value)}
+// 					className="col-span-3"
+// 				/>
+// 				<Button onClick={handleAddProject}>Create</Button>
+// 			</PopoverContent>
+// 		</Popover>
+// 	);
+// }

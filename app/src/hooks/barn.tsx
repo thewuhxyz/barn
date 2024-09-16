@@ -17,6 +17,7 @@ import { GoToExplorer } from "@/components/solana";
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 import type {
+	AddGrantProgramArgs,
 	AddProjectArgs,
 	ApproveSponsorArgs,
 	CreateUserArgs,
@@ -29,6 +30,8 @@ export function useBarnRPC() {
 	const doApproveSponsor = (args: ApproveSponsorArgs) =>
 		barn.rpc.approveSponsor(args);
 	const doAddProject = (args: AddProjectArgs) => barn.rpc.addProject(args);
+	const doAddGrantProgram = (args: AddGrantProgramArgs) =>
+		barn.rpc.addGrantProgram(args);
 
 	const createUser = useMutation({
 		mutationFn: doCreateUser,
@@ -87,7 +90,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const addGrantProgram = useMutation({
-		mutationFn: barn.rpc.addGrantProgram,
+		mutationFn: doAddGrantProgram,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -199,47 +202,6 @@ export function useBarnRPC() {
 	};
 }
 
-// export function useBarnState() {
-// 	const barn = useBarn();
-// 	const { publicKey } = useWallet();
-
-// 	const getUserProfile = (pubkey: string) =>
-// 		barn.account.getUserProfile(new PublicKey(pubkey));
-// 	// all projects
-// 	const allProjects = useQuery({
-// 		queryKey: ["all-projects"],
-// 		queryFn: barn.account.getAllProjectAccounts,
-// 	});
-
-// 	// user profile
-// 	const userProfile = useQuery({
-// 		queryKey: ["profile", { publicKey: publicKey?.toBase58() ?? null }],
-// 		queryFn: ({
-// 			queryKey,
-// 		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
-// 			const [_, { publicKey }] = queryKey;
-// 			return publicKey
-// 				? barn.account.getUserProfile(new PublicKey(publicKey))
-// 				: null;
-// 		},
-// 	});
-
-// 	// all projects for user
-// 	const userProjects = useQuery({
-// 		queryKey: ["profile", { publicKey: publicKey?.toBase58() ?? null }],
-// 		queryFn: ({
-// 			queryKey,
-// 		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
-// 			const [_, { publicKey }] = queryKey;
-// 			return publicKey
-// 				? barn.account.getUserProjects(new PublicKey(publicKey))
-// 				: null;
-// 		},
-// 	});
-
-// 	return { allProjects, userProfile, userProjects };
-// }
-
 export function useBarnUser() {
 	const barn = useBarn();
 	const { publicKey } = useWallet();
@@ -256,33 +218,45 @@ export function useBarnUser() {
 		},
 	});
 
-	const projectsPks = useQuery({
+	const projectOrProgramPks = useQuery({
 		queryKey: [
 			"project-keys",
 			{
 				profilePk: profile.data?.profile?.toBase58() ?? null,
 				count: profile.data?.count || null,
+				sponsor: profile.data?.sponsor || null,
 			},
 		],
 		queryFn: ({
 			queryKey,
 		}: QueryFunctionContext<
-			[string, { profilePk: string | null; count: number | null }]
+			[
+				string,
+				{
+					profilePk: string | null;
+					count: number | null;
+					sponsor: boolean | null;
+				},
+			]
 		>) => {
-			const [_, { profilePk, count }] = queryKey;
-			return profilePk && count
-				? barn.account.getProjectPks(new PublicKey(profilePk), count)
+			const [_, { profilePk, count, sponsor }] = queryKey;
+			return profilePk && count && sponsor !== null
+				? barn.account.getProjectOrGrantProgramPks(
+						new PublicKey(profilePk),
+						count,
+						sponsor
+					)
 				: null;
 		},
 	});
 
-	return { profile, projectsPks };
+	return { profile, projectOrProgramPks };
 }
 
 export function useBarnProject(projectPk: string) {
 	const barn = useBarn();
 
-	console.log("profile:", )
+	console.log("profile:");
 
 	const project = useQuery({
 		queryKey: ["project", { projectPk }],
@@ -295,6 +269,48 @@ export function useBarnProject(projectPk: string) {
 	});
 
 	return { project };
+}
+
+export function useBarnGrantProgram(grantProgramPk: string) {
+	const barn = useBarn();
+
+	const grantProgram = useQuery({
+		queryKey: ["grant-program", { grantProgramPk }],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<[string, { grantProgramPk: string }]>) => {
+			const [_, { grantProgramPk }] = queryKey;
+			return barn.account.grantProgram(new PublicKey(grantProgramPk));
+		},
+	});
+
+	const grantPks = useQuery({
+		queryKey: [
+			"grant-keys",
+			{
+				grantProgramPk: grantProgramPk,
+				count: grantProgram.data?.count || null,
+			},
+		],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<
+			[
+				string,
+				{
+					grantProgramPk: string;
+					count: number | null;
+				},
+			]
+		>) => {
+			const [_, { grantProgramPk, count }] = queryKey;
+			return grantProgramPk && count !== null
+				? barn.account.getGrantsPks(new PublicKey(grantProgramPk), count)
+				: null;
+		},
+	});
+
+	return { grantProgram, grantPks };
 }
 
 export function useBarnGrant(grantPk: string | null) {

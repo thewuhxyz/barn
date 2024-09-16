@@ -2,13 +2,18 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+	AllUserGrantPrograms,
 	AllUserGrants,
 	AllUserProjects,
 	Notifications,
 	ProfileCard,
 } from "@/components/barn/profile";
 import { useBarnUser } from "@/hooks/barn";
-import { AddNewProject, CreateUserProfile } from "@/components/barn/project";
+import {
+	AddGrantProgram,
+	AddNewProject,
+	CreateUserProfile,
+} from "@/components/barn/project";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletButton } from "@/context";
 
@@ -23,18 +28,20 @@ export default function Profile() {
 			{profile ? (
 				<>
 					<ProfileCard />
-					<AddNewProject />
+					{profile.sponsor ? <AddGrantProgram /> : <AddNewProject />}
 					<Tabs
 						defaultValue="grants"
 						className="flex w-full flex-col items-center justify-center space-y-8 max-w-6xl"
 					>
 						<TabsList className="grid w-[400px] grid-cols-3">
-							<TabsTrigger value="projects">Projects</TabsTrigger>
+							<TabsTrigger value="projects">
+								{profile.sponsor ? "Grant Programs" : "Projects"}
+							</TabsTrigger>
 							<TabsTrigger value="grants">Grants</TabsTrigger>
 							<TabsTrigger value="notifications">Nofications</TabsTrigger>
 						</TabsList>
 						<TabsContent className="w-full" value="projects">
-							<AllUserProjects />
+							{profile.sponsor ? <AllUserGrantPrograms /> : <AllUserProjects />}
 						</TabsContent>
 						<TabsContent className="w-full" value="grants">
 							<AllUserGrants />

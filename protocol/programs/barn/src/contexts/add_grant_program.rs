@@ -14,6 +14,7 @@ pub struct AddGrantProgram<'info> {
     pub authority: Account<'info, Authority>,
 
     #[account(
+        mut,
         has_one=authority,
         constraint=profile.sponsor@BarnError::NotASponsor,
         seeds=[b"profile", profile.seed.as_bytes()],
@@ -22,7 +23,7 @@ pub struct AddGrantProgram<'info> {
     pub profile: Account<'info, Profile>,
 
     #[account(
-        init,
+        init_if_needed,
         payer=signer,
         space=8+GrantProgram::INIT_SPACE,
         seeds=[b"grant-program", profile.key().as_ref(), profile.count.to_le_bytes().as_ref()],

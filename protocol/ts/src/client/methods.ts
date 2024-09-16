@@ -40,7 +40,7 @@ export class BarnMethods {
 		return BarnMethods.addProject(this.program, args);
 	}
 
-	addGrantProgram(args: { uri: string; signer: PublicKey }): BarnMethod {
+	addGrantProgram(args: AddGrantProgramArgs): BarnMethod {
 		return BarnMethods.addGrantProgram(this.program, args);
 	}
 
@@ -147,16 +147,11 @@ export class BarnMethods {
 
 	static addGrantProgram(
 		program: Program<Barn>,
-		{
-			uri,
-			signer,
-		}: {
-			uri: string;
-			signer: PublicKey;
-		}
+		{ uri, signer, profile }: AddGrantProgramArgs
 	): BarnMethod {
 		return program.methods.addGrantProgram(uri).accountsPartial({
 			signer,
+			profile,
 		});
 	}
 

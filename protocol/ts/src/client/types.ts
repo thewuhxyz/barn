@@ -19,7 +19,11 @@ export type AddProjectArgs = {
 	profile: PublicKey;
 };
 
-export type AddGrantProgramArgs = { uri: string; signer: PublicKey };
+export type AddGrantProgramArgs = {
+	uri: string;
+	signer: PublicKey;
+	profile: PublicKey;
+};
 
 export type AwardGrantArgs = {
 	uri: string;

@@ -3,7 +3,11 @@ import { Barn } from "../idl";
 import { PublicKey } from "@solana/web3.js";
 import type BN from "bn.js";
 import { BarnMethods, IBarnMethods } from "./methods";
-import { AddProjectArgs, ApproveSponsorArgs } from "./types";
+import {
+	AddGrantProgramArgs,
+	AddProjectArgs,
+	ApproveSponsorArgs,
+} from "./types";
 
 export class BarnRPC implements IBarnMethods<string> {
 	constructor(private program: Program<Barn>) {}
@@ -24,10 +28,7 @@ export class BarnRPC implements IBarnMethods<string> {
 		return BarnMethods.addProject(this.program, args).rpc();
 	}
 
-	async addGrantProgram(args: {
-		uri: string;
-		signer: PublicKey;
-	}): Promise<string> {
+	async addGrantProgram(args: AddGrantProgramArgs): Promise<string> {
 		return BarnMethods.addGrantProgram(this.program, args).rpc();
 	}
 

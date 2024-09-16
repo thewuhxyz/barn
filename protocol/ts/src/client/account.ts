@@ -19,7 +19,7 @@ export class BarnAccount {
 		if (!count) return null;
 
 		const projectPks = Array.from({ length: count }, (_, i) =>
-			this.projectAddress(authority.profile, i)
+			this.getProjectOrGrantProgramAddress(authority.profile, i, profile.sponsor)
 		);
 
 		const projects = await Promise.all(
@@ -52,23 +52,54 @@ export class BarnAccount {
 		if (!count) return null;
 
 		const projectPks = Array.from({ length: count }, (_, i) =>
-			this.projectAddress(authority.profile, i)
+			this.getProjectOrGrantProgramAddress(
+				authority.profile,
+				i,
+				profile.sponsor
+			)
+		);
+
+		return projectPks;
+	}
+
+	getProjectOrGrantProgramPks(
+		profilePk: PublicKey,
+		count: number,
+		sponsor: boolean
+	): PublicKey[] | null {
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.getProjectOrGrantProgramAddress(profilePk, i, sponsor)
 		);
 
 		return projectPks;
 	}
 	
-	async getProjectPks(projectPk: PublicKey, count: number): Promise<PublicKey[] | null> {
-
+	getProjectPks(
+		projectPk: PublicKey,
+		count: number,
+	): PublicKey[] | null {
 		const projectPks = Array.from({ length: count }, (_, i) =>
 			this.projectAddress(projectPk, i)
 		);
 
 		return projectPks;
 	}
-	
-	async getGrantMilestonesPks(grantPk: PublicKey, count: number): Promise<PublicKey[] | null> {
 
+	getGrantsPks(
+		grantProgramPk: PublicKey,
+		count: number
+	): PublicKey[] | null {
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.grantAddress(grantProgramPk, i)
+		);
+
+		return projectPks;
+	}
+
+	getGrantMilestonesPks(
+		grantPk: PublicKey,
+		count: number
+	): PublicKey[] | null {
 		const projectPks = Array.from({ length: count }, (_, i) =>
 			this.grantMilestoneAddress(grantPk, i)
 		);
@@ -153,6 +184,16 @@ export class BarnAccount {
 			grantMilestonePk
 		);
 		return grantMilestone;
+	}
+
+	getProjectOrGrantProgramAddress(
+		profilePk: PublicKey,
+		id: number,
+		sponsor: boolean
+	) {
+		return sponsor
+			? this.grantProgramAddress(profilePk, id)
+			: this.projectAddress(profilePk, id);
 	}
 
 	//////////////////////////////////////////
