@@ -24,6 +24,8 @@ import type {
 	AwardGrantArgs,
 	CreateUserArgs,
 	EditGrantMilestoneArgs,
+	SettleGrantMilestoneArgs,
+	UpdateGrantMilestoneArgs,
 } from "@barn/protocol";
 
 export function useBarnRPC() {
@@ -40,6 +42,16 @@ export function useBarnRPC() {
 		barn.rpc.addGrantMilestone(args);
 	const doEditGrantMilestone = (args: EditGrantMilestoneArgs) =>
 		barn.rpc.editGrantMilestone(args);
+	const doReviseGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
+		barn.rpc.reviseGrantMilestone(args);
+	const doReviewGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
+		barn.rpc.reviewGrantMilestone(args);
+	const doAcceptGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
+		barn.rpc.acceptGrantMilestone(args);
+	const doRejectGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
+		barn.rpc.rejectGrantMilestone(args);
+	const doSettleGrantMilestone = (args: SettleGrantMilestoneArgs) =>
+		barn.rpc.settleGrantMilestone(args);
 
 	const createUser = useMutation({
 		mutationFn: doCreateUser,
@@ -70,7 +82,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const acceptGrantMilestone = useMutation({
-		mutationFn: barn.rpc.acceptGrantMilestone,
+		mutationFn: doAcceptGrantMilestone,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -140,7 +152,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const rejectGrantMilestone = useMutation({
-		mutationFn: barn.rpc.rejectGrantMilestone,
+		mutationFn: doRejectGrantMilestone,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -168,7 +180,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const reviewGrantMilestone = useMutation({
-		mutationFn: barn.rpc.reviewGrantMilestone,
+		mutationFn: doReviewGrantMilestone,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -182,7 +194,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const reviseGrantMilestone = useMutation({
-		mutationFn: barn.rpc.reviseGrantMilestone,
+		mutationFn: doReviseGrantMilestone,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -196,7 +208,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const settleGrantMilestone = useMutation({
-		mutationFn: barn.rpc.settleGrantMilestone,
+		mutationFn: doSettleGrantMilestone,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -288,19 +300,6 @@ export function useBarnProject(projectPk: string | null) {
 			return projectPk ? barn.account.project(new PublicKey(projectPk)) : null;
 		},
 	});
-
-	// const milestonePks = useQuery({
-	// 	queryKey: [
-	// 		"milestone-keys",
-	// 		{ grantPk: project.data?.grant?.toBase58() ?? null },
-	// 	],
-	// 	queryFn: ({
-	// 		queryKey,
-	// 	}: QueryFunctionContext<[string, { grantPk: string | null }]>) => {
-	// 		const [_, { grantPk }] = queryKey;
-	// 		return grantPk ? barn.account.getGrantMilestonesPks(new PublicKey(grantPk)) : null;
-	// 	},
-	// });
 
 	return {
 		project,

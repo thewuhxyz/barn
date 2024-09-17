@@ -18,6 +18,7 @@ import {
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
 	SettleGrantMilestoneArgs,
+	UpdateGrantMilestoneArgs,
 } from "./types";
 
 export class BarnMethods {
@@ -98,7 +99,7 @@ export class BarnMethods {
 	
 	static reviseGrantMilestone(
 		program: Program<Barn>,
-		args: ReviseGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): BarnMethod {
 		return program.methods
 			.reviseGrantMilestone()
@@ -107,21 +108,21 @@ export class BarnMethods {
 
 	static reviewGrantMilestone(
 		program: Program<Barn>,
-		args: ReviewGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): BarnMethod {
 		return program.methods.reviewGrantMilestone().accountsPartial(args);
 	}
 
 	static acceptGrantMilestone(
 		program: Program<Barn>,
-		args: AcceptGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): BarnMethod {
 		return program.methods.acceptGrantMilestone().accountsPartial(args);
 	}
 
 	static rejectGrantMilestone(
 		program: Program<Barn>,
-		args: RejectGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): BarnMethod {
 		return program.methods.rejectGrantMilestone().accountsPartial(args);
 	}
@@ -130,7 +131,7 @@ export class BarnMethods {
 		program: Program<Barn>,
 		args: SettleGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.settleGrantMilestone().accountsPartial(args);
+		return program.methods.settleGrantMilestone().accountsPartial({...args, });
 	}
 }
 
@@ -155,13 +156,13 @@ export interface IBarnMethods<T> {
 
 	editGrantMilestone(args: EditGrantMilestoneArgs): Promise<T>;
 
-	reviseGrantMilestone(args: ReviseGrantMilestoneArgs): Promise<T>;
+	reviseGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<T>;
 
-	reviewGrantMilestone(args: ReviewGrantMilestoneArgs): Promise<T>;
+	reviewGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<T>;
 
-	acceptGrantMilestone(args: AcceptGrantMilestoneArgs): Promise<T>;
+	acceptGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<T>;
 
-	rejectGrantMilestone(args: RejectGrantMilestoneArgs): Promise<T>;
+	rejectGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<T>;
 
 	settleGrantMilestone(args: SettleGrantMilestoneArgs): Promise<T>;
 }

@@ -17,7 +17,7 @@ import {
 	useBarnUser,
 } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
-import { AddGrantMilestone, EditGrantMilestone } from "./project";
+import { AddGrantMilestone, EditGrantMilestone, UpdateMilestone } from "./project";
 import Link from "next/link";
 import BN from "bn.js";
 import { MilestoneState } from "@barn/protocol";
@@ -155,6 +155,11 @@ export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
 		project: { data: project },
 		milestone: { data: milestone },
 	} = useBarnGrantMilestone(publicKey.toBase58());
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
 	if (!grant || !project || !milestone) return;
 	return (
 		<Card className="w-full">
@@ -180,7 +185,8 @@ export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
 					</CardDescription>
 				</CardContent>
 			</Link>
-			<CardFooter>
+			<CardFooter className="flex flex-col space-y-4">
+				<UpdateMilestone grantMilestonePk={publicKey} />
 				<EditGrantMilestone grantMilestonePk={publicKey} />
 			</CardFooter>
 		</Card>

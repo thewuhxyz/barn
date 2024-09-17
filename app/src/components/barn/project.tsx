@@ -22,6 +22,7 @@ import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { getMint, NATIVE_MINT } from "@solana/spl-token";
 import Project from "@/app/project/[address]/page";
+import { MilestoneState } from "@barn/protocol";
 
 export function CreateUserProfile() {
 	const [userName, setUserName] = useState("");
@@ -390,6 +391,302 @@ export function EditGrantMilestone({
 					</PopoverContent>
 				</Popover>
 			)}
+		</>
+	);
+}
+
+export function ReviseGrantMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const wallet = useAnchorWallet();
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
+	const {
+		grant: { data: grant },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
+	const { reviseGrantMilestone } = useBarnRPC();
+
+	async function handleClick() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+			if (!milestone) throw "no grant project for user";
+			if (!grant) throw "no grant project for user";
+
+			return reviseGrantMilestone({
+				signer: wallet.publicKey,
+				profile: profile.profile,
+				project: grant.project,
+				grant: milestone.grant,
+				grantMilestone: grantMilestonePk,
+				grantProgram: grant.program,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Button className="w-full" onClick={handleClick}>
+			Revise
+		</Button>
+	);
+}
+
+export function ReviewGrantMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const wallet = useAnchorWallet();
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
+	const {
+		grant: { data: grant },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
+	const { reviewGrantMilestone } = useBarnRPC();
+
+	async function handleClick() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+			if (!milestone) throw "no grant project for user";
+			if (!grant) throw "no grant project for user";
+
+			return reviewGrantMilestone({
+				signer: wallet.publicKey,
+				profile: profile.profile,
+				project: grant.project,
+				grant: milestone.grant,
+				grantMilestone: grantMilestonePk,
+				grantProgram: grant.program,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Button className="w-full" onClick={handleClick}>
+			Review
+		</Button>
+	);
+}
+
+export function AcceptGrantMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const wallet = useAnchorWallet();
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
+	const {
+		grant: { data: grant },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
+	const { acceptGrantMilestone } = useBarnRPC();
+
+	async function handleClick() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+			if (!milestone) throw "no grant project for user";
+			if (!grant) throw "no grant project for user";
+
+			return acceptGrantMilestone({
+				signer: wallet.publicKey,
+				profile: profile.profile,
+				project: grant.project,
+				grant: milestone.grant,
+				grantMilestone: grantMilestonePk,
+				grantProgram: grant.program,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Button className="w-full" onClick={handleClick}>
+			Accept
+		</Button>
+	);
+}
+
+export function RejectGrantMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const wallet = useAnchorWallet();
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
+	const {
+		grant: { data: grant },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
+	const { rejectGrantMilestone } = useBarnRPC();
+
+	async function handleClick() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+			if (!milestone) throw "no grant project for user";
+			if (!grant) throw "no grant project for user";
+
+			return rejectGrantMilestone({
+				signer: wallet.publicKey,
+				profile: profile.profile,
+				project: grant.project,
+				grant: milestone.grant,
+				grantMilestone: grantMilestonePk,
+				grantProgram: grant.program,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Button className="w-full" variant="destructive" onClick={handleClick}>
+			Reject
+		</Button>
+	);
+}
+
+// export function SettleGrantMilestone({
+// 	grantMilestonePk,
+// }: {
+// 	grantMilestonePk: PublicKey;
+// }) {
+// 	const wallet = useAnchorWallet();
+
+// 	const {
+// 		profile: { data: profile },
+// 	} = useBarnUser();
+
+// 	const {
+// 		grant: { data: grant },
+// 		milestone: { data: milestone },
+// 	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
+// 	const { settleGrantMilestone } = useBarnRPC();
+
+// 	async function handleClick() {
+// 		try {
+// 			if (!wallet) throw "wallet not connected";
+// 			if (!profile) throw "no profile for user";
+// 			if (!milestone) throw "no grant project for user";
+// 			if (!grant) throw "no grant project for user";
+
+// 			return settleGrantMilestone({
+// 				signer: wallet.publicKey,
+// 				profile: profile.profile,
+// 				grant: milestone.grant,
+// 				grantMilestone: grantMilestonePk,
+// 				paymentMint: grant.paymentMint,
+// 				// signerTokenAccount: getA
+// 				to:
+
+// 			});
+// 		} catch (e: any) {
+// 			toast.error(`Error occurred: ${e.message || e}`);
+// 		}
+// 	}
+
+// 	return (
+// 		<Button className="w-full" variant="secondary" onClick={handleClick}>
+// 			Reject
+// 		</Button>
+// 	);
+// }
+
+export function DevUpdateMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+	const {
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	if (!profile || !milestone) return <></>;
+	return (
+		<>
+			{!profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "inProgress" && (
+					<ReviewGrantMilestone grantMilestonePk={grantMilestonePk} />
+				)}
+			{!profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "inReview" && (
+					<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
+				)}
+		</>
+	);
+}
+
+export function UpdateMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+	const {
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	if (!profile || !milestone) return <></>;
+	return (
+		<>
+			{!profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "inProgress" && (
+					<ReviewGrantMilestone grantMilestonePk={grantMilestonePk} />
+				)}
+			{!profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "inReview" && (
+					<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
+				)}
+			{profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "inReview" && (
+					<div className="flex w-full space-x-4">
+						<AcceptGrantMilestone grantMilestonePk={grantMilestonePk} />
+						<RejectGrantMilestone grantMilestonePk={grantMilestonePk} />
+					</div>
+				)}
+			{profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "accepted" && (
+					<Button className="w-full">Settle Payment</Button>
+				)}
+			{profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "rejected" && (
+					<Button disabled={true} className="w-full">
+						Settle Payment
+					</Button>
+				)}
 		</>
 	);
 }

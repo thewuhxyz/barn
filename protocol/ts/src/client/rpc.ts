@@ -14,6 +14,7 @@ import {
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
 	SettleGrantMilestoneArgs,
+	UpdateGrantMilestoneArgs,
 } from "./types";
 
 export class BarnRPC implements IBarnMethods<string> {
@@ -47,19 +48,19 @@ export class BarnRPC implements IBarnMethods<string> {
 		return BarnMethods.editGrantMilestone(this.program, args).rpc();
 	}
 
-	async reviseGrantMilestone(args: ReviseGrantMilestoneArgs): Promise<string> {
+	async reviseGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<string> {
 		return BarnMethods.reviseGrantMilestone(this.program, args).rpc();
 	}
 
-	async reviewGrantMilestone(args: ReviewGrantMilestoneArgs): Promise<string> {
+	async reviewGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<string> {
 		return BarnMethods.reviewGrantMilestone(this.program, args).rpc();
 	}
 
-	async acceptGrantMilestone(args: AcceptGrantMilestoneArgs): Promise<string> {
+	async acceptGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<string> {
 		return BarnMethods.acceptGrantMilestone(this.program, args).rpc();
 	}
 
-	async rejectGrantMilestone(args: RejectGrantMilestoneArgs): Promise<string> {
+	async rejectGrantMilestone(args: UpdateGrantMilestoneArgs): Promise<string> {
 		return BarnMethods.rejectGrantMilestone(this.program, args).rpc();
 	}
 

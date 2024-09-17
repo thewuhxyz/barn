@@ -15,6 +15,7 @@ import {
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
 	SettleGrantMilestoneArgs,
+	UpdateGrantMilestoneArgs,
 } from "./types";
 
 export class BarnTransaction implements IBarnMethods<Transaction> {
@@ -51,25 +52,25 @@ export class BarnTransaction implements IBarnMethods<Transaction> {
 	}
 
 	async reviseGrantMilestone(
-		args: ReviseGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): Promise<Transaction> {
 		return BarnMethods.reviseGrantMilestone(this.program, args).transaction();
 	}
 
 	async reviewGrantMilestone(
-		args: ReviewGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): Promise<Transaction> {
 		return BarnMethods.reviewGrantMilestone(this.program, args).transaction();
 	}
 
 	async acceptGrantMilestone(
-		args: AcceptGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): Promise<Transaction> {
 		return BarnMethods.acceptGrantMilestone(this.program, args).transaction();
 	}
 
 	async rejectGrantMilestone(
-		args: RejectGrantMilestoneArgs
+		args: UpdateGrantMilestoneArgs
 	): Promise<Transaction> {
 		return BarnMethods.rejectGrantMilestone(this.program, args).transaction();
 	}
