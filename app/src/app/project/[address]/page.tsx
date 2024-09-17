@@ -8,19 +8,19 @@ import { PublicKey } from "@solana/web3.js";
 export default function Project({ params }: { params: { address: string } }) {
 	const projectPk = params.address;
 
-	const { project } = useBarnProject(projectPk);
+	const { project, grantPk } = useBarnProject(projectPk);
 
 	const {
 		grant: { data: grant },
 		milestonePks: { data: milestones },
-	} = useBarnGrant(project.data?.grant?.toBase58() ?? null);
+	} = useBarnGrant(grantPk?.toBase58() ?? null);
 
 	return (
 		<main className="flex-1 flex flex-col items-center justify-center space-y-16">
 			<ProjectCard publicKey={new PublicKey(projectPk)} />
 			<div className="w-full">
 				<div>Grant</div>
-				<GrantCard />
+				{grantPk ? <GrantCard publicKey={grantPk} /> : "No Grants Awarded"}
 			</div>
 			<div className="w-full">
 				<div>Milestones</div>

@@ -255,7 +255,6 @@ export function useBarnUser() {
 	return { profile, projectOrProgramPks };
 }
 
-
 export function useBarnProject(projectPk: string | null) {
 	const barn = useBarn();
 
@@ -269,9 +268,22 @@ export function useBarnProject(projectPk: string | null) {
 		},
 	});
 
+	// const milestonePks = useQuery({
+	// 	queryKey: [
+	// 		"milestone-keys",
+	// 		{ grantPk: project.data?.grant?.toBase58() ?? null },
+	// 	],
+	// 	queryFn: ({
+	// 		queryKey,
+	// 	}: QueryFunctionContext<[string, { grantPk: string | null }]>) => {
+	// 		const [_, { grantPk }] = queryKey;
+	// 		return grantPk ? barn.account.getGrantMilestonesPks(new PublicKey(grantPk)) : null;
+	// 	},
+	// });
+
 	return {
 		project,
-		grantPks: project.data?.grant ? [project.data?.grant] : null,
+		grantPk: project.data?.grant ?? null,
 	};
 }
 
@@ -330,7 +342,9 @@ export function useBarnGrant(grantPk: string | null) {
 		},
 	});
 
-	const project = useBarnProject(grant.data?.project.toBase58() || null).project 
+	const project = useBarnProject(
+		grant.data?.project.toBase58() || null
+	).project;
 
 	const milestonePks = useQuery({
 		queryKey: [
