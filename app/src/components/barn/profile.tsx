@@ -8,7 +8,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { GrantProgramCard, ProjectCard } from ".";
 import {
 	useBarnGrant,
@@ -18,7 +17,7 @@ import {
 	useBarnUser,
 } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
-import { AddGrantMilestone } from "./project";
+import { AddGrantMilestone, EditGrantMilestone } from "./project";
 import Link from "next/link";
 import BN from "bn.js";
 import { MilestoneState } from "@barn/protocol";
@@ -182,7 +181,7 @@ export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
 				</CardContent>
 			</Link>
 			<CardFooter>
-				<AddGrantMilestone grantPk={publicKey} />
+				<EditGrantMilestone grantMilestonePk={publicKey} />
 			</CardFooter>
 		</Card>
 	);

@@ -44,9 +44,18 @@ export type AddGrantMilestoneArgs = {
 	signer: PublicKey;
 };
 
-export type ReviseGrantMilestoneArgs = {
+export type EditGrantMilestoneArgs = {
 	uri: string | null;
 	amount: BN | null;
+  project: PublicKey;
+	grant: PublicKey;
+	grantMilestone: PublicKey;
+  grantProgram: PublicKey;
+	profile: PublicKey;
+	signer: PublicKey;
+};
+
+export type ReviseGrantMilestoneArgs = {
 	grant: PublicKey;
 	grantMilestone: PublicKey;
 	profile: PublicKey;

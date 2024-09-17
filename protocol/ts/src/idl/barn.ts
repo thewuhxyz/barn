@@ -891,6 +891,207 @@ export type Barn = {
       ]
     },
     {
+      "name": "editGrantMilestone",
+      "discriminator": [
+        2,
+        252,
+        115,
+        184,
+        82,
+        237,
+        41,
+        53
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          },
+          "relations": [
+            "profile"
+          ]
+        },
+        {
+          "name": "profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  102,
+                  105,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "profile.seed",
+                "account": "profile"
+              }
+            ]
+          },
+          "relations": [
+            "authority"
+          ]
+        },
+        {
+          "name": "project",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  106,
+                  101,
+                  99,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "project.profile",
+                "account": "project"
+              },
+              {
+                "kind": "account",
+                "path": "project.id",
+                "account": "project"
+              }
+            ]
+          },
+          "relations": [
+            "grant"
+          ]
+        },
+        {
+          "name": "grant",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant.id",
+                "account": "grant"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grantProgram",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  112,
+                  114,
+                  111,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.profile",
+                "account": "grantProgram"
+              },
+              {
+                "kind": "account",
+                "path": "grant_program.id",
+                "account": "grantProgram"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grantMilestone",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  97,
+                  110,
+                  116,
+                  45,
+                  109,
+                  105,
+                  108,
+                  101,
+                  115,
+                  116,
+                  111,
+                  110,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grant"
+              },
+              {
+                "kind": "account",
+                "path": "grant_milestone.id",
+                "account": "grantMilestone"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "config",
+          "type": {
+            "defined": {
+              "name": "milestoneRevisionConfig"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "rejectGrantMilestone",
       "discriminator": [
         168,
@@ -1464,16 +1665,7 @@ export type Barn = {
           }
         }
       ],
-      "args": [
-        {
-          "name": "config",
-          "type": {
-            "defined": {
-              "name": "milestoneRevisionConfig"
-            }
-          }
-        }
-      ]
+      "args": []
     },
     {
       "name": "settleGrantMilestone",

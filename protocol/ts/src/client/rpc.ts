@@ -1,7 +1,5 @@
 import { Program } from "@coral-xyz/anchor";
 import { Barn } from "../idl";
-import { PublicKey } from "@solana/web3.js";
-import type BN from "bn.js";
 import { BarnMethods, IBarnMethods } from "./methods";
 import {
 	AcceptGrantMilestoneArgs,
@@ -11,6 +9,7 @@ import {
 	ApproveSponsorArgs,
 	AwardGrantArgs,
 	CreateUserArgs,
+	EditGrantMilestoneArgs,
 	RejectGrantMilestoneArgs,
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
@@ -42,6 +41,10 @@ export class BarnRPC implements IBarnMethods<string> {
 
 	async addGrantMilestone(args: AddGrantMilestoneArgs): Promise<string> {
 		return BarnMethods.addGrantMilestone(this.program, args).rpc();
+	}
+
+	async editGrantMilestone(args: EditGrantMilestoneArgs): Promise<string> {
+		return BarnMethods.editGrantMilestone(this.program, args).rpc();
 	}
 
 	async reviseGrantMilestone(args: ReviseGrantMilestoneArgs): Promise<string> {

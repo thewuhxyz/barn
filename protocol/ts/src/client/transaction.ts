@@ -10,6 +10,7 @@ import {
 	ApproveSponsorArgs,
 	AwardGrantArgs,
 	CreateUserArgs,
+	EditGrantMilestoneArgs,
 	RejectGrantMilestoneArgs,
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
@@ -41,6 +42,12 @@ export class BarnTransaction implements IBarnMethods<Transaction> {
 
 	async addGrantMilestone(args: AddGrantMilestoneArgs): Promise<Transaction> {
 		return BarnMethods.addGrantMilestone(this.program, args).transaction();
+	}
+
+	async editGrantMilestone(
+		args: EditGrantMilestoneArgs
+	): Promise<Transaction> {
+		return BarnMethods.editGrantMilestone(this.program, args).transaction();
 	}
 
 	async reviseGrantMilestone(

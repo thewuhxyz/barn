@@ -37,11 +37,15 @@ pub mod barn {
         ctx.accounts.add_milestone(uri, amount, &ctx.bumps)
     }
 
-    pub fn revise_grant_milestone(
+    pub fn edit_grant_milestone(
         ctx: Context<UpdateGrantMilestone>,
         config: MilestoneRevisionConfig,
     ) -> Result<()> {
-        ctx.accounts.revise_milestone(config)
+        ctx.accounts.edit_milestone(config)
+    }
+
+    pub fn revise_grant_milestone(ctx: Context<UpdateGrantMilestone>) -> Result<()> {
+        ctx.accounts.revise_milestone()
     }
 
     pub fn review_grant_milestone(ctx: Context<UpdateGrantMilestone>) -> Result<()> {

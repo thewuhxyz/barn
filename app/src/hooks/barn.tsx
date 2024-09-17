@@ -23,6 +23,7 @@ import type {
 	ApproveSponsorArgs,
 	AwardGrantArgs,
 	CreateUserArgs,
+	EditGrantMilestoneArgs,
 } from "@barn/protocol";
 
 export function useBarnRPC() {
@@ -37,6 +38,8 @@ export function useBarnRPC() {
 	const doAwardGrant = (args: AwardGrantArgs) => barn.rpc.awardGrant(args);
 	const doAddGrantMilestone = (args: AddGrantMilestoneArgs) =>
 		barn.rpc.addGrantMilestone(args);
+	const doEditGrantMilestone = (args: EditGrantMilestoneArgs) =>
+		barn.rpc.editGrantMilestone(args);
 
 	const createUser = useMutation({
 		mutationFn: doCreateUser,
@@ -150,6 +153,20 @@ export function useBarnRPC() {
 		},
 	}).mutate;
 
+	const editGrantMilestone = useMutation({
+		mutationFn: doEditGrantMilestone,
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
 	const reviewGrantMilestone = useMutation({
 		mutationFn: barn.rpc.reviewGrantMilestone,
 		onSuccess: (tx) => {
@@ -200,6 +217,7 @@ export function useBarnRPC() {
 		approveSponsor,
 		awardGrant,
 		createUser,
+		editGrantMilestone,
 		rejectGrantMilestone,
 		reviewGrantMilestone,
 		reviseGrantMilestone,

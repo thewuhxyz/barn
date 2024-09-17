@@ -170,7 +170,7 @@ pub struct GrantMilestone {
 }
 
 impl GrantMilestone {
-    pub fn revise(&mut self, config: MilestoneRevisionConfig) -> Result<()> {
+    pub fn edit(&mut self, config: MilestoneRevisionConfig) -> Result<()> {
         require!(
             !self.state.confirmed(),
             BarnError::MilestoneAlreadyConfirmed
@@ -181,6 +181,15 @@ impl GrantMilestone {
         if let Some(uri) = config.uri {
             self.uri = uri
         }
+        Ok(())
+    }
+
+    pub fn revise(&mut self) -> Result<()> {
+        require!(
+            !self.state.confirmed(),
+            BarnError::MilestoneAlreadyConfirmed
+        );
+
         self.state = MilestoneState::InProgress;
         Ok(())
     }

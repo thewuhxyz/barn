@@ -7,7 +7,13 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useBarn, useBarnGrant, useBarnRPC, useBarnUser } from "@/hooks/barn";
+import {
+	useBarn,
+	useBarnGrant,
+	useBarnGrantMilestone,
+	useBarnRPC,
+	useBarnUser,
+} from "@/hooks/barn";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +21,7 @@ import { toast } from "sonner";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { getMint, NATIVE_MINT } from "@solana/spl-token";
+import Project from "@/app/project/[address]/page";
 
 export function CreateUserProfile() {
 	const [userName, setUserName] = useState("");
@@ -256,7 +263,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 			{profile?.sponsor === false && (
 				<Popover>
 					<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
-						Add Milestone
+						Add New Milestone
 					</PopoverTrigger>
 					<PopoverContent className="space-y-4">
 						<Input
@@ -284,7 +291,102 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 					}
 					placeholder="Enter Project"
 				/> */}
-						<Button className="w-full" onClick={handleAddProject}>Add Milestone</Button>
+						<Button className="w-full" onClick={handleAddProject}>
+							Add New Milestone
+						</Button>
+					</PopoverContent>
+				</Popover>
+			)}
+		</>
+	);
+}
+
+export function EditGrantMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const [awardGrantConfig, setAwardGrantConfig] = useState<{
+		amount: string;
+	}>({ amount: "" });
+
+	const wallet = useAnchorWallet();
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
+	const {
+		grant: { data: grant },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
+	const { editGrantMilestone } = useBarnRPC();
+
+	const { amount } = awardGrantConfig;
+
+	async function handleAddProject() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+			if (!milestone) throw "no grant project for user";
+			if (!grant) throw "no grant project for user";
+
+			return editGrantMilestone({
+				uri: "",
+				signer: wallet.publicKey,
+				amount: new BN(parseFloat(amount) * 10 ** grant.paymentDecimals),
+				profile: profile.profile,
+				project: grant.project,
+				grant: milestone.grant,
+				grantMilestone: grantMilestonePk,
+				grantProgram: grant.program,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<>
+			{profile?.sponsor === false && (
+				<Popover>
+					<PopoverTrigger
+						className={cn(
+							buttonVariants({ variant: "secondary", className: "w-full" })
+						)}
+					>
+						Edit Milestone
+					</PopoverTrigger>
+					<PopoverContent className="space-y-4">
+						<Input
+							id="amount"
+							type="text"
+							value={amount}
+							onChange={(e) =>
+								setAwardGrantConfig({
+									...awardGrantConfig,
+									amount: e.target.value,
+								})
+							}
+							placeholder="Amount"
+							className="col-span-3"
+						/>
+						{/* <Input
+					id="project"
+					type="text"
+					value={project}
+					onChange={(e) =>
+						setAwardGrantConfig({
+							...awardGrantConfig,
+							project: e.target.value,
+						})
+					}
+					placeholder="Enter Project"
+				/> */}
+						<Button className="w-full" onClick={handleAddProject}>
+							Edit Milestone
+						</Button>
 					</PopoverContent>
 				</Popover>
 			)}

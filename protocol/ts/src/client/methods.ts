@@ -13,6 +13,7 @@ import {
 	ApproveSponsorArgs,
 	AwardGrantArgs,
 	CreateUserArgs,
+	EditGrantMilestoneArgs,
 	RejectGrantMilestoneArgs,
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
@@ -20,52 +21,6 @@ import {
 } from "./types";
 
 export class BarnMethods {
-	constructor(private program: Program<Barn>) {}
-
-	createUser(args: CreateUserArgs): BarnMethod {
-		return BarnMethods.createUser(this.program, args);
-	}
-
-	approveSponsor(args: ApproveSponsorArgs): BarnMethod {
-		return BarnMethods.approveSponsor(this.program, args);
-	}
-
-	addProject(args: AddProjectArgs): BarnMethod {
-		return BarnMethods.addProject(this.program, args);
-	}
-
-	addGrantProgram(args: AddGrantProgramArgs): BarnMethod {
-		return BarnMethods.addGrantProgram(this.program, args);
-	}
-
-	awardGrant(args: AwardGrantArgs): BarnMethod {
-		return BarnMethods.awardGrant(this.program, args);
-	}
-
-	addGrantMilestone(args: AddGrantMilestoneArgs): BarnMethod {
-		return BarnMethods.addGrantMilestone(this.program, args);
-	}
-
-	reviseGrantMilestone(args: ReviseGrantMilestoneArgs): BarnMethod {
-		return BarnMethods.reviseGrantMilestone(this.program, args);
-	}
-
-	reviewGrantMilestone(args: ReviewGrantMilestoneArgs): BarnMethod {
-		return BarnMethods.reviewGrantMilestone(this.program, args);
-	}
-
-	acceptGrantMilestone(args: AcceptGrantMilestoneArgs): BarnMethod {
-		return BarnMethods.acceptGrantMilestone(this.program, args);
-	}
-
-	rejectGrantMilestone(args: RejectGrantMilestoneArgs): BarnMethod {
-		return BarnMethods.rejectGrantMilestone(this.program, args);
-	}
-
-	settleGrantMilestone(args: SettleGrantMilestoneArgs): BarnMethod {
-		return BarnMethods.settleGrantMilestone(this.program, args);
-	}
-
 	static createUser(
 		program: Program<Barn>,
 		{ seed, uri, signer }: CreateUserArgs
@@ -132,12 +87,21 @@ export class BarnMethods {
 			.accountsPartial(args);
 	}
 
+	static editGrantMilestone(
+		program: Program<Barn>,
+		args: EditGrantMilestoneArgs
+	): BarnMethod {
+		return program.methods
+			.editGrantMilestone({ uri: args.uri, amount: args.amount })
+			.accountsPartial(args);
+	}
+	
 	static reviseGrantMilestone(
 		program: Program<Barn>,
 		args: ReviseGrantMilestoneArgs
 	): BarnMethod {
 		return program.methods
-			.reviseGrantMilestone({ uri: args.uri, amount: args.amount })
+			.reviseGrantMilestone()
 			.accountsPartial(args);
 	}
 
@@ -188,6 +152,8 @@ export interface IBarnMethods<T> {
 	awardGrant(args: AwardGrantArgs): Promise<T>;
 
 	addGrantMilestone(args: AddGrantMilestoneArgs): Promise<T>;
+
+	editGrantMilestone(args: EditGrantMilestoneArgs): Promise<T>;
 
 	reviseGrantMilestone(args: ReviseGrantMilestoneArgs): Promise<T>;
 

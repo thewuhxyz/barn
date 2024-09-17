@@ -11,6 +11,7 @@ import {
 	ApproveSponsorArgs,
 	AwardGrantArgs,
 	CreateUserArgs,
+	EditGrantMilestoneArgs,
 	RejectGrantMilestoneArgs,
 	ReviewGrantMilestoneArgs,
 	ReviseGrantMilestoneArgs,
@@ -44,27 +45,45 @@ export class BarnInstructon implements IBarnMethods<TransactionInstruction> {
 		return BarnMethods.awardGrant(this.program, args).instruction();
 	}
 
-	async addGrantMilestone(args: AddGrantMilestoneArgs): Promise<TransactionInstruction> {
+	async addGrantMilestone(
+		args: AddGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
 		return BarnMethods.addGrantMilestone(this.program, args).instruction();
 	}
 
-	async reviseGrantMilestone(args: ReviseGrantMilestoneArgs): Promise<TransactionInstruction> {
+	async editGrantMilestone(
+		args: EditGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
+		return BarnMethods.editGrantMilestone(this.program, args).instruction();
+	}
+
+	async reviseGrantMilestone(
+		args: ReviseGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
 		return BarnMethods.reviseGrantMilestone(this.program, args).instruction();
 	}
 
-	async reviewGrantMilestone(args: ReviewGrantMilestoneArgs): Promise<TransactionInstruction> {
+	async reviewGrantMilestone(
+		args: ReviewGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
 		return BarnMethods.reviewGrantMilestone(this.program, args).instruction();
 	}
 
-	async acceptGrantMilestone(args: AcceptGrantMilestoneArgs): Promise<TransactionInstruction> {
+	async acceptGrantMilestone(
+		args: AcceptGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
 		return BarnMethods.acceptGrantMilestone(this.program, args).instruction();
 	}
 
-	async rejectGrantMilestone(args: RejectGrantMilestoneArgs): Promise<TransactionInstruction> {
+	async rejectGrantMilestone(
+		args: RejectGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
 		return BarnMethods.rejectGrantMilestone(this.program, args).instruction();
 	}
 
-	async settleGrantMilestone(args: SettleGrantMilestoneArgs): Promise<TransactionInstruction> {
+	async settleGrantMilestone(
+		args: SettleGrantMilestoneArgs
+	): Promise<TransactionInstruction> {
 		return BarnMethods.settleGrantMilestone(this.program, args).instruction();
 	}
 }
