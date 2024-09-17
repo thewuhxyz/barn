@@ -4,12 +4,14 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
 import { useBarnGrantProgram, useBarnProject } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
+import { AwardGrant } from "./project";
 
 export type ProjectCardProps = {};
 
@@ -27,8 +29,6 @@ export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
 	const {
 		project: { data: project },
 	} = useBarnProject(publicKey.toBase58());
-
-	console.log("project account:", project);
 
 	if (!project) {
 		return <></>;
@@ -62,22 +62,23 @@ export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
 	}
 
 	return (
-		<Link className="w-full" href={`/project/${publicKey.toBase58()}`}>
-			<Card className="w-full">
-				<CardHeader>
-					<CardTitle>ProjectTitle - {grantProgram.id}</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<CardDescription>Desecription: "description"</CardDescription>
-					<CardDescription>
-						Owner: {grantProgram.profile.toBase58()}
-					</CardDescription>
-					<CardDescription>
-						No of grants issued: {grantProgram.count}
-					</CardDescription>
-				</CardContent>
-			</Card>
-		</Link>
+		<Card className="w-full">
+			<CardHeader>
+				<CardTitle>Grant Program - {grantProgram.id}</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<CardDescription>Desecription: "description"</CardDescription>
+				<CardDescription>
+					Owner: {grantProgram.profile.toBase58()}
+				</CardDescription>
+				<CardDescription>
+					No of grants issued: {grantProgram.count}
+				</CardDescription>
+			</CardContent>
+			<CardFooter>
+				<AwardGrant grantProgram={publicKey} />
+			</CardFooter>
+		</Card>
 	);
 }
 

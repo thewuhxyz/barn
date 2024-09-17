@@ -31,6 +31,7 @@ export type AwardGrantArgs = {
 	paymentMint: PublicKey;
 	grantProgram: PublicKey;
 	project: PublicKey;
+  profile: PublicKey
 	signer: PublicKey;
 };
 

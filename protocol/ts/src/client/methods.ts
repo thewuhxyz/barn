@@ -44,14 +44,7 @@ export class BarnMethods {
 		return BarnMethods.addGrantProgram(this.program, args);
 	}
 
-	awardGrant(args: {
-		uri: string;
-		approvedAmount: BN;
-		paymentMint: PublicKey;
-		grantProgram: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	awardGrant(args: AwardGrantArgs): BarnMethod {
 		return BarnMethods.awardGrant(this.program, args);
 	}
 
@@ -164,20 +157,15 @@ export class BarnMethods {
 			project,
 			paymentMint,
 			signer,
-		}: {
-			uri: string;
-			approvedAmount: BN;
-			paymentMint: PublicKey;
-			grantProgram: PublicKey;
-			project: PublicKey;
-			signer: PublicKey;
-		}
+			profile
+		}: AwardGrantArgs
 	): BarnMethod {
 		return program.methods.awardGrant(uri, approvedAmount).accountsPartial({
 			paymentMint,
 			signer,
 			grantProgram,
 			project,
+			profile
 		});
 	}
 

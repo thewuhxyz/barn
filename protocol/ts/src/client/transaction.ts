@@ -7,6 +7,7 @@ import {
 	AddGrantProgramArgs,
 	AddProjectArgs,
 	ApproveSponsorArgs,
+	AwardGrantArgs,
 } from "./types";
 
 export class BarnTransaction implements IBarnMethods<Transaction> {
@@ -32,14 +33,7 @@ export class BarnTransaction implements IBarnMethods<Transaction> {
 		return BarnMethods.addGrantProgram(this.program, args).transaction();
 	}
 
-	async awardGrant(args: {
-		uri: string;
-		approvedAmount: BN;
-		paymentMint: PublicKey;
-		grantProgram: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async awardGrant(args: AwardGrantArgs): Promise<Transaction> {
 		return BarnMethods.awardGrant(this.program, args).transaction();
 	}
 

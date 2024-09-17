@@ -7,6 +7,7 @@ import {
 	AddGrantProgramArgs,
 	AddProjectArgs,
 	ApproveSponsorArgs,
+	AwardGrantArgs,
 } from "./types";
 
 export class BarnRPC implements IBarnMethods<string> {
@@ -32,14 +33,7 @@ export class BarnRPC implements IBarnMethods<string> {
 		return BarnMethods.addGrantProgram(this.program, args).rpc();
 	}
 
-	async awardGrant(args: {
-		uri: string;
-		approvedAmount: BN;
-		paymentMint: PublicKey;
-		grantProgram: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<string> {
+	async awardGrant(args: AwardGrantArgs): Promise<string> {
 		return BarnMethods.awardGrant(this.program, args).rpc();
 	}
 

@@ -10,7 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GrantProgramCard, ProjectCard } from ".";
-import { useBarnUser } from "@/hooks/barn";
+import {
+	useBarnGrant,
+	useBarnGrantProgram,
+	useBarnProject,
+	useBarnUser,
+} from "@/hooks/barn";
+import { PublicKey } from "@solana/web3.js";
 
 export type ProjectCardProps = {};
 
@@ -50,12 +56,56 @@ export function AllUserGrantPrograms() {
 }
 
 export function AllUserGrants() {
+	const {
+		profile: { data: profile },
+		projectOrProgramPks: { data: projectsPks },
+	} = useBarnUser();
+
+	if (!profile || !projectsPks || !projectsPks.length)
+		return <p>No Projects For User</p>;
+
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{Array.from({ length: 10 }).map((_, i) => (
-				<GrantCard key={i} />
-			))}
+			{projectsPks.map((pk) => {
+				return profile.sponsor ? (
+					<GrantsFromProgramCard key={pk.toBase58()} publicKey={pk} />
+				) : (
+					<GrantsFromProjectCard key={pk.toBase58()} publicKey={pk} />
+				);
+			})}
 		</div>
+	);
+}
+
+export function GrantsFromProjectCard({ publicKey }: { publicKey: PublicKey }) {
+	const { grantPks } = useBarnProject(publicKey.toBase58());
+
+	if (!grantPks) {
+		return <></>;
+	}
+
+	return (
+		<>
+			{grantPks.map((pk) => {
+				return <GrantCard key={pk.toBase58()} publicKey={pk} />;
+			})}
+		</>
+	);
+}
+
+export function GrantsFromProgramCard({ publicKey }: { publicKey: PublicKey }) {
+	const { grantPks } = useBarnGrantProgram(publicKey.toBase58());
+
+	if (!grantPks) {
+		return <></>;
+	}
+
+	return (
+		<>
+			{grantPks.map((pk) => {
+				return <GrantCard key={pk.toBase58()} publicKey={pk} />;
+			})}
+		</>
 	);
 }
 
@@ -120,18 +170,28 @@ export function MilestoneCard() {
 	);
 }
 
-export function GrantCard() {
+export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
+	const {
+		grant: { data: grant },
+		project: { data: project },
+	} = useBarnGrant(publicKey.toBase58());
+	if (!grant || !project) return;
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<CardTitle>ProjectTitle | "approved_amount"</CardTitle>
+				<CardTitle>
+					Project - {project.id} | ${grant.approvedAmount}
+				</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<CardDescription>Desecripttion: "description"</CardDescription>
-				<CardDescription>Grant Program: "Program"</CardDescription>
-				<CardDescription>Owner: "owner"</CardDescription>
-				<CardDescription>Amount paid out: "amount_paid_out"</CardDescription>
-				<CardDescription>Milestones: "X/Y"</CardDescription>
+				<CardDescription>Desecription: "description"</CardDescription>
+				<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
+				<CardDescription>
+					Grant Program: {grant.program.toBase58()}
+				</CardDescription>
+				<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
+				<CardDescription>Amount paid out: {grant.paidOut} </CardDescription>
+				<CardDescription>Milestones: {grant.count}</CardDescription>
 			</CardContent>
 		</Card>
 	);

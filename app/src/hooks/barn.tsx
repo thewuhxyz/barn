@@ -20,6 +20,7 @@ import type {
 	AddGrantProgramArgs,
 	AddProjectArgs,
 	ApproveSponsorArgs,
+	AwardGrantArgs,
 	CreateUserArgs,
 } from "@barn/protocol";
 
@@ -32,6 +33,7 @@ export function useBarnRPC() {
 	const doAddProject = (args: AddProjectArgs) => barn.rpc.addProject(args);
 	const doAddGrantProgram = (args: AddGrantProgramArgs) =>
 		barn.rpc.addGrantProgram(args);
+	const doAwardGrant = (args: AwardGrantArgs) => barn.rpc.awardGrant(args);
 
 	const createUser = useMutation({
 		mutationFn: doCreateUser,
@@ -118,7 +120,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const awardGrant = useMutation({
-		mutationFn: barn.rpc.awardGrant,
+		mutationFn: doAwardGrant,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -224,7 +226,7 @@ export function useBarnUser() {
 			{
 				profilePk: profile.data?.profile?.toBase58() ?? null,
 				count: profile.data?.count || null,
-				sponsor: profile.data?.sponsor || null,
+				sponsor: profile.data?.sponsor ?? null,
 			},
 		],
 		queryFn: ({
@@ -253,22 +255,24 @@ export function useBarnUser() {
 	return { profile, projectOrProgramPks };
 }
 
-export function useBarnProject(projectPk: string) {
-	const barn = useBarn();
 
-	console.log("profile:");
+export function useBarnProject(projectPk: string | null) {
+	const barn = useBarn();
 
 	const project = useQuery({
 		queryKey: ["project", { projectPk }],
 		queryFn: ({
 			queryKey,
-		}: QueryFunctionContext<[string, { projectPk: string }]>) => {
+		}: QueryFunctionContext<[string, { projectPk: string | null }]>) => {
 			const [_, { projectPk }] = queryKey;
-			return barn.account.project(new PublicKey(projectPk));
+			return projectPk ? barn.account.project(new PublicKey(projectPk)) : null;
 		},
 	});
 
-	return { project };
+	return {
+		project,
+		grantPks: project.data?.grant ? [project.data?.grant] : null,
+	};
 }
 
 export function useBarnGrantProgram(grantProgramPk: string) {
@@ -310,7 +314,7 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 		},
 	});
 
-	return { grantProgram, grantPks };
+	return { grantProgram, grantPks: grantPks.data ?? null };
 }
 
 export function useBarnGrant(grantPk: string | null) {
@@ -325,6 +329,8 @@ export function useBarnGrant(grantPk: string | null) {
 			return grantPk ? barn.account.grant(new PublicKey(grantPk)) : null;
 		},
 	});
+
+	const project = useBarnProject(grant.data?.project.toBase58() || null).project 
 
 	const milestonePks = useQuery({
 		queryKey: [
@@ -346,7 +352,7 @@ export function useBarnGrant(grantPk: string | null) {
 		},
 	});
 
-	return { grant, milestonePks };
+	return { grant, project, milestonePks };
 }
 
 export function useBarnMilestone(milestonePk: string) {

@@ -74,6 +74,17 @@ export class BarnAccount {
 		return projectPks;
 	}
 	
+	getGrantProgramPks(
+		projectPk: PublicKey,
+		count: number,
+	): PublicKey[] | null {
+		const grantProgramPks = Array.from({ length: count }, (_, i) =>
+			this.grantProgramAddress(projectPk, i)
+		);
+
+		return grantProgramPks;
+	}
+
 	getProjectPks(
 		projectPk: PublicKey,
 		count: number,

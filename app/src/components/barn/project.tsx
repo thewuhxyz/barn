@@ -1,15 +1,20 @@
 "use client";
 
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
-import { PopoverContent } from "@radix-ui/react-popover";
+import {
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useBarn, useBarnRPC, useBarnUser } from "@/hooks/barn";
-import { useAnchorWallet } from "@solana/wallet-adapter-react";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PublicKey } from "@solana/web3.js";
+import BN from "bn.js";
+import { getMint, NATIVE_MINT } from "@solana/spl-token";
 
 export function CreateUserProfile() {
 	const [userName, setUserName] = useState("");
@@ -136,29 +141,74 @@ export function AddGrantProgram() {
 	return <Button onClick={handleAddGrantProgram}>Add New Grant Program</Button>;
 }
 
-// export function awardGrant() {
-// 	const [userName, setUserName] = useState("");
-// 	const { awardGrant } = useBarnRPC();
-// 	const wallet = useAnchorWallet();
+export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
+	const [awardGrantConfig, setAwardGrantConfig] = useState<{
+		amount: string;
+		project: string;
+	}>({ amount: "", project: "" });
 
-// 	function handleAddProject() {
-// 		if (!wallet) throw "wallet not connected";
-// 		return awardGrant({ uri: "", signer: wallet.publicKey });
-// 	}
+	const wallet = useAnchorWallet();
+	const { connection } = useConnection();
 
-// 	return (
-// 		<Popover>
-// 			<PopoverTrigger>Create User Profile</PopoverTrigger>
-// 			<PopoverContent>
-// 				<Input
-// 					id="amount"
-// 					type="number"
-// 					value={userName}
-// 					onChange={(e) => setUserName(e.target.value)}
-// 					className="col-span-3"
-// 				/>
-// 				<Button onClick={handleAddProject}>Create</Button>
-// 			</PopoverContent>
-// 		</Popover>
-// 	);
-// }
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+	const { awardGrant } = useBarnRPC();
+
+	const { amount, project } = awardGrantConfig;
+
+	async function handleAddProject() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+
+			const paymentMint = NATIVE_MINT; // todo: any token
+			const decimals = (await getMint(connection, paymentMint)).decimals;
+
+			return awardGrant({
+				uri: "",
+				signer: wallet.publicKey,
+				grantProgram,
+				project: new PublicKey(project),
+				approvedAmount: new BN(parseFloat(amount) * 10 ** decimals),
+				paymentMint,
+				profile: profile.profile,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Popover>
+			<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
+				Award Grant
+			</PopoverTrigger>
+			<PopoverContent className="space-y-4">
+				<Input
+					id="amount"
+					type="number"
+					value={amount}
+					onChange={(e) =>
+						setAwardGrantConfig({ ...awardGrantConfig, amount: e.target.value })
+					}
+					placeholder="Amount"
+					className="col-span-3"
+				/>
+				<Input
+					id="project"
+					type="text"
+					value={project}
+					onChange={(e) =>
+						setAwardGrantConfig({
+							...awardGrantConfig,
+							project: e.target.value,
+						})
+					}
+					placeholder="Enter Project"
+				/>
+				<Button onClick={handleAddProject}>Award Grant</Button>
+			</PopoverContent>
+		</Popover>
+	);
+}
