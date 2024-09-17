@@ -292,6 +292,7 @@
         },
         {
           "name": "grant",
+          "writable": true,
           "pda": {
             "seeds": [
               {

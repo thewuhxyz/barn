@@ -298,6 +298,7 @@ export type Barn = {
         },
         {
           "name": "grant",
+          "writable": true,
           "pda": {
             "seeds": [
               {

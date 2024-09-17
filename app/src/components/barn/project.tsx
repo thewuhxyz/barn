@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useBarn, useBarnRPC, useBarnUser } from "@/hooks/barn";
+import { useBarn, useBarnGrant, useBarnRPC, useBarnUser } from "@/hooks/barn";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -210,5 +210,84 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 				<Button onClick={handleAddProject}>Award Grant</Button>
 			</PopoverContent>
 		</Popover>
+	);
+}
+
+export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
+	const [awardGrantConfig, setAwardGrantConfig] = useState<{
+		amount: string;
+	}>({ amount: "" });
+
+	const wallet = useAnchorWallet();
+
+	const {
+		profile: { data: profile },
+	} = useBarnUser();
+
+	const {
+		grant: { data: grant },
+	} = useBarnGrant(grantPk.toBase58());
+
+	const { addGrantMilestone } = useBarnRPC();
+
+	const { amount } = awardGrantConfig;
+
+	async function handleAddProject() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile) throw "no profile for user";
+			if (!grant) throw "no grant project for user";
+
+			return addGrantMilestone({
+				uri: "",
+				signer: wallet.publicKey,
+				project: grant.project,
+				amount: new BN(parseFloat(amount) * 10 ** grant.paymentDecimals),
+				profile: profile.profile,
+				grant: grantPk,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<>
+			{profile?.sponsor === false && (
+				<Popover>
+					<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
+						Add Milestone
+					</PopoverTrigger>
+					<PopoverContent className="space-y-4">
+						<Input
+							id="amount"
+							type="text"
+							value={amount}
+							onChange={(e) =>
+								setAwardGrantConfig({
+									...awardGrantConfig,
+									amount: e.target.value,
+								})
+							}
+							placeholder="Amount"
+							className="col-span-3"
+						/>
+						{/* <Input
+					id="project"
+					type="text"
+					value={project}
+					onChange={(e) =>
+						setAwardGrantConfig({
+							...awardGrantConfig,
+							project: e.target.value,
+						})
+					}
+					placeholder="Enter Project"
+				/> */}
+						<Button className="w-full" onClick={handleAddProject}>Add Milestone</Button>
+					</PopoverContent>
+				</Popover>
+			)}
+		</>
 	);
 }

@@ -1,23 +1,25 @@
 import { Program } from "@coral-xyz/anchor";
 import { Barn } from "../idl";
 import { PublicKey, Transaction } from "@solana/web3.js";
-import type BN from "bn.js";
 import { BarnMethods, IBarnMethods } from "./methods";
 import {
+	AcceptGrantMilestoneArgs,
+	AddGrantMilestoneArgs,
 	AddGrantProgramArgs,
 	AddProjectArgs,
 	ApproveSponsorArgs,
 	AwardGrantArgs,
+	CreateUserArgs,
+	RejectGrantMilestoneArgs,
+	ReviewGrantMilestoneArgs,
+	ReviseGrantMilestoneArgs,
+	SettleGrantMilestoneArgs,
 } from "./types";
 
 export class BarnTransaction implements IBarnMethods<Transaction> {
 	constructor(private program: Program<Barn>) {}
 
-	async createUser(args: {
-		seed: string;
-		uri: string;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async createUser(args: CreateUserArgs): Promise<Transaction> {
 		return BarnMethods.createUser(this.program, args).transaction();
 	}
 
@@ -37,59 +39,37 @@ export class BarnTransaction implements IBarnMethods<Transaction> {
 		return BarnMethods.awardGrant(this.program, args).transaction();
 	}
 
-	async addGrantMilestone(args: {
-		uri: string;
-		amount: BN;
-		grant: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async addGrantMilestone(args: AddGrantMilestoneArgs): Promise<Transaction> {
 		return BarnMethods.addGrantMilestone(this.program, args).transaction();
 	}
 
-	async reviseGrantMilestone(args: {
-		uri: string | null;
-		amount: BN | null;
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async reviseGrantMilestone(
+		args: ReviseGrantMilestoneArgs
+	): Promise<Transaction> {
 		return BarnMethods.reviseGrantMilestone(this.program, args).transaction();
 	}
 
-	async reviewGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async reviewGrantMilestone(
+		args: ReviewGrantMilestoneArgs
+	): Promise<Transaction> {
 		return BarnMethods.reviewGrantMilestone(this.program, args).transaction();
 	}
 
-	async acceptGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async acceptGrantMilestone(
+		args: AcceptGrantMilestoneArgs
+	): Promise<Transaction> {
 		return BarnMethods.acceptGrantMilestone(this.program, args).transaction();
 	}
 
-	async rejectGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): Promise<Transaction> {
+	async rejectGrantMilestone(
+		args: RejectGrantMilestoneArgs
+	): Promise<Transaction> {
 		return BarnMethods.rejectGrantMilestone(this.program, args).transaction();
 	}
 
-	async settleGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		to: PublicKey;
-		signer: PublicKey;
-		signerTokenAccount: PublicKey;
-		paymentMint: PublicKey;
-		tokenProgram: PublicKey;
-	}): Promise<Transaction> {
+	async settleGrantMilestone(
+		args: SettleGrantMilestoneArgs
+	): Promise<Transaction> {
 		return BarnMethods.settleGrantMilestone(this.program, args).transaction();
 	}
 }

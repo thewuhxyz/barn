@@ -24,7 +24,9 @@ export default function Project({ params }: { params: { address: string } }) {
 			</div>
 			<div className="w-full">
 				<div>Milestones</div>
-				<MilestoneCard />
+				{milestones
+					? milestones.map((m, i) => <MilestoneCard key={i} publicKey={m} />)
+					: "No milestones"}
 			</div>
 		</main>
 	);

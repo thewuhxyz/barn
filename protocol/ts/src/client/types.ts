@@ -31,7 +31,7 @@ export type AwardGrantArgs = {
 	paymentMint: PublicKey;
 	grantProgram: PublicKey;
 	project: PublicKey;
-  profile: PublicKey
+	profile: PublicKey;
 	signer: PublicKey;
 };
 
@@ -40,6 +40,7 @@ export type AddGrantMilestoneArgs = {
 	amount: BN;
 	grant: PublicKey;
 	project: PublicKey;
+	profile: PublicKey;
 	signer: PublicKey;
 };
 
@@ -48,24 +49,28 @@ export type ReviseGrantMilestoneArgs = {
 	amount: BN | null;
 	grant: PublicKey;
 	grantMilestone: PublicKey;
+	profile: PublicKey;
 	signer: PublicKey;
 };
 
 export type ReviewGrantMilestoneArgs = {
 	grant: PublicKey;
 	grantMilestone: PublicKey;
+	profile: PublicKey;
 	signer: PublicKey;
 };
 
 export type AcceptGrantMilestoneArgs = {
 	grant: PublicKey;
 	grantMilestone: PublicKey;
+	profile: PublicKey;
 	signer: PublicKey;
 };
 
 export type RejectGrantMilestoneArgs = {
 	grant: PublicKey;
 	grantMilestone: PublicKey;
+	profile: PublicKey;
 	signer: PublicKey;
 };
 
@@ -73,6 +78,7 @@ export type SettleGrantMilestoneArgs = {
 	grant: PublicKey;
 	grantMilestone: PublicKey;
 	to: PublicKey;
+	profile: PublicKey;
 	signer: PublicKey;
 	signerTokenAccount: PublicKey;
 	paymentMint: PublicKey;

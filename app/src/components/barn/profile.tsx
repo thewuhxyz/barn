@@ -12,11 +12,16 @@ import { Button } from "@/components/ui/button";
 import { GrantProgramCard, ProjectCard } from ".";
 import {
 	useBarnGrant,
+	useBarnGrantMilestone,
 	useBarnGrantProgram,
 	useBarnProject,
 	useBarnUser,
 } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
+import { AddGrantMilestone } from "./project";
+import Link from "next/link";
+import BN from "bn.js";
+import { MilestoneState } from "@barn/protocol";
 
 export type ProjectCardProps = {};
 
@@ -111,7 +116,8 @@ export function Notifications() {
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{Array.from({ length: 10 }).map((_, i) => (
-				<MilestoneCard key={i} />
+				<div></div>
+				// <MilestoneCard key={i} />
 			))}
 		</div>
 	);
@@ -144,25 +150,39 @@ export function ProfileCard() {
 	);
 }
 
-export function MilestoneCard() {
+export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
+	const {
+		grant: { data: grant },
+		project: { data: project },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(publicKey.toBase58());
+	if (!grant || !project || !milestone) return;
 	return (
 		<Card className="w-full">
-			<CardHeader>
-				<CardTitle>ProjectTitle - id | "amount"</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<CardDescription>Description : "description"</CardDescription>
-				<CardDescription>Grant Program : "program"</CardDescription>
-				<CardDescription>Github: {"<github_url>"}</CardDescription>
-				<CardDescription>Owner: "owner"</CardDescription>
-			</CardContent>
-			<CardFooter className="space-x-4">
-				<Button className="w-full" size="sm">
-					Approve
-				</Button>
-				<Button className="w-full" size="sm" variant="secondary">
-					Reject
-				</Button>
+			<Link href={`/project/${grant.project}`}>
+				<CardHeader>
+					<CardTitle>
+						Project - {project.id} | ${grant.approvedAmount}
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<CardDescription>Description: "description"</CardDescription>
+					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
+					<CardDescription>
+						Grant Program: {grant.program.toBase58()}
+					</CardDescription>
+					<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
+					<CardDescription>
+						Amount: {milestone.amount.toNumber() / 10 ** grant.paymentDecimals}
+					</CardDescription>
+					<CardDescription>Milestone id: {milestone.id}</CardDescription>
+					<CardDescription>
+						Status: {MilestoneState.toStatus(milestone.state)}
+					</CardDescription>
+				</CardContent>
+			</Link>
+			<CardFooter>
+				<AddGrantMilestone grantPk={publicKey} />
 			</CardFooter>
 		</Card>
 	);
@@ -176,21 +196,26 @@ export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
 	if (!grant || !project) return;
 	return (
 		<Card className="w-full">
-			<CardHeader>
-				<CardTitle>
-					Project - {project.id} | ${grant.approvedAmount}
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<CardDescription>Desecription: "description"</CardDescription>
-				<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
-				<CardDescription>
-					Grant Program: {grant.program.toBase58()}
-				</CardDescription>
-				<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
-				<CardDescription>Amount paid out: {grant.paidOut} </CardDescription>
-				<CardDescription>Milestones: {grant.count}</CardDescription>
-			</CardContent>
+			<Link href={`/project/${grant.project}`}>
+				<CardHeader>
+					<CardTitle>
+						Project - {project.id} | ${grant.approvedAmount}
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<CardDescription>Desecription: "description"</CardDescription>
+					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
+					<CardDescription>
+						Grant Program: {grant.program.toBase58()}
+					</CardDescription>
+					<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
+					<CardDescription>Amount paid out: {grant.paidOut} </CardDescription>
+					<CardDescription>Milestones: {grant.count}</CardDescription>
+				</CardContent>
+			</Link>
+			<CardFooter>
+				<AddGrantMilestone grantPk={publicKey} />
+			</CardFooter>
 		</Card>
 	);
 }

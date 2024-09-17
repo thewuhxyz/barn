@@ -19,7 +19,11 @@ export class BarnAccount {
 		if (!count) return null;
 
 		const projectPks = Array.from({ length: count }, (_, i) =>
-			this.getProjectOrGrantProgramAddress(authority.profile, i, profile.sponsor)
+			this.getProjectOrGrantProgramAddress(
+				authority.profile,
+				i,
+				profile.sponsor
+			)
 		);
 
 		const projects = await Promise.all(
@@ -73,11 +77,8 @@ export class BarnAccount {
 
 		return projectPks;
 	}
-	
-	getGrantProgramPks(
-		projectPk: PublicKey,
-		count: number,
-	): PublicKey[] | null {
+
+	getGrantProgramPks(projectPk: PublicKey, count: number): PublicKey[] | null {
 		const grantProgramPks = Array.from({ length: count }, (_, i) =>
 			this.grantProgramAddress(projectPk, i)
 		);
@@ -85,10 +86,7 @@ export class BarnAccount {
 		return grantProgramPks;
 	}
 
-	getProjectPks(
-		projectPk: PublicKey,
-		count: number,
-	): PublicKey[] | null {
+	getProjectPks(projectPk: PublicKey, count: number): PublicKey[] | null {
 		const projectPks = Array.from({ length: count }, (_, i) =>
 			this.projectAddress(projectPk, i)
 		);
@@ -96,10 +94,7 @@ export class BarnAccount {
 		return projectPks;
 	}
 
-	getGrantsPks(
-		grantProgramPk: PublicKey,
-		count: number
-	): PublicKey[] | null {
+	getGrantsPks(grantProgramPk: PublicKey, count: number): PublicKey[] | null {
 		const projectPks = Array.from({ length: count }, (_, i) =>
 			this.grantAddress(grantProgramPk, i)
 		);
@@ -107,10 +102,7 @@ export class BarnAccount {
 		return projectPks;
 	}
 
-	getGrantMilestonesPks(
-		grantPk: PublicKey,
-		count: number
-	): PublicKey[] | null {
+	getGrantMilestonesPks(grantPk: PublicKey, count: number): PublicKey[] | null {
 		const projectPks = Array.from({ length: count }, (_, i) =>
 			this.grantMilestoneAddress(grantPk, i)
 		);
@@ -307,7 +299,7 @@ export type GrantMilestoneAccount = {
 	bump: number;
 	grant: PublicKey;
 	id: number;
-	state: MilestoneState;
+	state: MilestoneStateEnum;
 	uri: string;
 };
 
@@ -324,10 +316,28 @@ export type GrantAccount = {
 	uri: string;
 };
 
+export type MilestoneStateEnum =
+	| { inProgress: {} }
+	| { inReview: {} }
+	| { accepted: {} }
+	| { rejected: {} }
+	| { paid: {} };
+
+
+export type MilestoneStatus =
+	| "inProgress"
+	| "inReview"
+	| "accepted"
+	| "rejected"
+	| "paid";
+
+
 export class MilestoneState {
-	static IN_PROGRESS = { inProgress: {} };
-	static IN_REVIEW = { inReview: {} };
-	static ACCEPTED = { accepted: {} };
-	static REJECTED = { rejected: {} };
-	static PAID = { paid: {} };
+	static toStatus(m: MilestoneStateEnum): MilestoneStatus {
+		return Object.keys(m)[0] as MilestoneStatus;
+	}
+	
+	static toEnum(m: MilestoneStatus): MilestoneStateEnum {
+		return { [m]: {} } as MilestoneStateEnum;;
+	}
 }

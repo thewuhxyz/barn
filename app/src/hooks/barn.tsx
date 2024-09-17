@@ -17,6 +17,7 @@ import { GoToExplorer } from "@/components/solana";
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 import type {
+	AddGrantMilestoneArgs,
 	AddGrantProgramArgs,
 	AddProjectArgs,
 	ApproveSponsorArgs,
@@ -34,6 +35,8 @@ export function useBarnRPC() {
 	const doAddGrantProgram = (args: AddGrantProgramArgs) =>
 		barn.rpc.addGrantProgram(args);
 	const doAwardGrant = (args: AwardGrantArgs) => barn.rpc.awardGrant(args);
+	const doAddGrantMilestone = (args: AddGrantMilestoneArgs) =>
+		barn.rpc.addGrantMilestone(args);
 
 	const createUser = useMutation({
 		mutationFn: doCreateUser,
@@ -78,7 +81,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const addGrantMilestone = useMutation({
-		mutationFn: barn.rpc.addGrantMilestone,
+		mutationFn: doAddGrantMilestone,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -369,7 +372,7 @@ export function useBarnGrant(grantPk: string | null) {
 	return { grant, project, milestonePks };
 }
 
-export function useBarnMilestone(milestonePk: string) {
+export function useBarnGrantMilestone(milestonePk: string) {
 	const barn = useBarn();
 
 	const milestone = useQuery({
@@ -382,7 +385,11 @@ export function useBarnMilestone(milestonePk: string) {
 		},
 	});
 
-	return milestone;
+	const { grant, project } = useBarnGrant(
+		milestone.data?.grant.toBase58() || null
+	);
+
+	return { milestone, grant, project };
 }
 
 export function useBarn() {

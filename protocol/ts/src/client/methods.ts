@@ -2,11 +2,9 @@ import { Program } from "@coral-xyz/anchor";
 import { Barn } from "../idl";
 import {
 	ConfirmOptions,
-	PublicKey,
 	Transaction,
 	TransactionInstruction,
 } from "@solana/web3.js";
-import type BN from "bn.js";
 import {
 	AcceptGrantMilestoneArgs,
 	AddGrantMilestoneArgs,
@@ -24,11 +22,7 @@ import {
 export class BarnMethods {
 	constructor(private program: Program<Barn>) {}
 
-	createUser(args: {
-		seed: string;
-		uri: string;
-		signer: PublicKey;
-	}): BarnMethod {
+	createUser(args: CreateUserArgs): BarnMethod {
 		return BarnMethods.createUser(this.program, args);
 	}
 
@@ -48,73 +42,33 @@ export class BarnMethods {
 		return BarnMethods.awardGrant(this.program, args);
 	}
 
-	addGrantMilestone(args: {
-		uri: string;
-		amount: BN;
-		grant: PublicKey;
-		project: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	addGrantMilestone(args: AddGrantMilestoneArgs): BarnMethod {
 		return BarnMethods.addGrantMilestone(this.program, args);
 	}
 
-	reviseGrantMilestone(args: {
-		uri: string | null;
-		amount: BN | null;
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	reviseGrantMilestone(args: ReviseGrantMilestoneArgs): BarnMethod {
 		return BarnMethods.reviseGrantMilestone(this.program, args);
 	}
 
-	reviewGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	reviewGrantMilestone(args: ReviewGrantMilestoneArgs): BarnMethod {
 		return BarnMethods.reviewGrantMilestone(this.program, args);
 	}
 
-	acceptGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	acceptGrantMilestone(args: AcceptGrantMilestoneArgs): BarnMethod {
 		return BarnMethods.acceptGrantMilestone(this.program, args);
 	}
 
-	rejectGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		signer: PublicKey;
-	}): BarnMethod {
+	rejectGrantMilestone(args: RejectGrantMilestoneArgs): BarnMethod {
 		return BarnMethods.rejectGrantMilestone(this.program, args);
 	}
 
-	settleGrantMilestone(args: {
-		grant: PublicKey;
-		grantMilestone: PublicKey;
-		to: PublicKey;
-		signer: PublicKey;
-		signerTokenAccount: PublicKey;
-		paymentMint: PublicKey;
-		tokenProgram: PublicKey;
-	}): BarnMethod {
+	settleGrantMilestone(args: SettleGrantMilestoneArgs): BarnMethod {
 		return BarnMethods.settleGrantMilestone(this.program, args);
 	}
 
 	static createUser(
 		program: Program<Barn>,
-		{
-			seed,
-			uri,
-			signer,
-		}: {
-			seed: string;
-			uri: string;
-			signer: PublicKey;
-		}
+		{ seed, uri, signer }: CreateUserArgs
 	): BarnMethod {
 		return program.methods.createUser(seed, uri).accounts({
 			signer,
@@ -157,7 +111,7 @@ export class BarnMethods {
 			project,
 			paymentMint,
 			signer,
-			profile
+			profile,
 		}: AwardGrantArgs
 	): BarnMethod {
 		return program.methods.awardGrant(uri, approvedAmount).accountsPartial({
@@ -165,144 +119,54 @@ export class BarnMethods {
 			signer,
 			grantProgram,
 			project,
-			profile
+			profile,
 		});
 	}
 
 	static addGrantMilestone(
 		program: Program<Barn>,
-		{
-			uri,
-			amount,
-			grant,
-			project,
-			signer,
-		}: {
-			uri: string;
-			amount: BN;
-			grant: PublicKey;
-			project: PublicKey;
-			signer: PublicKey;
-		}
+		args: AddGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.addGrantMilestone(uri, amount).accountsPartial({
-			signer,
-			project,
-			grant,
-		});
+		return program.methods
+			.addGrantMilestone(args.uri, args.amount)
+			.accountsPartial(args);
 	}
 
 	static reviseGrantMilestone(
 		program: Program<Barn>,
-		{
-			uri,
-			amount,
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			uri: string | null;
-			amount: BN | null;
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
+		args: ReviseGrantMilestoneArgs
 	): BarnMethod {
 		return program.methods
-			.reviseGrantMilestone({ uri, amount })
-			.accountsPartial({
-				signer,
-				grant,
-				grantMilestone,
-			});
+			.reviseGrantMilestone({ uri: args.uri, amount: args.amount })
+			.accountsPartial(args);
 	}
 
 	static reviewGrantMilestone(
 		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
+		args: ReviewGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.reviewGrantMilestone().accountsPartial({
-			signer,
-			grant,
-			grantMilestone,
-		});
+		return program.methods.reviewGrantMilestone().accountsPartial(args);
 	}
 
 	static acceptGrantMilestone(
 		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
+		args: AcceptGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.acceptGrantMilestone().accountsPartial({
-			signer,
-			grant,
-			grantMilestone,
-		});
+		return program.methods.acceptGrantMilestone().accountsPartial(args);
 	}
 
 	static rejectGrantMilestone(
 		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			signer: PublicKey;
-		}
+		args: RejectGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.rejectGrantMilestone().accountsPartial({
-			signer,
-			grant,
-			grantMilestone,
-		});
+		return program.methods.rejectGrantMilestone().accountsPartial(args);
 	}
 
 	static settleGrantMilestone(
 		program: Program<Barn>,
-		{
-			grant,
-			grantMilestone,
-			signer,
-			signerTokenAccount,
-			paymentMint,
-			to,
-			tokenProgram,
-		}: {
-			grant: PublicKey;
-			grantMilestone: PublicKey;
-			to: PublicKey;
-			signer: PublicKey;
-			signerTokenAccount: PublicKey;
-			paymentMint: PublicKey;
-			tokenProgram: PublicKey;
-		}
+		args: SettleGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.settleGrantMilestone().accountsPartial({
-			to,
-			signer,
-			grant,
-			grantMilestone,
-			signerTokenAccount,
-			paymentMint,
-			tokenProgram,
-		});
+		return program.methods.settleGrantMilestone().accountsPartial(args);
 	}
 }
 
