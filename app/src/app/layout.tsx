@@ -25,15 +25,19 @@ export default function RootLayout({
 							<Link href="/">
 								<p className="text-3xl cursor-default">Barn</p>
 							</Link>
-							<nav className="flex space-x-8 items-center text-muted-foreground">
+							<nav className="flex space-x-8 items-center text-sm text-muted-foreground">
 								<ul>
-									<Link href="/">
-										<p className="cursor-default hover:text-primary">Home</p>
+									<Link href="/project">
+										<p className="cursor-default hover:text-primary">
+											Project
+										</p>
 									</Link>
 								</ul>
 								<ul>
 									<Link href="/program">
-										<p className="cursor-default hover:text-primary">Grants</p>
+										<p className="cursor-default hover:text-primary">
+											Grant Program
+										</p>
 									</Link>
 								</ul>
 								<ul>

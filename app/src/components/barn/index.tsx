@@ -21,7 +21,7 @@ export type ProjectCardProps = {};
 
 export function AllGrantedProjects() {
 	const { allGrants } = useBarnAccount();
-	if (!allGrants) return<></>;
+	if (!allGrants) return <></>;
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{allGrants.map((grant, i) => (
@@ -33,7 +33,7 @@ export function AllGrantedProjects() {
 
 export function AllGrantPrograms() {
 	const { allGrantPrograms } = useBarnAccount();
-	if (!allGrantPrograms) return<></>;
+	if (!allGrantPrograms) return <></>;
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{allGrantPrograms.map(({ publicKey }, i) => (
@@ -77,18 +77,20 @@ export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
 
 	return (
 		<Card className="w-full">
-			<CardHeader>
-				<CardTitle>Grant Program - {grantProgram.id}</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<CardDescription>Desecription: "description"</CardDescription>
-				<CardDescription>
-					Owner: {grantProgram.profile.toBase58()}
-				</CardDescription>
-				<CardDescription>
-					No of grants issued: {grantProgram.count}
-				</CardDescription>
-			</CardContent>
+			<Link className="w-full" href={`/program/${publicKey}`}>
+				<CardHeader>
+					<CardTitle>Grant Program - {grantProgram.id}</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<CardDescription>Desecription: "description"</CardDescription>
+					<CardDescription>
+						Owner: {grantProgram.profile.toBase58()}
+					</CardDescription>
+					<CardDescription>
+						No of grants issued: {grantProgram.count}
+					</CardDescription>
+				</CardContent>
+			</Link>
 			<CardFooter>
 				<AwardGrant grantProgram={publicKey} />
 			</CardFooter>

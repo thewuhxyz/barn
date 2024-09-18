@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { GrantProgramCard, ProjectCard } from ".";
 import {
-	useBarnAccount,
 	useBarnGrant,
 	useBarnGrantMilestone,
 	useBarnGrantProgram,

@@ -1,18 +1,25 @@
 "use client";
 
-import { useConnection } from "@solana/wallet-adapter-react";
+import { GrantProgramCard } from "@/components/barn";
+import { GrantCard } from "@/components/barn/profile";
+import { useBarnGrantProgram } from "@/hooks/barn";
+import { PublicKey } from "@solana/web3.js";
 
-export default function Program() {
-	const { connection } = useConnection();
+export default function Program({ params }: { params: { address: string } }) {
+	const projectPk = params.address;
+	const { grantPks } = useBarnGrantProgram(projectPk);
+
 	return (
-		<main className="flex-1 flex flex-col items-center justify-center space-y-16">
-			<h1 className="text-3xl font-bold">Barn - Solana Grants Manager</h1>
-			<div className="flex items-center justify-center space-x-2">
-				<p className="">Manage grants on-chain with ease.</p>
-				<p className=""> RPC Endpoint: {connection.rpcEndpoint}</p>
+		<main className="flex-1 items-center justify-center space-y-16">
+			<GrantProgramCard publicKey={new PublicKey(projectPk)} />
+			<div className="w-full">
+				<div>Projects</div>
+				<div className="space-y-4">
+					{grantPks
+						? grantPks.map((m, i) => <GrantCard key={i} publicKey={m} />)
+						: "No milestones"}
+				</div>
 			</div>
 		</main>
 	);
 }
-
-
