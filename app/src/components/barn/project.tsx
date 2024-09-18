@@ -615,7 +615,7 @@ export function SettleGrantMilestone({
 			if (!profile || !authority) throw "no profile for user";
 			if (!milestone) throw "no grant project for user";
 			if (!grant) throw "no grant project for user";
-			if (!projectAuthority) throw "project owner not found"
+			if (!projectAuthority) throw "project owner not found";
 
 			const mintAccountInfo = await connection.getAccountInfo(
 				grant.paymentMint
@@ -643,8 +643,8 @@ export function SettleGrantMilestone({
 	}
 
 	return (
-		<Button className="w-full" variant="secondary" onClick={handleClick}>
-			Reject
+		<Button className="w-full" onClick={handleClick}>
+			Settle Payment
 		</Button>
 	);
 }
@@ -706,7 +706,7 @@ export function UpdateMilestone({
 				)}
 			{profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "accepted" && (
-					<Button className="w-full">Settle Payment</Button>
+					<SettleGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
 			{profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "rejected" && (
@@ -714,6 +714,11 @@ export function UpdateMilestone({
 						Settle Payment
 					</Button>
 				)}
+			{MilestoneState.toStatus(milestone.state) === "paid" && (
+				<Button disabled={true} className="w-full">
+					Paid
+				</Button>
+			)}
 		</>
 	);
 }

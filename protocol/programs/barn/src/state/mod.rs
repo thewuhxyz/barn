@@ -224,11 +224,11 @@ impl GrantMilestone {
 
     pub fn settle(&mut self) -> Result<()> {
         // make sure it is not rejected already
-        require!(self.is_rejected(), BarnError::MilestoneNotAccepted);
-        // make sure it is not paid already
-        require!(self.is_paid(), BarnError::MilestoneAlreadyPaid);
-        // make sure it is accepted
-        require!(self.state.confirmed(), BarnError::MilestoneNotConfirmed);
+        require!(self.is_accepted(), BarnError::MilestoneNotAccepted);
+        // // make sure it is not paid already
+        // require!(self.is_paid(), BarnError::MilestoneAlreadyPaid);
+        // // make sure it is accepted
+        // require!(self.state.confirmed(), BarnError::MilestoneNotConfirmed);
 
         self.state = MilestoneState::Paid;
         Ok(())
