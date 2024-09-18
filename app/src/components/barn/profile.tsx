@@ -29,9 +29,7 @@ import { MilestoneState } from "@barn/protocol";
 export type ProjectCardProps = {};
 
 export function AllUserProjects() {
-	const {
-		projectOrProgramPks: projectsPks ,
-	} = useBarnUser();
+	const { projectOrProgramPks: projectsPks } = useBarnUser();
 
 	if (!projectsPks || !projectsPks.length) return <p>No Projects For User</p>;
 
@@ -46,9 +44,7 @@ export function AllUserProjects() {
 }
 
 export function AllUserGrantPrograms() {
-	const {
-		projectOrProgramPks: grantProgramPks,
-	} = useBarnUser();
+	const { projectOrProgramPks: grantProgramPks } = useBarnUser();
 
 	if (!grantProgramPks || !grantProgramPks.length)
 		return <p>No Grant Programs For User</p>;
@@ -112,14 +108,60 @@ export function GrantsFromProgramCard({ publicKey }: { publicKey: PublicKey }) {
 	);
 }
 
-export function Notifications() {
+export function AllUserNotifications() {
+	const { profile, projectOrProgramPks, programPks, projectPks } =
+		useBarnUser();
+
+	if (!profile || !projectOrProgramPks || !projectOrProgramPks.length)
+		return <p>No Notifications For User</p>;
+
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{Array.from({ length: 10 }).map((_, i) => (
-				<div></div>
-				// <MilestoneCard key={i} />
-			))}
+			{profile.sponsor &&
+				programPks &&
+				programPks.map((pk) => <NotificationsFromProgramCard publicKey={pk} />)}
+			{!profile.sponsor &&
+				projectPks &&
+				projectPks.map((pk) => <NotificationsFromProjectCard publicKey={pk} />)}
 		</div>
+	);
+}
+
+export function NotificationsFromProjectCard({
+	publicKey,
+}: {
+	publicKey: PublicKey;
+}) {
+	const { grantPk } = useBarnProject(publicKey.toBase58());
+
+	if (!grantPk) {
+		return <></>;
+	}
+
+	return (
+		<>
+			<GrantCard key={grantPk.toBase58()} publicKey={grantPk} />
+		</>
+	);
+}
+
+export function NotificationsFromProgramCard({
+	publicKey,
+}: {
+	publicKey: PublicKey;
+}) {
+	const { grantPks } = useBarnGrantProgram(publicKey.toBase58());
+
+	if (!grantPks) {
+		return <></>;
+	}
+
+	return (
+		<>
+			{grantPks.map((pk) => {
+				return <Notifications key={pk.toBase58()} grantPk={pk} />;
+			})}
+		</>
 	);
 }
 
@@ -215,5 +257,40 @@ export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
 				<AddGrantMilestone grantPk={publicKey} />
 			</CardFooter>
 		</Card>
+	);
+}
+
+export function Notifications({ grantPk }: { grantPk: PublicKey }) {
+	const { grant, project, milestonePks } = useBarnGrant(grantPk.toBase58());
+	if (!grant || !project || !milestonePks) return;
+	return (
+		<>
+			{milestonePks.map((pk) => (
+				<Notification publicKey={pk} />
+			))}
+		</>
+	);
+}
+
+export function Notification({ publicKey }: { publicKey: PublicKey }) {
+	const { profile } = useBarnUser();
+	const { grant, project, milestone } = useBarnGrantMilestone(
+		publicKey.toBase58()
+	);
+
+	if (!grant || !project || !milestone || !profile) return;
+
+	return (
+		<>
+			{profile.sponsor &&
+				MilestoneState.toStatus(milestone.state) === "inReview" && (
+					<MilestoneCard publicKey={publicKey} />
+				)}
+			{!profile.sponsor &&
+				(MilestoneState.toStatus(milestone.state) === "accepted" ||
+					MilestoneState.toStatus(milestone.state) === "rejected") && (
+					<MilestoneCard publicKey={publicKey} />
+				)}
+		</>
 	);
 }

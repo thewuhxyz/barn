@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	AllUserGrantPrograms,
 	AllUserGrants,
+	AllUserNotifications,
 	AllUserProjects,
 	Notifications,
 	ProfileCard,
@@ -45,7 +46,7 @@ export default function Profile() {
 							<AllUserGrants />
 						</TabsContent>
 						<TabsContent className="w-full" value="notifications">
-							<Notifications />
+							<AllUserNotifications />
 						</TabsContent>
 					</Tabs>
 				</>

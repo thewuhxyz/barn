@@ -9,11 +9,12 @@ export function useBarnUser() {
 	const barn = useBarn();
 	const { publicKey } = useWallet();
 
-	const { profile, projectOrProgramPks, authority } = useBarnAuthority(
-		publicKey ? barn.account.authorityAddress(publicKey).toBase58() : null
-	);
+	const { profile, projectOrProgramPks, authority, programPks, projectPks } =
+		useBarnAuthority(
+			publicKey ? barn.account.authorityAddress(publicKey).toBase58() : null
+		);
 
-	return { profile, projectOrProgramPks, authority };
+	return { profile, projectOrProgramPks, authority, projectPks, programPks };
 }
 
 export function useBarnAuthority(authorityPk: string | null) {
@@ -44,9 +45,61 @@ export function useBarnAuthority(authorityPk: string | null) {
 		},
 	});
 
-	const projectOrProgramPks = useQuery({
+	const projectPks = useQuery({
 		queryKey: [
 			"project-keys",
+			{
+				profilePk: authority.data?.profile.toBase58() || null,
+				count: profile.data?.count || null,
+			},
+		],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<
+			[
+				string,
+				{
+					profilePk: string | null;
+					count: number | null;
+				},
+			]
+		>) => {
+			const [_, { profilePk, count }] = queryKey;
+			return profilePk && count
+				? barn.account.getProjectPks(new PublicKey(profilePk), count)
+				: null;
+		},
+	});
+
+	const programPks = useQuery({
+		queryKey: [
+			"program-keys",
+			{
+				profilePk: authority.data?.profile.toBase58() || null,
+				count: profile.data?.count || null,
+			},
+		],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<
+			[
+				string,
+				{
+					profilePk: string | null;
+					count: number | null;
+				},
+			]
+		>) => {
+			const [_, { profilePk, count }] = queryKey;
+			return profilePk && count
+				? barn.account.getGrantProgramPks(new PublicKey(profilePk), count)
+				: null;
+		},
+	});
+
+	const projectOrProgramPks = useQuery({
+		queryKey: [
+			"project-or-program-keys",
 			{
 				profilePk: authority.data?.profile.toBase58() || null,
 				count: profile.data?.count || null,
@@ -80,6 +133,8 @@ export function useBarnAuthority(authorityPk: string | null) {
 		authority: authority.data,
 		profile: profile.data,
 		projectOrProgramPks: projectOrProgramPks.data,
+		projectPks: projectPks.data,
+		programPks: programPks.data,
 	};
 }
 

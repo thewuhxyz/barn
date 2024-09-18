@@ -21,9 +21,11 @@ export default function Project({ params }: { params: { address: string } }) {
 			</div>
 			<div className="w-full">
 				<div>Milestones</div>
-				{milestones
-					? milestones.map((m, i) => <MilestoneCard key={i} publicKey={m} />)
-					: "No milestones"}
+				<div className="space-y-4">
+					{milestones
+						? milestones.map((m, i) => <MilestoneCard key={i} publicKey={m} />)
+						: "No milestones"}
+				</div>
 			</div>
 		</main>
 	);
