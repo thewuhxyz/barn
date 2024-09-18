@@ -30,7 +30,7 @@ export type ProjectCardProps = {};
 
 export function AllUserProjects() {
 	const {
-		projectOrProgramPks: { data: projectsPks },
+		projectOrProgramPks: projectsPks ,
 	} = useBarnUser();
 
 	if (!projectsPks || !projectsPks.length) return <p>No Projects For User</p>;
@@ -47,7 +47,7 @@ export function AllUserProjects() {
 
 export function AllUserGrantPrograms() {
 	const {
-		projectOrProgramPks: { data: grantProgramPks },
+		projectOrProgramPks: grantProgramPks,
 	} = useBarnUser();
 
 	if (!grantProgramPks || !grantProgramPks.length)
@@ -64,17 +64,14 @@ export function AllUserGrantPrograms() {
 }
 
 export function AllUserGrants() {
-	const {
-		profile: { data: profile },
-		projectOrProgramPks: { data: projectsPks },
-	} = useBarnUser();
+	const { profile, projectOrProgramPks } = useBarnUser();
 
-	if (!profile || !projectsPks || !projectsPks.length)
+	if (!profile || !projectOrProgramPks || !projectOrProgramPks.length)
 		return <p>No Projects For User</p>;
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{projectsPks.map((pk) => {
+			{projectOrProgramPks.map((pk) => {
 				return profile.sponsor ? (
 					<GrantsFromProgramCard key={pk.toBase58()} publicKey={pk} />
 				) : (
@@ -127,14 +124,12 @@ export function Notifications() {
 }
 
 export function ProfileCard() {
-	const {
-		profile: userProfile,
-		authority: { data: authority },
-	} = useBarnUser();
-	const { data: profile } = userProfile;
+	const { profile, authority } = useBarnUser();
+
 	if (!profile || !authority) {
 		return "Create a Profile";
 	}
+
 	return (
 		<Card className="w-full">
 			<CardHeader>
@@ -157,15 +152,9 @@ export function ProfileCard() {
 }
 
 export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
-	const {
-		grant: { data: grant },
-		project: { data: project },
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(publicKey.toBase58());
-
-	const {
-		profile: { data: profile },
-	} = useBarnUser();
+	const { grant, project, milestone } = useBarnGrantMilestone(
+		publicKey.toBase58()
+	);
 
 	if (!grant || !project || !milestone) return;
 	return (
@@ -201,10 +190,7 @@ export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
 }
 
 export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
-	const {
-		grant: { data: grant },
-		project: { data: project },
-	} = useBarnGrant(publicKey.toBase58());
+	const { grant, project } = useBarnGrant(publicKey.toBase58());
 	if (!grant || !project) return;
 	return (
 		<Card className="w-full">

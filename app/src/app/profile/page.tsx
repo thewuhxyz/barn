@@ -19,9 +19,7 @@ import { WalletButton } from "@/context";
 
 export default function Profile() {
 	const { publicKey } = useWallet();
-	const {
-		profile: { data: profile },
-	} = useBarnUser();
+	const { profile } = useBarnUser();
 
 	return (
 		<main className="flex flex-col items-center space-y-16">

@@ -26,9 +26,7 @@ export function AllGrantedProjects() {
 }
 
 export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
-	const {
-		project: { data: project },
-	} = useBarnProject(publicKey.toBase58());
+	const { project } = useBarnProject(publicKey.toBase58());
 
 	if (!project) {
 		return <></>;
@@ -53,9 +51,7 @@ export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
 }
 
 export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
-	const {
-		grantProgram: { data: grantProgram },
-	} = useBarnGrantProgram(publicKey.toBase58());
+	const { grantProgram } = useBarnGrantProgram(publicKey.toBase58());
 
 	if (!grantProgram) {
 		return <></>;

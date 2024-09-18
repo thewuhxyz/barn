@@ -7,13 +7,10 @@ import { PublicKey } from "@solana/web3.js";
 
 export default function Project({ params }: { params: { address: string } }) {
 	const projectPk = params.address;
-
-	const { project, grantPk } = useBarnProject(projectPk);
-
-	const {
-		grant: { data: grant },
-		milestonePks: { data: milestones },
-	} = useBarnGrant(grantPk?.toBase58() ?? null);
+	const { grantPk } = useBarnProject(projectPk);
+	const { milestonePks: milestones } = useBarnGrant(
+		grantPk?.toBase58() ?? null
+	);
 
 	return (
 		<main className="flex-1 flex flex-col items-center justify-center space-y-16">

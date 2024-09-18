@@ -25,7 +25,6 @@ import {
 	getMint,
 	NATIVE_MINT,
 } from "@solana/spl-token";
-import Project from "@/app/project/[address]/page";
 import { MilestoneState } from "@barn/protocol";
 
 export function CreateUserProfile() {
@@ -108,10 +107,7 @@ export function ApproveSponsor() {
 export function AddNewProject() {
 	const { addProject } = useBarnRPC();
 	const wallet = useAnchorWallet();
-	const {
-		profile: { data: profile },
-		authority: { data: authority },
-	} = useBarnUser();
+	const { profile, authority } = useBarnUser();
 
 	function handleAddProject() {
 		try {
@@ -133,10 +129,7 @@ export function AddNewProject() {
 export function AddGrantProgram() {
 	const { addGrantProgram } = useBarnRPC();
 	const wallet = useAnchorWallet();
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
 	function handleAddGrantProgram() {
 		try {
@@ -164,10 +157,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 	const wallet = useAnchorWallet();
 	const { connection } = useConnection();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 	const { awardGrant } = useBarnRPC();
 
 	const { amount, project } = awardGrantConfig;
@@ -235,14 +225,9 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 
 	const wallet = useAnchorWallet();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
-	const {
-		grant: { data: grant },
-	} = useBarnGrant(grantPk.toBase58());
+	const { grant } = useBarnGrant(grantPk.toBase58());
 
 	const { addGrantMilestone } = useBarnRPC();
 
@@ -321,15 +306,11 @@ export function EditGrantMilestone({
 
 	const wallet = useAnchorWallet();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
-	const {
-		grant: { data: grant },
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { grant, milestone } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
 	const { editGrantMilestone } = useBarnRPC();
 
@@ -411,15 +392,11 @@ export function ReviseGrantMilestone({
 }) {
 	const wallet = useAnchorWallet();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
-	const {
-		grant: { data: grant },
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { grant, milestone } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
 	const { reviseGrantMilestone } = useBarnRPC();
 
@@ -457,15 +434,11 @@ export function ReviewGrantMilestone({
 }) {
 	const wallet = useAnchorWallet();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
-	const {
-		grant: { data: grant },
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { grant, milestone } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
 	const { reviewGrantMilestone } = useBarnRPC();
 
@@ -503,15 +476,11 @@ export function AcceptGrantMilestone({
 }) {
 	const wallet = useAnchorWallet();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
-	const {
-		grant: { data: grant },
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { grant, milestone } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
 	const { acceptGrantMilestone } = useBarnRPC();
 
@@ -549,15 +518,11 @@ export function RejectGrantMilestone({
 }) {
 	const wallet = useAnchorWallet();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
-	const {
-		grant: { data: grant },
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { grant, milestone } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
 	const { rejectGrantMilestone } = useBarnRPC();
 
@@ -596,15 +561,12 @@ export function SettleGrantMilestone({
 	const wallet = useAnchorWallet();
 	const { connection } = useConnection();
 
-	const {
-		authority: { data: authority },
-		profile: { data: profile },
-	} = useBarnUser();
+	const { authority, profile } = useBarnUser();
 
 	const {
-		authority: { data: projectAuthority },
-		grant: { data: grant },
-		milestone: { data: milestone },
+		authority: projectAuthority,
+		grant,
+		milestone,
 	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
 
 	const { settleGrantMilestone } = useBarnRPC();
@@ -633,7 +595,7 @@ export function SettleGrantMilestone({
 					grant.paymentMint,
 					wallet.publicKey,
 					true
-				), // expects this account to already be created and funded
+				), // expects signer token account to already be created and funded
 				to: projectAuthority.signer,
 				tokenProgram: mintAccountInfo.owner,
 			});
@@ -649,44 +611,16 @@ export function SettleGrantMilestone({
 	);
 }
 
-export function DevUpdateMilestone({
-	grantMilestonePk,
-}: {
-	grantMilestonePk: PublicKey;
-}) {
-	const {
-		profile: { data: profile },
-	} = useBarnUser();
-	const {
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
-	if (!profile || !milestone) return <></>;
-	return (
-		<>
-			{!profile.sponsor &&
-				MilestoneState.toStatus(milestone.state) === "inProgress" && (
-					<ReviewGrantMilestone grantMilestonePk={grantMilestonePk} />
-				)}
-			{!profile.sponsor &&
-				MilestoneState.toStatus(milestone.state) === "inReview" && (
-					<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
-				)}
-		</>
-	);
-}
-
 export function UpdateMilestone({
 	grantMilestonePk,
 }: {
 	grantMilestonePk: PublicKey;
 }) {
-	const {
-		profile: { data: profile },
-	} = useBarnUser();
-	const {
-		milestone: { data: milestone },
-	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { profile } = useBarnUser();
+	const { milestone } = useBarnGrantMilestone(grantMilestonePk.toBase58());
+
 	if (!profile || !milestone) return <></>;
+
 	return (
 		<>
 			{!profile.sponsor &&
