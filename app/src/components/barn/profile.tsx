@@ -17,7 +17,11 @@ import {
 	useBarnUser,
 } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
-import { AddGrantMilestone, EditGrantMilestone, UpdateMilestone } from "./project";
+import {
+	AddGrantMilestone,
+	EditGrantMilestone,
+	UpdateMilestone,
+} from "./project";
 import Link from "next/link";
 import BN from "bn.js";
 import { MilestoneState } from "@barn/protocol";
@@ -123,9 +127,12 @@ export function Notifications() {
 }
 
 export function ProfileCard() {
-	const { profile: userProfile } = useBarnUser();
+	const {
+		profile: userProfile,
+		authority: { data: authority },
+	} = useBarnUser();
 	const { data: profile } = userProfile;
-	if (!profile) {
+	if (!profile || !authority) {
 		return "Create a Profile";
 	}
 	return (
@@ -134,7 +141,7 @@ export function ProfileCard() {
 				<CardTitle>username: {profile.seed}</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<CardDescription>Owner: {profile.signer.toBase58()}</CardDescription>
+				<CardDescription>Owner: {authority.signer.toBase58()}</CardDescription>
 				<CardDescription>
 					Authority: {profile.authority.toBase58()}
 				</CardDescription>

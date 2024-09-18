@@ -20,7 +20,11 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
-import { getMint, NATIVE_MINT } from "@solana/spl-token";
+import {
+	getAssociatedTokenAddressSync,
+	getMint,
+	NATIVE_MINT,
+} from "@solana/spl-token";
 import Project from "@/app/project/[address]/page";
 import { MilestoneState } from "@barn/protocol";
 
@@ -106,16 +110,17 @@ export function AddNewProject() {
 	const wallet = useAnchorWallet();
 	const {
 		profile: { data: profile },
+		authority: { data: authority },
 	} = useBarnUser();
 
 	function handleAddProject() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "profile not created";
+			if (!profile || !authority) throw "profile not created";
 			return addProject({
 				uri: "some.json",
 				signer: wallet.publicKey,
-				profile: profile.profile,
+				profile: authority.profile,
 			});
 		} catch (e: any) {
 			toast.error(`Error occurred: ${e.message || e}`);
@@ -129,17 +134,18 @@ export function AddGrantProgram() {
 	const { addGrantProgram } = useBarnRPC();
 	const wallet = useAnchorWallet();
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
 	function handleAddGrantProgram() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "profile not created";
+			if (!profile || !authority) throw "profile not created";
 			return addGrantProgram({
 				uri: "some.json",
 				signer: wallet.publicKey,
-				profile: profile.profile,
+				profile: authority.profile,
 			});
 		} catch (e: any) {
 			toast.error(`Error occurred: ${e.message || e}`);
@@ -159,6 +165,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 	const { connection } = useConnection();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 	const { awardGrant } = useBarnRPC();
@@ -168,7 +175,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 	async function handleAddProject() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 
 			const paymentMint = NATIVE_MINT; // todo: any token
 			const decimals = (await getMint(connection, paymentMint)).decimals;
@@ -180,7 +187,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 				project: new PublicKey(project),
 				approvedAmount: new BN(parseFloat(amount) * 10 ** decimals),
 				paymentMint,
-				profile: profile.profile,
+				profile: authority.profile,
 			});
 		} catch (e: any) {
 			toast.error(`Error occurred: ${e.message || e}`);
@@ -229,6 +236,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 	const wallet = useAnchorWallet();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
@@ -243,7 +251,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 	async function handleAddProject() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 			if (!grant) throw "no grant project for user";
 
 			return addGrantMilestone({
@@ -251,7 +259,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 				signer: wallet.publicKey,
 				project: grant.project,
 				amount: new BN(parseFloat(amount) * 10 ** grant.paymentDecimals),
-				profile: profile.profile,
+				profile: authority.profile,
 				grant: grantPk,
 			});
 		} catch (e: any) {
@@ -314,6 +322,7 @@ export function EditGrantMilestone({
 	const wallet = useAnchorWallet();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
@@ -329,7 +338,7 @@ export function EditGrantMilestone({
 	async function handleAddProject() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 			if (!milestone) throw "no grant project for user";
 			if (!grant) throw "no grant project for user";
 
@@ -337,7 +346,7 @@ export function EditGrantMilestone({
 				uri: "",
 				signer: wallet.publicKey,
 				amount: new BN(parseFloat(amount) * 10 ** grant.paymentDecimals),
-				profile: profile.profile,
+				profile: authority.profile,
 				project: grant.project,
 				grant: milestone.grant,
 				grantMilestone: grantMilestonePk,
@@ -403,6 +412,7 @@ export function ReviseGrantMilestone({
 	const wallet = useAnchorWallet();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
@@ -416,13 +426,13 @@ export function ReviseGrantMilestone({
 	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 			if (!milestone) throw "no grant project for user";
 			if (!grant) throw "no grant project for user";
 
 			return reviseGrantMilestone({
 				signer: wallet.publicKey,
-				profile: profile.profile,
+				profile: authority.profile,
 				project: grant.project,
 				grant: milestone.grant,
 				grantMilestone: grantMilestonePk,
@@ -448,6 +458,7 @@ export function ReviewGrantMilestone({
 	const wallet = useAnchorWallet();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
@@ -461,13 +472,13 @@ export function ReviewGrantMilestone({
 	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 			if (!milestone) throw "no grant project for user";
 			if (!grant) throw "no grant project for user";
 
 			return reviewGrantMilestone({
 				signer: wallet.publicKey,
-				profile: profile.profile,
+				profile: authority.profile,
 				project: grant.project,
 				grant: milestone.grant,
 				grantMilestone: grantMilestonePk,
@@ -493,6 +504,7 @@ export function AcceptGrantMilestone({
 	const wallet = useAnchorWallet();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
@@ -506,13 +518,13 @@ export function AcceptGrantMilestone({
 	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 			if (!milestone) throw "no grant project for user";
 			if (!grant) throw "no grant project for user";
 
 			return acceptGrantMilestone({
 				signer: wallet.publicKey,
-				profile: profile.profile,
+				profile: authority.profile,
 				project: grant.project,
 				grant: milestone.grant,
 				grantMilestone: grantMilestonePk,
@@ -538,6 +550,7 @@ export function RejectGrantMilestone({
 	const wallet = useAnchorWallet();
 
 	const {
+		authority: { data: authority },
 		profile: { data: profile },
 	} = useBarnUser();
 
@@ -551,13 +564,13 @@ export function RejectGrantMilestone({
 	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			if (!profile) throw "no profile for user";
+			if (!profile || !authority) throw "no profile for user";
 			if (!milestone) throw "no grant project for user";
 			if (!grant) throw "no grant project for user";
 
 			return rejectGrantMilestone({
 				signer: wallet.publicKey,
-				profile: profile.profile,
+				profile: authority.profile,
 				project: grant.project,
 				grant: milestone.grant,
 				grantMilestone: grantMilestonePk,
@@ -575,52 +588,66 @@ export function RejectGrantMilestone({
 	);
 }
 
-// export function SettleGrantMilestone({
-// 	grantMilestonePk,
-// }: {
-// 	grantMilestonePk: PublicKey;
-// }) {
-// 	const wallet = useAnchorWallet();
+export function SettleGrantMilestone({
+	grantMilestonePk,
+}: {
+	grantMilestonePk: PublicKey;
+}) {
+	const wallet = useAnchorWallet();
+	const { connection } = useConnection();
 
-// 	const {
-// 		profile: { data: profile },
-// 	} = useBarnUser();
+	const {
+		authority: { data: authority },
+		profile: { data: profile },
+	} = useBarnUser();
 
-// 	const {
-// 		grant: { data: grant },
-// 		milestone: { data: milestone },
-// 	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const {
+		authority: { data: projectAuthority },
+		grant: { data: grant },
+		milestone: { data: milestone },
+	} = useBarnGrantMilestone(grantMilestonePk.toBase58());
 
-// 	const { settleGrantMilestone } = useBarnRPC();
+	const { settleGrantMilestone } = useBarnRPC();
 
-// 	async function handleClick() {
-// 		try {
-// 			if (!wallet) throw "wallet not connected";
-// 			if (!profile) throw "no profile for user";
-// 			if (!milestone) throw "no grant project for user";
-// 			if (!grant) throw "no grant project for user";
+	async function handleClick() {
+		try {
+			if (!wallet) throw "wallet not connected";
+			if (!profile || !authority) throw "no profile for user";
+			if (!milestone) throw "no grant project for user";
+			if (!grant) throw "no grant project for user";
+			if (!projectAuthority) throw "project owner not found"
 
-// 			return settleGrantMilestone({
-// 				signer: wallet.publicKey,
-// 				profile: profile.profile,
-// 				grant: milestone.grant,
-// 				grantMilestone: grantMilestonePk,
-// 				paymentMint: grant.paymentMint,
-// 				// signerTokenAccount: getA
-// 				to:
+			const mintAccountInfo = await connection.getAccountInfo(
+				grant.paymentMint
+			);
 
-// 			});
-// 		} catch (e: any) {
-// 			toast.error(`Error occurred: ${e.message || e}`);
-// 		}
-// 	}
+			if (!mintAccountInfo) throw "token mint not creted";
 
-// 	return (
-// 		<Button className="w-full" variant="secondary" onClick={handleClick}>
-// 			Reject
-// 		</Button>
-// 	);
-// }
+			return settleGrantMilestone({
+				signer: wallet.publicKey,
+				profile: authority.profile,
+				grant: milestone.grant,
+				grantMilestone: grantMilestonePk,
+				paymentMint: grant.paymentMint,
+				signerTokenAccount: getAssociatedTokenAddressSync(
+					grant.paymentMint,
+					wallet.publicKey,
+					true
+				), // expects this account to already be created and funded
+				to: projectAuthority.signer,
+				tokenProgram: mintAccountInfo.owner,
+			});
+		} catch (e: any) {
+			toast.error(`Error occurred: ${e.message || e}`);
+		}
+	}
+
+	return (
+		<Button className="w-full" variant="secondary" onClick={handleClick}>
+			Reject
+		</Button>
+	);
+}
 
 export function DevUpdateMilestone({
 	grantMilestonePk,

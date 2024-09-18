@@ -31,30 +31,8 @@ import type {
 export function useBarnRPC() {
 	const barn = useBarn();
 
-	const doCreateUser = (args: CreateUserArgs) => barn.rpc.createUser(args);
-	const doApproveSponsor = (args: ApproveSponsorArgs) =>
-		barn.rpc.approveSponsor(args);
-	const doAddProject = (args: AddProjectArgs) => barn.rpc.addProject(args);
-	const doAddGrantProgram = (args: AddGrantProgramArgs) =>
-		barn.rpc.addGrantProgram(args);
-	const doAwardGrant = (args: AwardGrantArgs) => barn.rpc.awardGrant(args);
-	const doAddGrantMilestone = (args: AddGrantMilestoneArgs) =>
-		barn.rpc.addGrantMilestone(args);
-	const doEditGrantMilestone = (args: EditGrantMilestoneArgs) =>
-		barn.rpc.editGrantMilestone(args);
-	const doReviseGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
-		barn.rpc.reviseGrantMilestone(args);
-	const doReviewGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
-		barn.rpc.reviewGrantMilestone(args);
-	const doAcceptGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
-		barn.rpc.acceptGrantMilestone(args);
-	const doRejectGrantMilestone = (args: UpdateGrantMilestoneArgs) =>
-		barn.rpc.rejectGrantMilestone(args);
-	const doSettleGrantMilestone = (args: SettleGrantMilestoneArgs) =>
-		barn.rpc.settleGrantMilestone(args);
-
 	const createUser = useMutation({
-		mutationFn: doCreateUser,
+		mutationFn: (args: CreateUserArgs) => barn.rpc.createUser(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -68,7 +46,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const approveSponsor = useMutation({
-		mutationFn: doApproveSponsor,
+		mutationFn: (args: ApproveSponsorArgs) => barn.rpc.approveSponsor(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -82,7 +60,8 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const acceptGrantMilestone = useMutation({
-		mutationFn: doAcceptGrantMilestone,
+		mutationFn: (args: UpdateGrantMilestoneArgs) =>
+			barn.rpc.acceptGrantMilestone(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -96,7 +75,8 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const addGrantMilestone = useMutation({
-		mutationFn: doAddGrantMilestone,
+		mutationFn: (args: AddGrantMilestoneArgs) =>
+			barn.rpc.addGrantMilestone(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -110,7 +90,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const addGrantProgram = useMutation({
-		mutationFn: doAddGrantProgram,
+		mutationFn: (args: AddGrantProgramArgs) => barn.rpc.addGrantProgram(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -124,7 +104,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const addProject = useMutation({
-		mutationFn: doAddProject,
+		mutationFn: (args: AddProjectArgs) => barn.rpc.addProject(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -138,21 +118,7 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const awardGrant = useMutation({
-		mutationFn: doAwardGrant,
-		onSuccess: (tx) => {
-			toast.success("Transaction successful!", {
-				action: <GoToExplorer tx={tx} cluster="custom" />,
-				className: "w-max",
-			});
-		},
-		onError: (e) => {
-			console.error("error:", e);
-			toast.error(`Transaction failed. ${e.message}`);
-		},
-	}).mutate;
-
-	const rejectGrantMilestone = useMutation({
-		mutationFn: doRejectGrantMilestone,
+		mutationFn: (args: AwardGrantArgs) => barn.rpc.awardGrant(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -166,7 +132,23 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const editGrantMilestone = useMutation({
-		mutationFn: doEditGrantMilestone,
+		mutationFn: (args: EditGrantMilestoneArgs) =>
+			barn.rpc.editGrantMilestone(args),
+		onSuccess: (tx) => {
+			toast.success("Transaction successful!", {
+				action: <GoToExplorer tx={tx} cluster="custom" />,
+				className: "w-max",
+			});
+		},
+		onError: (e) => {
+			console.error("error:", e);
+			toast.error(`Transaction failed. ${e.message}`);
+		},
+	}).mutate;
+
+	const rejectGrantMilestone = useMutation({
+		mutationFn: (args: UpdateGrantMilestoneArgs) =>
+			barn.rpc.rejectGrantMilestone(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -180,7 +162,8 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const reviewGrantMilestone = useMutation({
-		mutationFn: doReviewGrantMilestone,
+		mutationFn: (args: UpdateGrantMilestoneArgs) =>
+			barn.rpc.reviewGrantMilestone(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -194,7 +177,8 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const reviseGrantMilestone = useMutation({
-		mutationFn: doReviseGrantMilestone,
+		mutationFn: (args: UpdateGrantMilestoneArgs) =>
+			barn.rpc.reviseGrantMilestone(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -208,7 +192,8 @@ export function useBarnRPC() {
 	}).mutate;
 
 	const settleGrantMilestone = useMutation({
-		mutationFn: doSettleGrantMilestone,
+		mutationFn: (args: SettleGrantMilestoneArgs) =>
+			barn.rpc.settleGrantMilestone(args),
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
 				action: <GoToExplorer tx={tx} cluster="custom" />,
@@ -241,15 +226,38 @@ export function useBarnUser() {
 	const barn = useBarn();
 	const { publicKey } = useWallet();
 
-	const profile = useQuery({
-		queryKey: ["profile", { publicKey: publicKey?.toBase58() ?? null }],
+	const { profile, projectOrProgramPks, authority } = useBarnAuthority(
+		publicKey ? barn.account.authorityAddress(publicKey).toBase58() : null
+	);
+
+	return { profile, projectOrProgramPks, authority };
+}
+
+export function useBarnAuthority(authorityPk: string | null) {
+	const barn = useBarn();
+
+	const authority = useQuery({
+		queryKey: ["authority", { authorityPk }],
 		queryFn: ({
 			queryKey,
-		}: QueryFunctionContext<[string, { publicKey: string | null }]>) => {
-			const [_, { publicKey }] = queryKey;
-			return publicKey
-				? barn.account.getUserProfile(new PublicKey(publicKey))
+		}: QueryFunctionContext<[string, { authorityPk: string | null }]>) => {
+			const [_, { authorityPk }] = queryKey;
+			return authorityPk
+				? barn.account.authority(new PublicKey(authorityPk))
 				: null;
+		},
+	});
+
+	const profile = useQuery({
+		queryKey: [
+			"profile",
+			{ profilePk: authority.data?.profile.toBase58() || null },
+		],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<[string, { profilePk: string | null }]>) => {
+			const [_, { profilePk }] = queryKey;
+			return profilePk ? barn.account.profile(new PublicKey(profilePk)) : null;
 		},
 	});
 
@@ -257,7 +265,7 @@ export function useBarnUser() {
 		queryKey: [
 			"project-keys",
 			{
-				profilePk: profile.data?.profile?.toBase58() ?? null,
+				profilePk: authority.data?.profile.toBase58() || null,
 				count: profile.data?.count || null,
 				sponsor: profile.data?.sponsor ?? null,
 			},
@@ -285,7 +293,27 @@ export function useBarnUser() {
 		},
 	});
 
-	return { profile, projectOrProgramPks };
+	return { authority, profile, projectOrProgramPks };
+}
+
+export function useBarnProfile(profilePk: string | null) {
+	const barn = useBarn();
+
+	const profile = useQuery({
+		queryKey: ["profile", { profilePk }],
+		queryFn: ({
+			queryKey,
+		}: QueryFunctionContext<[string, { profilePk: string | null }]>) => {
+			const [_, { profilePk }] = queryKey;
+			return profilePk ? barn.account.profile(new PublicKey(profilePk)) : null;
+		},
+	});
+
+	const { projectOrProgramPks, authority } = useBarnAuthority(
+		profile.data?.authority.toBase58() || null
+	);
+
+	return { profile, projectOrProgramPks, authority };
 }
 
 export function useBarnProject(projectPk: string | null) {
@@ -301,8 +329,14 @@ export function useBarnProject(projectPk: string | null) {
 		},
 	});
 
+	const { profile, authority } = useBarnProfile(
+		project.data?.profile.toBase58() || null
+	);
+
 	return {
 		project,
+		profile,
+		authority,
 		grantPk: project.data?.grant ?? null,
 	};
 }
@@ -319,6 +353,10 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 			return barn.account.grantProgram(new PublicKey(grantProgramPk));
 		},
 	});
+
+	const { profile, authority } = useBarnProfile(
+		grantProgram.data?.profile.toBase58() || null
+	);
 
 	const grantPks = useQuery({
 		queryKey: [
@@ -346,7 +384,7 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 		},
 	});
 
-	return { grantProgram, grantPks: grantPks.data ?? null };
+	return { grantProgram, authority, profile, grantPks: grantPks.data ?? null };
 }
 
 export function useBarnGrant(grantPk: string | null) {
@@ -362,9 +400,9 @@ export function useBarnGrant(grantPk: string | null) {
 		},
 	});
 
-	const project = useBarnProject(
+	const { project, authority, profile } = useBarnProject(
 		grant.data?.project.toBase58() || null
-	).project;
+	);
 
 	const milestonePks = useQuery({
 		queryKey: [
@@ -386,7 +424,7 @@ export function useBarnGrant(grantPk: string | null) {
 		},
 	});
 
-	return { grant, project, milestonePks };
+	return { grant, project, milestonePks, authority, profile };
 }
 
 export function useBarnGrantMilestone(milestonePk: string) {
@@ -402,11 +440,11 @@ export function useBarnGrantMilestone(milestonePk: string) {
 		},
 	});
 
-	const { grant, project } = useBarnGrant(
+	const { grant, project, authority, profile } = useBarnGrant(
 		milestone.data?.grant.toBase58() || null
 	);
 
-	return { milestone, grant, project };
+	return { milestone, grant, project, authority, profile };
 }
 
 export function useBarn() {
