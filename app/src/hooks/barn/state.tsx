@@ -299,3 +299,23 @@ export function useBarnGrantMilestone(milestonePk: string) {
 
 	return { milestone: milestone.data, grant, project, authority, profile };
 }
+
+export function useBarnAccount() {
+	const barn = useBarn();
+
+	const allGrants = useQuery({
+		queryKey: ["all-grants"],
+		queryFn: () => {
+			return barn.account.getAllGrantAccount();
+		},
+	});
+
+	const addGrantPrograms = useQuery({
+		queryKey: ["all-grant-programs"],
+		queryFn: () => {
+			return barn.program.account.grantProgram.all();
+		},
+	});
+
+	return { allGrants: allGrants.data, allGrantPrograms: addGrantPrograms.data };
+}

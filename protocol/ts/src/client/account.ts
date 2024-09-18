@@ -135,6 +135,27 @@ export class BarnAccount {
 		return projects.map((p) => p.account);
 	}
 
+	async getAllGrantAccount(): Promise<GrantAccount[]> {
+		const grants = await this.barn.account.grant.all();
+		return await Promise.all(
+			grants.map(async ({ account: grant }) => {
+				const { paymentMint } = grant;
+
+				const { decimals } = await getMint(
+					this.barn.provider.connection,
+					paymentMint
+				);
+
+				return {
+					...grant,
+					paymentDecimals: decimals,
+					approvedAmount: toUiAmount(grant.approvedAmount, decimals),
+					paidOut: toUiAmount(grant.paidOut, decimals),
+				};
+			})
+		);
+	}
+
 	async authority(authorityPk: PublicKey): Promise<AuthorityAccount | null> {
 		const authority = await this.barn.account.authority.fetchNullable(
 			authorityPk
@@ -323,7 +344,6 @@ export type MilestoneStateEnum =
 	| { rejected: {} }
 	| { paid: {} };
 
-
 export type MilestoneStatus =
 	| "inProgress"
 	| "inReview"
@@ -331,13 +351,12 @@ export type MilestoneStatus =
 	| "rejected"
 	| "paid";
 
-
 export class MilestoneState {
 	static toStatus(m: MilestoneStateEnum): MilestoneStatus {
 		return Object.keys(m)[0] as MilestoneStatus;
 	}
-	
+
 	static toEnum(m: MilestoneStatus): MilestoneStateEnum {
-		return { [m]: {} } as MilestoneStateEnum;;
+		return { [m]: {} } as MilestoneStateEnum;
 	}
 }

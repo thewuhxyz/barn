@@ -8,7 +8,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { useBarnGrantProgram, useBarnProject } from "@/hooks/barn";
+import {
+	useBarnAccount,
+	useBarnGrantProgram,
+	useBarnProject,
+} from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { AwardGrant } from "./project";
@@ -16,10 +20,24 @@ import { AwardGrant } from "./project";
 export type ProjectCardProps = {};
 
 export function AllGrantedProjects() {
+	const { allGrants } = useBarnAccount();
+	if (!allGrants) return<></>;
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{Array.from({ length: 10 }).map((_, i) => (
-				<ProjectCards key={i} />
+			{allGrants.map((grant, i) => (
+				<ProjectCard key={i} publicKey={grant.project}></ProjectCard>
+			))}
+		</div>
+	);
+}
+
+export function AllGrantPrograms() {
+	const { allGrantPrograms } = useBarnAccount();
+	if (!allGrantPrograms) return<></>;
+	return (
+		<div className="grid grid-cols-2 gap-8 w-full">
+			{allGrantPrograms.map(({ publicKey }, i) => (
+				<GrantProgramCard key={i} publicKey={publicKey}></GrantProgramCard>
 			))}
 		</div>
 	);

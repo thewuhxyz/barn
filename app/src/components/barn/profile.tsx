@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { GrantProgramCard, ProjectCard } from ".";
 import {
+	useBarnAccount,
 	useBarnGrant,
 	useBarnGrantMilestone,
 	useBarnGrantProgram,
@@ -293,4 +294,10 @@ export function Notification({ publicKey }: { publicKey: PublicKey }) {
 				)}
 		</>
 	);
+}
+
+export function GrantProjectCard({ grantPk }: { grantPk: PublicKey }) {
+	const { grant } = useBarnGrant(grantPk.toBase58());
+	if (!grant) return;
+	return <ProjectCard publicKey={grant.project}></ProjectCard>;
 }
