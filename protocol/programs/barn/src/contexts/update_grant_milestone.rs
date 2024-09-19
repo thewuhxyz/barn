@@ -49,9 +49,14 @@ pub struct UpdateGrantMilestone<'info> {
 }
 
 impl<'info> UpdateGrantMilestone<'info> {
-    pub fn revise_milestone(&mut self, config: MilestoneRevisionConfig) -> Result<()> {
+    pub fn edit_milestone(&mut self, config: MilestoneRevisionConfig) -> Result<()> {
         self.check_signer()?;
-        self.grant_milestone.revise(config)
+        self.grant_milestone.edit(config)
+    }
+
+    pub fn revise_milestone(&mut self) -> Result<()> {
+        self.check_signer()?;
+        self.grant_milestone.revise()
     }
 
     pub fn review_milestone(&mut self) -> Result<()> {

@@ -6,124 +6,192 @@ import { toUiAmount } from "./helpers";
 import BN from "bn.js";
 
 export class BarnAccount {
-	static authorityAddress(barn: Program<Barn>, signer: PublicKey): PublicKey {
-		return PublicKey.findProgramAddressSync(
-			[signer.toBuffer()],
-			barn.programId
-		)[0];
+	constructor(private barn: Program<Barn>) {}
+
+	async getUserProjects(signer: PublicKey): Promise<ProjectAccount[] | null> {
+		const authority = await this.getUserAuthority(signer);
+		if (!authority) return authority;
+
+		const profile = await this.profile(authority.profile);
+		if (!profile) return profile;
+
+		const { count } = profile;
+		if (!count) return null;
+
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.getProjectOrGrantProgramAddress(
+				authority.profile,
+				i,
+				profile.sponsor
+			)
+		);
+
+		const projects = await Promise.all(
+			projectPks.map((pk) => this.project(pk))
+		).then((nullableProjects) => {
+			let projects: ProjectAccount[] = [];
+			// remove all projects that are null
+			nullableProjects.forEach((p) => {
+				if (p !== null) {
+					projects.push(p);
+				}
+			});
+			return projects;
+		});
+
+		// if the projects array is empty, return null
+		if (!projects.length) return null;
+
+		return projects;
 	}
 
-	static profileAddress(barn: Program<Barn>, seed: string): PublicKey {
-		return PublicKey.findProgramAddressSync(
-			[Buffer.from("proflle"), Buffer.from(seed)],
-			barn.programId
-		)[0];
+	async getUserProjectsPks(signer: PublicKey): Promise<PublicKey[] | null> {
+		const authority = await this.getUserAuthority(signer);
+		if (!authority) return authority;
+
+		const profile = await this.profile(authority.profile);
+		if (!profile) return profile;
+
+		const { count } = profile;
+		if (!count) return null;
+
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.getProjectOrGrantProgramAddress(
+				authority.profile,
+				i,
+				profile.sponsor
+			)
+		);
+
+		return projectPks;
 	}
 
-	static projectAddress(
-		barn: Program<Barn>,
-		profile: PublicKey,
-		id: number
-	): PublicKey {
-		return PublicKey.findProgramAddressSync(
-			[
-				Buffer.from("project"),
-				profile.toBuffer(),
-				new BN(id).toArrayLike(Buffer, "le", 4), // u32
-			],
-			barn.programId
-		)[0];
-	}
-	
-	static grantProgramAddress(
-		barn: Program<Barn>,
-		profile: PublicKey,
-		id: number
-	): PublicKey {
-		return PublicKey.findProgramAddressSync(
-			[
-				Buffer.from("grant-program"),
-				profile.toBuffer(),
-				new BN(id).toArrayLike(Buffer, "le", 4), // u32
-			],
-			barn.programId
-		)[0];
-	}
-	
-	static grantAddress(
-		barn: Program<Barn>,
-		grantProgram: PublicKey,
-		id: number
-	): PublicKey {
-		return PublicKey.findProgramAddressSync(
-			[
-				Buffer.from("grant"),
-				grantProgram.toBuffer(),
-				new BN(id).toArrayLike(Buffer, "le", 4), // u32
-			],
-			barn.programId
-		)[0];
-	}
-	
-	static grantMilestoneAddress(
-		barn: Program<Barn>,
-		grant: PublicKey,
-		id: number
-	): PublicKey {
-		return PublicKey.findProgramAddressSync(
-			[
-				Buffer.from("grant-milestone"),
-				grant.toBuffer(),
-				new BN(id).toArrayLike(Buffer, "le", 4), // u32
-			],
-			barn.programId
-		)[0];
+	getProjectOrGrantProgramPks(
+		profilePk: PublicKey,
+		count: number,
+		sponsor: boolean
+	): PublicKey[] | null {
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.getProjectOrGrantProgramAddress(profilePk, i, sponsor)
+		);
+
+		return projectPks;
 	}
 
-	static async authority(
-		barn: Program<Barn>,
-		authorityPk: PublicKey
-	): Promise<AuthorityAccount | null> {
-		const authority = await barn.account.authority.fetchNullable(authorityPk);
+	getGrantProgramPks(projectPk: PublicKey, count: number): PublicKey[] | null {
+		const grantProgramPks = Array.from({ length: count }, (_, i) =>
+			this.grantProgramAddress(projectPk, i)
+		);
+
+		return grantProgramPks;
+	}
+
+	getProjectPks(projectPk: PublicKey, count: number): PublicKey[] | null {
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.projectAddress(projectPk, i)
+		);
+
+		return projectPks;
+	}
+
+	getGrantsPks(grantProgramPk: PublicKey, count: number): PublicKey[] | null {
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.grantAddress(grantProgramPk, i)
+		);
+
+		return projectPks;
+	}
+
+	getGrantMilestonesPks(grantPk: PublicKey, count: number): PublicKey[] | null {
+		const projectPks = Array.from({ length: count }, (_, i) =>
+			this.grantMilestoneAddress(grantPk, i)
+		);
+
+		return projectPks;
+	}
+
+	async getUserProfile(
+		user: PublicKey
+	): Promise<(ProfileAccount & AuthorityAccount) | null> {
+		const authority = await this.getUserAuthority(user);
+		if (!authority) return authority;
+		const { profile } = authority;
+		const profileAccount = await this.profile(profile);
+		if (!profileAccount) return profileAccount;
+		return { ...profileAccount, ...authority };
+	}
+
+	async getUserAuthority(signer: PublicKey): Promise<AuthorityAccount | null> {
+		return await this.authority(this.authorityAddress(signer));
+	}
+
+	async getAllProjects(): Promise<PublicKey[]> {
+		const projects = await this.barn.account.project.all();
+		return projects.map((p) => p.publicKey);
+	}
+
+	async getAllProjectAccounts(): Promise<ProjectAccount[]> {
+		const projects = await this.barn.account.project.all();
+		return projects.map((p) => p.account);
+	}
+
+	async getAllGrantAccount(): Promise<GrantAccount[]> {
+		const grants = await this.barn.account.grant.all();
+		return await Promise.all(
+			grants.map(async ({ account: grant }) => {
+				const { paymentMint } = grant;
+
+				const { decimals } = await getMint(
+					this.barn.provider.connection,
+					paymentMint
+				);
+
+				return {
+					...grant,
+					paymentDecimals: decimals,
+					approvedAmount: toUiAmount(grant.approvedAmount, decimals),
+					paidOut: toUiAmount(grant.paidOut, decimals),
+				};
+			})
+		);
+	}
+
+	async authority(authorityPk: PublicKey): Promise<AuthorityAccount | null> {
+		const authority = await this.barn.account.authority.fetchNullable(
+			authorityPk
+		);
 		return authority;
 	}
 
-	static async profile(
-		barn: Program<Barn>,
-		profilePk: PublicKey
-	): Promise<ProfileAccount | null> {
-		const profile = await barn.account.profile.fetchNullable(profilePk);
+	async profile(profilePk: PublicKey): Promise<ProfileAccount | null> {
+		const profile = await this.barn.account.profile.fetchNullable(profilePk);
 		return profile;
 	}
 
-	static async project(
-		barn: Program<Barn>,
-		projectPk: PublicKey
-	): Promise<ProjectAccount | null> {
-		const project = await barn.account.project.fetchNullable(projectPk);
+	async project(projectPk: PublicKey): Promise<ProjectAccount | null> {
+		const project = await this.barn.account.project.fetchNullable(projectPk);
 		return project;
 	}
 
-	static async grantProgram(
-		barn: Program<Barn>,
+	async grantProgram(
 		grantProgramPk: PublicKey
 	): Promise<GrantProgramAccount | null> {
-		const grantProgram = await barn.account.grantProgram.fetchNullable(
+		const grantProgram = await this.barn.account.grantProgram.fetchNullable(
 			grantProgramPk
 		);
 		return grantProgram;
 	}
 
-	static async grant(
-		barn: Program<Barn>,
-		grantPk: PublicKey
-	): Promise<GrantAccount | null> {
-		const grant = await barn.account.grant.fetchNullable(grantPk);
+	async grant(grantPk: PublicKey): Promise<GrantAccount | null> {
+		const grant = await this.barn.account.grant.fetchNullable(grantPk);
 		if (!grant) return grant;
 
 		const { paymentMint } = grant;
 
-		const { decimals } = await getMint(barn.provider.connection, paymentMint);
+		const { decimals } = await getMint(
+			this.barn.provider.connection,
+			paymentMint
+		);
 
 		return {
 			...grant,
@@ -133,14 +201,86 @@ export class BarnAccount {
 		};
 	}
 
-	static async grantMilestone(
-		barn: Program<Barn>,
+	async grantMilestone(
 		grantMilestonePk: PublicKey
 	): Promise<GrantMilestoneAccount | null> {
-		const grantMilestone = await barn.account.grantMilestone.fetchNullable(
+		const grantMilestone = await this.barn.account.grantMilestone.fetchNullable(
 			grantMilestonePk
 		);
 		return grantMilestone;
+	}
+
+	getProjectOrGrantProgramAddress(
+		profilePk: PublicKey,
+		id: number,
+		sponsor: boolean
+	) {
+		return sponsor
+			? this.grantProgramAddress(profilePk, id)
+			: this.projectAddress(profilePk, id);
+	}
+
+	//////////////////////////////////////////
+	//
+	// PDA
+	//
+	//////////////////////////////////////////
+	authorityAddress(signer: PublicKey): PublicKey {
+		return PublicKey.findProgramAddressSync(
+			[signer.toBuffer()],
+			this.barn.programId
+		)[0];
+	}
+
+	profileAddress(seed: string): PublicKey {
+		return PublicKey.findProgramAddressSync(
+			[Buffer.from("proflle"), Buffer.from(seed)],
+			this.barn.programId
+		)[0];
+	}
+
+	projectAddress(profile: PublicKey, id: number): PublicKey {
+		return PublicKey.findProgramAddressSync(
+			[
+				Buffer.from("project"),
+				profile.toBuffer(),
+				new BN(id).toArrayLike(Buffer, "le", 4), // u32
+			],
+			this.barn.programId
+		)[0];
+	}
+
+	grantProgramAddress(profile: PublicKey, id: number): PublicKey {
+		return PublicKey.findProgramAddressSync(
+			[
+				Buffer.from("grant-program"),
+				profile.toBuffer(),
+				new BN(id).toArrayLike(Buffer, "le", 4), // u32
+			],
+			this.barn.programId
+		)[0];
+	}
+
+	grantAddress(grantProgram: PublicKey, id: number): PublicKey {
+		return PublicKey.findProgramAddressSync(
+			[
+				Buffer.from("grant"),
+				grantProgram.toBuffer(),
+				new BN(id).toArrayLike(Buffer, "le", 4), // u32
+			],
+			this.barn.programId
+		)[0];
+	}
+
+	grantMilestoneAddress(grant: PublicKey, id: number): PublicKey {
+		return PublicKey.findProgramAddressSync(
+			[
+				Buffer.from("grant-milestone"),
+				grant.toBuffer(),
+				new BN(id).toArrayLike(Buffer, "le", 4), // u32
+			],
+			this.barn.programId
+		)[0];
 	}
 }
 
@@ -180,7 +320,7 @@ export type GrantMilestoneAccount = {
 	bump: number;
 	grant: PublicKey;
 	id: number;
-	state: MilestoneState;
+	state: MilestoneStateEnum;
 	uri: string;
 };
 
@@ -197,10 +337,26 @@ export type GrantAccount = {
 	uri: string;
 };
 
+export type MilestoneStateEnum =
+	| { inProgress: {} }
+	| { inReview: {} }
+	| { accepted: {} }
+	| { rejected: {} }
+	| { paid: {} };
+
+export type MilestoneStatus =
+	| "inProgress"
+	| "inReview"
+	| "accepted"
+	| "rejected"
+	| "paid";
+
 export class MilestoneState {
-	static IN_PROGRESS = { inProgress: {} };
-	static IN_REVIEW = { inReview: {} };
-	static ACCEPTED = { accepted: {} };
-	static REJECTED = { rejected: {} };
-	static PAID = { paid: {} };
+	static toStatus(m: MilestoneStateEnum): MilestoneStatus {
+		return Object.keys(m)[0] as MilestoneStatus;
+	}
+
+	static toEnum(m: MilestoneStatus): MilestoneStateEnum {
+		return { [m]: {} } as MilestoneStateEnum;
+	}
 }

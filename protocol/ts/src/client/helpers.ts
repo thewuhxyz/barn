@@ -1,7 +1,7 @@
 import BN from "bn.js";
 
 export function toUiAmount(amount: BN, decimals: number): number {
-	return amount.div(new BN(10 ** decimals)).toNumber();
+	return amount.toNumber() / (10 ** decimals);
 }
 
 export function toAmount(amount: number, decimals: number): BN {

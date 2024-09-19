@@ -29,6 +29,7 @@ pub struct AddGrantMilestone<'info> {
     pub project: Account<'info, Project>,
 
     #[account(
+        mut,
         seeds=[b"grant", grant.program.key().as_ref(), grant.id.to_le_bytes().as_ref()],
         bump=grant.bump,
         has_one=project,
@@ -36,7 +37,7 @@ pub struct AddGrantMilestone<'info> {
     pub grant: Account<'info, Grant>,
 
     #[account(
-        init,
+        init_if_needed,
         payer=signer,
         space=8+GrantMilestone::INIT_SPACE,
         seeds=[b"grant-milestone", grant.key().as_ref(), grant.count.to_le_bytes().as_ref()],

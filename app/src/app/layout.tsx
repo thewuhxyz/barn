@@ -21,10 +21,36 @@ export default function RootLayout({
 			<body className={inter.className}>
 				<Providers>
 					<main className="mx-auto max-w-6xl p-2 min-h-screen flex flex-col">
-						<header className="mx-auto flex w-full max-w-3xl justify-between py-4 pb-16">
+						<header className="mx-auto flex w-full max-w-6xl justify-between py-4 pb-16">
 							<Link href="/">
 								<p className="text-3xl cursor-default">Barn</p>
 							</Link>
+							<nav className="flex space-x-8 items-center text-sm text-muted-foreground">
+								<ul>
+									<Link href="/project">
+										<p className="cursor-default hover:text-primary">
+											Project
+										</p>
+									</Link>
+								</ul>
+								<ul>
+									<Link href="/program">
+										<p className="cursor-default hover:text-primary">
+											Grant Program
+										</p>
+									</Link>
+								</ul>
+								<ul>
+									<Link href="/profile">
+										<p className="cursor-default hover:text-primary">Profile</p>
+									</Link>
+								</ul>
+								<ul>
+									<Link href="/admin">
+										<p className="cursor-default hover:text-primary">Admin</p>
+									</Link>
+								</ul>
+							</nav>
 							<WalletButton />
 						</header>
 						{children}
