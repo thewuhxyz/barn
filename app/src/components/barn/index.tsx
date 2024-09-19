@@ -57,7 +57,7 @@ export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
 					<CardTitle>ProjectTitle - {project.id}</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Desecription: "description"</CardDescription>
+					<CardDescription>Desecription: description</CardDescription>
 					<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
 					<CardDescription>
 						grant: {project.grant?.toBase58() ?? null}
@@ -82,7 +82,7 @@ export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
 					<CardTitle>Grant Program - {grantProgram.id}</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Desecription: "description"</CardDescription>
+					<CardDescription>Desecription: description</CardDescription>
 					<CardDescription>
 						Owner: {grantProgram.profile.toBase58()}
 					</CardDescription>
@@ -103,13 +103,13 @@ export function ProjectCards() {
 		<Link className="w-full" href={"/project/address"}>
 			<Card className="w-full">
 				<CardHeader>
-					<CardTitle>ProjectTitle | "approved_amount"</CardTitle>
+					<CardTitle>ProjectTitle | approved_amount</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Desecription: "description"</CardDescription>
+					<CardDescription>Desecription: description</CardDescription>
 					<CardDescription>Github: {"<github_url>"}</CardDescription>
-					<CardDescription>Owner: "owner"</CardDescription>
-					<CardDescription>Amount paid out: "amount_paid_out"</CardDescription>
+					<CardDescription>Owner: owner</CardDescription>
+					<CardDescription>Amount paid out: amount_paid_out</CardDescription>
 				</CardContent>
 			</Card>
 		</Link>

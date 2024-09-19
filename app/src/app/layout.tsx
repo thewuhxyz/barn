@@ -21,7 +21,7 @@ export default function RootLayout({
 			<body className={inter.className}>
 				<Providers>
 					<main className="mx-auto max-w-6xl p-2 min-h-screen flex flex-col">
-						<header className="mx-auto flex w-full max-w-3xl justify-between py-4 pb-16">
+						<header className="mx-auto flex w-full max-w-6xl justify-between py-4 pb-16">
 							<Link href="/">
 								<p className="text-3xl cursor-default">Barn</p>
 							</Link>

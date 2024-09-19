@@ -23,7 +23,6 @@ import {
 	UpdateMilestone,
 } from "./project";
 import Link from "next/link";
-import BN from "bn.js";
 import { MilestoneState } from "@barn/protocol";
 
 export type ProjectCardProps = {};
@@ -119,10 +118,10 @@ export function AllUserNotifications() {
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{profile.sponsor &&
 				programPks &&
-				programPks.map((pk) => <NotificationsFromProgramCard publicKey={pk} />)}
+				programPks.map((pk) => <NotificationsFromProgramCard key={pk.toBase58()} publicKey={pk} />)}
 			{!profile.sponsor &&
 				projectPks &&
-				projectPks.map((pk) => <NotificationsFromProjectCard publicKey={pk} />)}
+				projectPks.map((pk) => <NotificationsFromProjectCard key={pk.toBase58()} publicKey={pk} />)}
 		</div>
 	);
 }
@@ -208,7 +207,7 @@ export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Description: "description"</CardDescription>
+					<CardDescription>Description: description</CardDescription>
 					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
 					<CardDescription>
 						Grant Program: {grant.program.toBase58()}
@@ -243,7 +242,7 @@ export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Desecription: "description"</CardDescription>
+					<CardDescription>Desecription: description</CardDescription>
 					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
 					<CardDescription>
 						Grant Program: {grant.program.toBase58()}
@@ -266,7 +265,7 @@ export function Notifications({ grantPk }: { grantPk: PublicKey }) {
 	return (
 		<>
 			{milestonePks.map((pk) => (
-				<Notification publicKey={pk} />
+				<Notification key={pk.toBase58()} publicKey={pk} />
 			))}
 		</>
 	);
