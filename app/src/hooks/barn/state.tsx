@@ -4,17 +4,25 @@ import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useBarn } from "./client";
+import { useFetchBarnURI } from "./uri";
+import {
+	GrantMilestoneURI,
+	GrantProgramURI,
+	GrantURI,
+	ProfileURI,
+	ProjectURI,
+} from "@/lib/uri-schema";
 
 export function useBarnUser() {
 	const barn = useBarn();
 	const { publicKey } = useWallet();
 
-	const { profile, projectOrProgramPks, authority, programPks, projectPks } =
+	const { profile, projectOrProgramPks, authority, programPks, projectPks, profileUri } =
 		useBarnAuthority(
 			publicKey ? barn.account.authorityAddress(publicKey).toBase58() : null
 		);
 
-	return { profile, projectOrProgramPks, authority, projectPks, programPks };
+	return { profile, projectOrProgramPks, authority, projectPks, programPks, profileUri };
 }
 
 export function useBarnAuthority(authorityPk: string | null) {
@@ -129,9 +137,15 @@ export function useBarnAuthority(authorityPk: string | null) {
 		},
 	});
 
+	const profileUri = useFetchBarnURI<ProfileURI>({
+		pk: authority.data?.profile.toBase58() || null,
+		uri: profile.data?.uri || null,
+	});
+
 	return {
 		authority: authority.data,
 		profile: profile.data,
+		profileUri: profileUri,
 		projectOrProgramPks: projectOrProgramPks.data,
 		projectPks: projectPks.data,
 		programPks: programPks.data,
@@ -155,7 +169,12 @@ export function useBarnProfile(profilePk: string | null) {
 		profile.data?.authority.toBase58() || null
 	);
 
-	return { profile: profile.data, projectOrProgramPks, authority };
+	const profileUri = useFetchBarnURI<ProfileURI>({
+		pk: profilePk,
+		uri: profile.data?.uri || null,
+	});
+
+	return { profile: profile.data, projectOrProgramPks, authority, profileUri };
 }
 
 export function useBarnProject(projectPk: string | null) {
@@ -171,13 +190,20 @@ export function useBarnProject(projectPk: string | null) {
 		},
 	});
 
-	const { profile, authority } = useBarnProfile(
+	const { profile, authority, profileUri } = useBarnProfile(
 		project.data?.profile.toBase58() || null
 	);
+
+	const projectUri = useFetchBarnURI<ProjectURI>({
+		pk: projectPk,
+		uri: project.data?.uri || null,
+	});
 
 	return {
 		project: project.data,
 		profile,
+		profileUri,
+		projectUri,
 		authority,
 		grantPk: project.data?.grant,
 	};
@@ -196,7 +222,7 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 		},
 	});
 
-	const { profile, authority } = useBarnProfile(
+	const { profile, authority, profileUri } = useBarnProfile(
 		grantProgram.data?.profile.toBase58() || null
 	);
 
@@ -226,10 +252,17 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 		},
 	});
 
+	const grantProgramUri = useFetchBarnURI<GrantProgramURI>({
+		pk: grantProgramPk,
+		uri: grantProgram.data?.uri || null,
+	});
+
 	return {
 		grantProgram: grantProgram.data,
 		authority,
 		profile,
+		profileUri,
+		grantProgramUri,
 		grantPks: grantPks.data,
 	};
 }
@@ -247,9 +280,8 @@ export function useBarnGrant(grantPk: string | null) {
 		},
 	});
 
-	const { project, authority, profile } = useBarnProject(
-		grant.data?.project.toBase58() || null
-	);
+	const { project, authority, profile, profileUri, projectUri } =
+		useBarnProject(grant.data?.project.toBase58() || null);
 
 	const milestonePks = useQuery({
 		queryKey: [
@@ -271,9 +303,17 @@ export function useBarnGrant(grantPk: string | null) {
 		},
 	});
 
+	const grantUri = useFetchBarnURI<GrantURI>({
+		pk: grantPk,
+		uri: grant.data?.uri || null,
+	});
+
 	return {
 		grant: grant.data,
 		project,
+		grantUri,
+		profileUri,
+		projectUri,
 		milestonePks: milestonePks.data,
 		authority,
 		profile,
@@ -293,11 +333,32 @@ export function useBarnGrantMilestone(milestonePk: string) {
 		},
 	});
 
-	const { grant, project, authority, profile } = useBarnGrant(
-		milestone.data?.grant.toBase58() || null
-	);
+	const {
+		grant,
+		project,
+		authority,
+		profile,
+		profileUri,
+		projectUri,
+		grantUri,
+	} = useBarnGrant(milestone.data?.grant.toBase58() || null);
 
-	return { milestone: milestone.data, grant, project, authority, profile };
+	const milestoneUri = useFetchBarnURI<GrantMilestoneURI>({
+		pk: milestonePk,
+		uri: milestone.data?.uri || null,
+	});
+
+	return {
+		milestone: milestone.data,
+		grant,
+		project,
+		authority,
+		profile,
+		profileUri,
+		projectUri,
+		grantUri,
+		milestoneUri,
+	};
 }
 
 export function useBarnAccount() {

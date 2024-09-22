@@ -24,6 +24,8 @@ import {
 } from "./project";
 import Link from "next/link";
 import { MilestoneState } from "@barn/protocol";
+import { useGithubProfile } from "@/hooks/barn/uri";
+import Image from "next/image";
 
 export type ProjectCardProps = {};
 
@@ -118,10 +120,14 @@ export function AllUserNotifications() {
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{profile.sponsor &&
 				programPks &&
-				programPks.map((pk) => <NotificationsFromProgramCard key={pk.toBase58()} publicKey={pk} />)}
+				programPks.map((pk) => (
+					<NotificationsFromProgramCard key={pk.toBase58()} publicKey={pk} />
+				))}
 			{!profile.sponsor &&
 				projectPks &&
-				projectPks.map((pk) => <NotificationsFromProjectCard key={pk.toBase58()} publicKey={pk} />)}
+				projectPks.map((pk) => (
+					<NotificationsFromProjectCard key={pk.toBase58()} publicKey={pk} />
+				))}
 		</div>
 	);
 }
@@ -165,7 +171,9 @@ export function NotificationsFromProgramCard({
 }
 
 export function ProfileCard() {
-	const { profile, authority } = useBarnUser();
+	const { profile, authority, profileUri } = useBarnUser();
+
+	const some = useGithubProfile({ user: profileUri?.github || null });
 
 	if (!profile || !authority) {
 		return "Create a Profile";
@@ -174,12 +182,22 @@ export function ProfileCard() {
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<CardTitle>username: {profile.seed}</CardTitle>
+				{some?.avatar_url && (
+					<Image
+						width={120}
+						height={120}
+						src={some.avatar_url}
+						alt={some.twitter_username || profile.seed}
+					/>
+				)}
+				<CardTitle>@{profile.seed}</CardTitle>
 			</CardHeader>
-			<CardContent>
-				<CardDescription>Owner: {authority.signer.toBase58()}</CardDescription>
+			<CardContent className="space-y-4">
+				<CardDescription>name: {profileUri?.name}</CardDescription>
+				<CardDescription>bio: {profileUri?.bio}</CardDescription>
+				<CardDescription>Pubkey: {authority.signer.toBase58()}</CardDescription>
 				<CardDescription>
-					Authority: {profile.authority.toBase58()}
+					Profile: {authority.profile.toBase58()}
 				</CardDescription>
 				<CardDescription>
 					Account: {profile.sponsor ? "Sponsor" : "Developer"}
@@ -188,6 +206,10 @@ export function ProfileCard() {
 					{profile.sponsor ? "Grant Programs" : "Projects"}: {profile.count}
 				</CardDescription>
 			</CardContent>
+			<CardFooter className="space-x-4">
+				<Link href={`https://github.com/${profileUri?.github}`}>Github</Link>
+				<Link href={`https://twitter.com/${profileUri?.twitter}`}>Twitter</Link>
+			</CardFooter>
 		</Card>
 	);
 }

@@ -44,9 +44,9 @@ export function AllGrantPrograms() {
 }
 
 export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
-	const { project } = useBarnProject(publicKey.toBase58());
+	const { project, projectUri, authority } = useBarnProject(publicKey.toBase58());
 
-	if (!project) {
+	if (!project || !authority) {
 		return <></>;
 	}
 
@@ -54,11 +54,13 @@ export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
 		<Link className="w-full" href={`/project/${publicKey.toBase58()}`}>
 			<Card className="w-full">
 				<CardHeader>
-					<CardTitle>ProjectTitle - {project.id}</CardTitle>
+					<CardTitle>
+						{projectUri?.name ?? ""} - {project.id}
+					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Desecription: description</CardDescription>
-					<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
+					<CardDescription>Desecription: {projectUri?.description ?? "Nil"} </CardDescription>
+					<CardDescription>Owner: {authority.signer.toBase58()}</CardDescription>
 					<CardDescription>
 						grant: {project.grant?.toBase58() ?? null}
 					</CardDescription>
@@ -95,23 +97,5 @@ export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
 				<AwardGrant grantProgram={publicKey} />
 			</CardFooter>
 		</Card>
-	);
-}
-
-export function ProjectCards() {
-	return (
-		<Link className="w-full" href={"/project/address"}>
-			<Card className="w-full">
-				<CardHeader>
-					<CardTitle>ProjectTitle | approved_amount</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<CardDescription>Desecription: description</CardDescription>
-					<CardDescription>Github: {"<github_url>"}</CardDescription>
-					<CardDescription>Owner: owner</CardDescription>
-					<CardDescription>Amount paid out: amount_paid_out</CardDescription>
-				</CardContent>
-			</Card>
-		</Link>
 	);
 }
