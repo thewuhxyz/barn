@@ -105,7 +105,7 @@ export function ApproveSponsor() {
 			<PopoverTrigger className={cn(buttonVariants())}>
 				Approve Sponsor
 			</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent className="space-y-4">
 				<Input
 					id="approve"
 					type="text"
@@ -146,13 +146,13 @@ export function AddNewProject() {
 			<PopoverTrigger className={cn(buttonVariants())}>
 				Add New Project
 			</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent className="space-y-4">
 				<Input
 					id="uri"
 					type="text"
 					value={uri}
 					onChange={(e) => setUri(e.target.value)}
-					placeholder="Enter Sponsor"
+					placeholder="Project URI"
 				/>
 				<Button className="w-full" onClick={handleClick}>
 					Add New Project
@@ -173,7 +173,7 @@ export function AddGrantProgram() {
 			if (!wallet) throw "wallet not connected";
 			if (!profile || !authority) throw "profile not created";
 			return addGrantProgram({
-				uri: "some.json",
+				uri,
 				signer: wallet.publicKey,
 				profile: authority.profile,
 			});
@@ -187,13 +187,13 @@ export function AddGrantProgram() {
 			<PopoverTrigger className={cn(buttonVariants())}>
 				Add Grant Program
 			</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent className="space-y-4">
 				<Input
 					id="uri"
 					type="text"
 					value={uri}
 					onChange={(e) => setUri(e.target.value)}
-					placeholder="Enter Sponsor"
+					placeholder="Grant Program URI"
 				/>
 				<Button className="w-full" onClick={handleClick}>
 					Add Grant Program
@@ -280,7 +280,9 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 					}
 					placeholder="Enter Grant URI"
 				/>
-				<Button onClick={handleClick}>Award Grant</Button>
+				<Button className="w-full" onClick={handleClick}>
+					Award Grant
+				</Button>
 			</PopoverContent>
 		</Popover>
 	);

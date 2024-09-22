@@ -17,12 +17,25 @@ export function useBarnUser() {
 	const barn = useBarn();
 	const { publicKey } = useWallet();
 
-	const { profile, projectOrProgramPks, authority, programPks, projectPks, profileUri } =
-		useBarnAuthority(
-			publicKey ? barn.account.authorityAddress(publicKey).toBase58() : null
-		);
+	const {
+		profile,
+		projectOrProgramPks,
+		authority,
+		programPks,
+		projectPks,
+		profileUri,
+	} = useBarnAuthority(
+		publicKey ? barn.account.authorityAddress(publicKey).toBase58() : null
+	);
 
-	return { profile, projectOrProgramPks, authority, projectPks, programPks, profileUri };
+	return {
+		profile,
+		projectOrProgramPks,
+		authority,
+		projectPks,
+		programPks,
+		profileUri,
+	};
 }
 
 export function useBarnAuthority(authorityPk: string | null) {
@@ -209,16 +222,18 @@ export function useBarnProject(projectPk: string | null) {
 	};
 }
 
-export function useBarnGrantProgram(grantProgramPk: string) {
+export function useBarnGrantProgram(grantProgramPk: string | null) {
 	const barn = useBarn();
 
 	const grantProgram = useQuery({
 		queryKey: ["grant-program", { grantProgramPk }],
 		queryFn: ({
 			queryKey,
-		}: QueryFunctionContext<[string, { grantProgramPk: string }]>) => {
+		}: QueryFunctionContext<[string, { grantProgramPk: string | null }]>) => {
 			const [_, { grantProgramPk }] = queryKey;
-			return barn.account.grantProgram(new PublicKey(grantProgramPk));
+			return grantProgramPk
+				? barn.account.grantProgram(new PublicKey(grantProgramPk))
+				: null;
 		},
 	});
 
@@ -230,7 +245,7 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 		queryKey: [
 			"grant-keys",
 			{
-				grantProgramPk: grantProgramPk,
+				grantProgramPk: grantProgramPk || null,
 				count: grantProgram.data?.count || null,
 			},
 		],
@@ -240,7 +255,7 @@ export function useBarnGrantProgram(grantProgramPk: string) {
 			[
 				string,
 				{
-					grantProgramPk: string;
+					grantProgramPk: string | null;
 					count: number | null;
 				},
 			]
@@ -283,6 +298,14 @@ export function useBarnGrant(grantPk: string | null) {
 	const { project, authority, profile, profileUri, projectUri } =
 		useBarnProject(grant.data?.project.toBase58() || null);
 
+	const {
+		authority: sponsorAuthority,
+		profile: sponsorProfile,
+		profileUri: sponsorProfileUri,
+		grantProgram,
+		grantProgramUri
+	} = useBarnGrantProgram(grant.data?.program.toBase58() || null);
+
 	const milestonePks = useQuery({
 		queryKey: [
 			"milestones-keys",
@@ -317,6 +340,11 @@ export function useBarnGrant(grantPk: string | null) {
 		milestonePks: milestonePks.data,
 		authority,
 		profile,
+		grantProgram,
+		sponsorProfile,
+		sponsorProfileUri,
+		sponsorAuthority,
+		grantProgramUri
 	};
 }
 
@@ -341,6 +369,7 @@ export function useBarnGrantMilestone(milestonePk: string) {
 		profileUri,
 		projectUri,
 		grantUri,
+		grantProgramUri
 	} = useBarnGrant(milestone.data?.grant.toBase58() || null);
 
 	const milestoneUri = useFetchBarnURI<GrantMilestoneURI>({
@@ -358,6 +387,7 @@ export function useBarnGrantMilestone(milestonePk: string) {
 		projectUri,
 		grantUri,
 		milestoneUri,
+		grantProgramUri
 	};
 }
 

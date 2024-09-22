@@ -53,7 +53,6 @@ export function AllUserGrantPrograms() {
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{grantProgramPks.map((pk) => {
-				console.log("pk:", pk.toBase58());
 				return <GrantProgramCard key={pk.toBase58()} publicKey={pk} />;
 			})}
 		</div>
@@ -215,26 +214,33 @@ export function ProfileCard() {
 }
 
 export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
-	const { grant, project, milestone } = useBarnGrantMilestone(
-		publicKey.toBase58()
-	);
+	const {
+		grant,
+		project,
+		milestone,
+		milestoneUri,
+		profileUri,
+		projectUri,
+		profile,
+		grantProgramUri,
+	} = useBarnGrantMilestone(publicKey.toBase58());
 
 	if (!grant || !project || !milestone) return;
 	return (
 		<Card className="w-full">
 			<Link href={`/project/${grant.project}`}>
 				<CardHeader>
-					<CardTitle>
-						Project - {project.id} | ${grant.approvedAmount}
-					</CardTitle>
+					<CardTitle>{milestoneUri?.name}</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription>Description: description</CardDescription>
-					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
 					<CardDescription>
-						Grant Program: {grant.program.toBase58()}
+						Description: {milestoneUri?.description}
 					</CardDescription>
-					<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
+					<CardDescription>Project: {projectUri?.name}</CardDescription>
+					<CardDescription>
+						Grant Program: {grantProgramUri?.name}
+					</CardDescription>
+					<CardDescription>Owner: {profile?.seed}</CardDescription>
 					<CardDescription>
 						Amount: {milestone.amount.toNumber() / 10 ** grant.paymentDecimals}
 					</CardDescription>
@@ -253,23 +259,46 @@ export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
 }
 
 export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
-	const { grant, project } = useBarnGrant(publicKey.toBase58());
-	if (!grant || !project) return;
+	const {
+		grant,
+		project,
+		grantUri,
+		profileUri,
+		projectUri,
+		grantProgramUri,
+		sponsorProfileUri,
+		profile,
+	} = useBarnGrant(publicKey.toBase58());
+	if (!grant || !project || !profile) return;
 	return (
 		<Card className="w-full">
 			<Link href={`/project/${grant.project}`}>
 				<CardHeader>
 					<CardTitle>
-						Project - {project.id} | ${grant.approvedAmount}
+						{projectUri?.name ?? `Untitled Project -${project.id}`} |{" "}
+						{grant.approvedAmount} SOL
 					</CardTitle>
 				</CardHeader>
-				<CardContent>
-					<CardDescription>Desecription: description</CardDescription>
+				<CardContent className="space-y-4">
+					<CardDescription>
+						Desecription: {grantUri?.description}
+					</CardDescription>
 					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
+					<div className="space-y-1">
+						{grantUri?.objectives?.length &&
+							grantUri.objectives.map((obj, i) => (
+								<CardDescription key={i}>
+									Task {i + 1}: {obj}
+								</CardDescription>
+							))}
+					</div>
 					<CardDescription>
 						Grant Program: {grant.program.toBase58()}
 					</CardDescription>
-					<CardDescription>Owner: {project.profile.toBase58()}</CardDescription>
+					<CardDescription>Owner: {`@${profile.seed}`}</CardDescription>
+					<CardDescription>
+						Sponsor: {`${sponsorProfileUri?.name}`}
+					</CardDescription>
 					<CardDescription>Amount paid out: {grant.paidOut} </CardDescription>
 					<CardDescription>Milestones: {grant.count}</CardDescription>
 				</CardContent>

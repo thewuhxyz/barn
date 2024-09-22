@@ -16,6 +16,7 @@ import {
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { AwardGrant } from "./project";
+import { useGithubRepo } from "@/hooks/barn/uri";
 
 export type ProjectCardProps = {};
 
@@ -44,36 +45,50 @@ export function AllGrantPrograms() {
 }
 
 export function ProjectCard({ publicKey }: { publicKey: PublicKey }) {
-	const { project, projectUri, authority } = useBarnProject(publicKey.toBase58());
+	const { project, projectUri, authority, profile } = useBarnProject(
+		publicKey.toBase58()
+	);
 
-	if (!project || !authority) {
+	const projectRepo = useGithubRepo({ repo: projectUri?.github || null });
+
+	if (!project || !authority || !profile) {
 		return <></>;
 	}
 
 	return (
-		<Link className="w-full" href={`/project/${publicKey.toBase58()}`}>
-			<Card className="w-full">
+		<Card className="w-full">
+			<Link className="w-full" href={`/project/${publicKey.toBase58()}`}>
 				<CardHeader>
 					<CardTitle>
-						{projectUri?.name ?? ""} - {project.id}
+						{projectUri?.name ?? `Untitled Project ${project.id}`}
 					</CardTitle>
 				</CardHeader>
-				<CardContent>
-					<CardDescription>Desecription: {projectUri?.description ?? "Nil"} </CardDescription>
-					<CardDescription>Owner: {authority.signer.toBase58()}</CardDescription>
-					<CardDescription>
-						grant: {project.grant?.toBase58() ?? null}
-					</CardDescription>
-				</CardContent>
-			</Card>
-		</Link>
+			</Link>
+			<CardContent className="space-y-4">
+				<CardDescription>{projectUri?.description ?? "Nil"} </CardDescription>
+				<CardDescription>
+					Owner: {`@${profile.seed}` || authority.signer.toBase58()}
+				</CardDescription>
+				<CardDescription>
+					Github Repo: {`https://github.com/${projectUri?.github}`}
+				</CardDescription>
+				<CardDescription>address: {publicKey.toBase58()}</CardDescription>
+				<CardDescription>
+					grant: {project.grant?.toBase58() ?? "None"}
+				</CardDescription>
+			</CardContent>
+			<CardFooter>
+				<Link href={`https://github.com/${projectUri?.github}`}>Github</Link>
+			</CardFooter>
+		</Card>
 	);
 }
 
 export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
-	const { grantProgram } = useBarnGrantProgram(publicKey.toBase58());
+	const { grantProgram, profile, grantProgramUri, authority } =
+		useBarnGrantProgram(publicKey.toBase58());
 
-	if (!grantProgram) {
+	if (!grantProgram || !profile || !authority) {
 		return <></>;
 	}
 
@@ -81,16 +96,18 @@ export function GrantProgramCard({ publicKey }: { publicKey: PublicKey }) {
 		<Card className="w-full">
 			<Link className="w-full" href={`/program/${publicKey}`}>
 				<CardHeader>
-					<CardTitle>Grant Program - {grantProgram.id}</CardTitle>
+					<CardTitle>
+						{grantProgramUri?.name ?? `Untitled Program ${grantProgram.id}`}
+					</CardTitle>
 				</CardHeader>
-				<CardContent>
-					<CardDescription>Desecription: description</CardDescription>
+				<CardContent className="space-y-4">
 					<CardDescription>
-						Owner: {grantProgram.profile.toBase58()}
+						{grantProgramUri?.description ?? "Nil"}
 					</CardDescription>
 					<CardDescription>
-						No of grants issued: {grantProgram.count}
+						Owner: {`@${profile.seed}` || authority.signer.toBase58()}
 					</CardDescription>
+					<CardDescription>Grants issued: {grantProgram.count}</CardDescription>
 				</CardContent>
 			</Link>
 			<CardFooter>
