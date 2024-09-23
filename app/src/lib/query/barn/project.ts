@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { ProjectAccount } from "@barn/protocol";
 import { BarnAccountQuery } from "./interface";
 
-export const BarnProfileQuery = {
+export const barnProjectQuery = {
 	queryKey(publicKey) {
 		return ["project", { publicKey }];
 	},
@@ -19,15 +19,18 @@ export const BarnProfileQuery = {
 		};
 	},
 
-	pubkeysQueryKey(publicKey, count) {
-		return ["project", { publicKey, keys: count }];
+	pubkeysQueryKey(profilePk, count) {
+		return ["project", { publicKey: profilePk, keys: count }];
 	},
 
-	pubkeysQuery(barn, publicKey, count) {
+	pubkeysQuery(barn, profilePk, count) {
 		return {
-			queryKey: this.pubkeysQueryKey(publicKey, count),
-			queryFn: () => {
-				throw "not implemented";
+			queryKey: this.pubkeysQueryKey(profilePk, count),
+			queryFn: ({ queryKey }) => {
+				const [_, { publicKey, keys }] = queryKey;
+				return publicKey && keys
+					? barn.account.getProjectPks(new PublicKey(publicKey), keys)
+					: null;
 			},
 		};
 	},

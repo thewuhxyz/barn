@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { GrantAccount } from "@barn/protocol";
 import { BarnAccountQuery } from "./interface";
 
-export const BarnGrantQuery = {
+export const barnGrantQuery = {
 	queryKey(publicKey) {
 		return ["grant", { publicKey }];
 	},

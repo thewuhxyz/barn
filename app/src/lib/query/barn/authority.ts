@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { AuthorityAccount } from "@barn/protocol";
 import { BarnAccountQuery } from "./interface";
 
-export const BarnAuthorityQuery = {
+export const barnAuthorityQuery = {
 	queryKey(publicKey) {
 		return ["authority", { publicKey }];
 	},

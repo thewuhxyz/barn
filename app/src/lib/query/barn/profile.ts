@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { ProfileAccount } from "@barn/protocol";
 import { BarnAccountQuery } from "./interface";
 
-export const BarnProfileQuery = {
+export const barnProfileQuery = {
 	queryKey(publicKey) {
 		return ["profile", { publicKey }];
 	},

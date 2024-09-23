@@ -16,7 +16,14 @@ import {
 	ProfileURI,
 	ProjectURI,
 } from "@/lib/uri-schema";
-import { BarnGrantQuery } from "@/lib/query/barn/grant";
+import {
+	barnAuthorityQuery,
+	barnGrantMilestoneQuery,
+	barnGrantProgramQuery,
+	barnGrantQuery,
+	barnProfileQuery,
+	barnProjectQuery,
+} from "@/lib/query/barn";
 
 export function useBarnUser() {
 	const barn = useBarn();
@@ -47,82 +54,30 @@ export function useBarnAuthority(authorityPk: string | null) {
 	const barn = useBarn();
 
 	const authority = useQuery({
-		queryKey: ["authority", { authorityPk }],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { authorityPk: string | null }]>) => {
-			const [_, { authorityPk }] = queryKey;
-			return authorityPk
-				? barn.account.authority(new PublicKey(authorityPk))
-				: null;
-		},
+		...barnAuthorityQuery.query(barn, authorityPk),
 	});
 
 	const profile = useQuery({
-		queryKey: [
-			"profile",
-			{ profilePk: authority.data?.profile.toBase58() || null },
-		],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { profilePk: string | null }]>) => {
-			const [_, { profilePk }] = queryKey;
-			return profilePk ? barn.account.profile(new PublicKey(profilePk)) : null;
-		},
+		...barnProfileQuery.query(barn, authority.data?.profile.toBase58() || null),
 	});
 
 	const projectPks = useQuery({
-		queryKey: [
-			"project-keys",
-			{
-				profilePk: authority.data?.profile.toBase58() || null,
-				count: profile.data?.count || null,
-			},
-		],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<
-			[
-				string,
-				{
-					profilePk: string | null;
-					count: number | null;
-				},
-			]
-		>) => {
-			const [_, { profilePk, count }] = queryKey;
-			return profilePk && count
-				? barn.account.getProjectPks(new PublicKey(profilePk), count)
-				: null;
-		},
+		...barnProjectQuery.pubkeysQuery(
+			barn,
+			authority.data?.profile.toBase58() || null,
+			profile.data?.count || null
+		),
 	});
 
 	const programPks = useQuery({
-		queryKey: [
-			"program-keys",
-			{
-				profilePk: authority.data?.profile.toBase58() || null,
-				count: profile.data?.count || null,
-			},
-		],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<
-			[
-				string,
-				{
-					profilePk: string | null;
-					count: number | null;
-				},
-			]
-		>) => {
-			const [_, { profilePk, count }] = queryKey;
-			return profilePk && count
-				? barn.account.getGrantProgramPks(new PublicKey(profilePk), count)
-				: null;
-		},
+		...barnGrantProgramQuery.pubkeysQuery(
+			barn,
+			authority.data?.profile.toBase58() || null,
+			profile.data?.count || null
+		),
 	});
 
+	// todo: replace
 	const projectOrProgramPks = useQuery({
 		queryKey: [
 			"project-or-program-keys",
@@ -173,15 +128,7 @@ export function useBarnAuthority(authorityPk: string | null) {
 export function useBarnProfile(profilePk: string | null) {
 	const barn = useBarn();
 
-	const profile = useQuery({
-		queryKey: ["profile", { profilePk }],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { profilePk: string | null }]>) => {
-			const [_, { profilePk }] = queryKey;
-			return profilePk ? barn.account.profile(new PublicKey(profilePk)) : null;
-		},
-	});
+	const profile = useQuery({ ...barnProfileQuery.query(barn, profilePk) });
 
 	const { projectOrProgramPks, authority } = useBarnAuthority(
 		profile.data?.authority.toBase58() || null
@@ -198,15 +145,7 @@ export function useBarnProfile(profilePk: string | null) {
 export function useBarnProject(projectPk: string | null) {
 	const barn = useBarn();
 
-	const project = useQuery({
-		queryKey: ["project", { projectPk }],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { projectPk: string | null }]>) => {
-			const [_, { projectPk }] = queryKey;
-			return projectPk ? barn.account.project(new PublicKey(projectPk)) : null;
-		},
-	});
+	const project = useQuery({ ...barnProjectQuery.query(barn, projectPk) });
 
 	const { profile, authority, profileUri } = useBarnProfile(
 		project.data?.profile.toBase58() || null
@@ -231,15 +170,7 @@ export function useBarnGrantProgram(grantProgramPk: string | null) {
 	const barn = useBarn();
 
 	const grantProgram = useQuery({
-		queryKey: ["grant-program", { grantProgramPk }],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { grantProgramPk: string | null }]>) => {
-			const [_, { grantProgramPk }] = queryKey;
-			return grantProgramPk
-				? barn.account.grantProgram(new PublicKey(grantProgramPk))
-				: null;
-		},
+		...barnGrantProgramQuery.query(barn, grantProgramPk),
 	});
 
 	const { profile, authority, profileUri } = useBarnProfile(
@@ -247,29 +178,11 @@ export function useBarnGrantProgram(grantProgramPk: string | null) {
 	);
 
 	const grantPks = useQuery({
-		queryKey: [
-			"grant-keys",
-			{
-				grantProgramPk: grantProgramPk || null,
-				count: grantProgram.data?.count || null,
-			},
-		],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<
-			[
-				string,
-				{
-					grantProgramPk: string | null;
-					count: number | null;
-				},
-			]
-		>) => {
-			const [_, { grantProgramPk, count }] = queryKey;
-			return grantProgramPk && count !== null
-				? barn.account.getGrantsPks(new PublicKey(grantProgramPk), count)
-				: null;
-		},
+		...barnGrantQuery.pubkeysQuery(
+			barn,
+			grantProgramPk,
+			grantProgram.data?.count || null
+		),
 	});
 
 	const grantProgramUri = useFetchBarnURI<GrantProgramURI>({
@@ -279,7 +192,7 @@ export function useBarnGrantProgram(grantProgramPk: string | null) {
 
 	const grants = useQueries({
 		queries: (grantPks.data ? grantPks.data : []).map((grantPk) => ({
-			...BarnGrantQuery.query(barn, grantPk.toBase58()),
+			...barnGrantQuery.query(barn, grantPk.toBase58()),
 			staleTime: Infinity,
 		})),
 		combine: (results) => {
@@ -303,15 +216,7 @@ export function useBarnGrantProgram(grantProgramPk: string | null) {
 export function useBarnGrant(grantPk: string | null) {
 	const barn = useBarn();
 
-	const grant = useQuery({
-		queryKey: ["grant", { grantPk }],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { grantPk: string | null }]>) => {
-			const [_, { grantPk }] = queryKey;
-			return grantPk ? barn.account.grant(new PublicKey(grantPk)) : null;
-		},
-	});
+	const grant = useQuery({ ...barnGrantQuery.query(barn, grantPk) });
 
 	const { project, authority, profile, profileUri, projectUri } =
 		useBarnProject(grant.data?.project.toBase58() || null);
@@ -325,23 +230,11 @@ export function useBarnGrant(grantPk: string | null) {
 	} = useBarnGrantProgram(grant.data?.program.toBase58() || null);
 
 	const milestonePks = useQuery({
-		queryKey: [
-			"milestones-keys",
-			{
-				grantPk: grantPk,
-				count: grant.data?.count || null,
-			},
-		],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<
-			[string, { grantPk: string | null; count: number | null }]
-		>) => {
-			const [_, { grantPk, count }] = queryKey;
-			return grantPk && count
-				? barn.account.getGrantMilestonesPks(new PublicKey(grantPk), count)
-				: null;
-		},
+		...barnGrantMilestoneQuery.pubkeysQuery(
+			barn,
+			grantPk,
+			grant.data?.count || null
+		),
 	});
 
 	const grantUri = useFetchBarnURI<GrantURI>({
@@ -370,13 +263,7 @@ export function useBarnGrantMilestone(milestonePk: string) {
 	const barn = useBarn();
 
 	const milestone = useQuery({
-		queryKey: ["milestone", { milestonePk }],
-		queryFn: ({
-			queryKey,
-		}: QueryFunctionContext<[string, { milestonePk: string }]>) => {
-			const [_, { milestonePk }] = queryKey;
-			return barn.account.grantMilestone(new PublicKey(milestonePk));
-		},
+		...barnGrantMilestoneQuery.query(barn, milestonePk),
 	});
 
 	const {
