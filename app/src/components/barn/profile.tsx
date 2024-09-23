@@ -93,16 +93,19 @@ export function GrantsFromProjectCard({ publicKey }: { publicKey: PublicKey }) {
 }
 
 export function GrantsFromProgramCard({ publicKey }: { publicKey: PublicKey }) {
-	const { grantPks } = useBarnGrantProgram(publicKey.toBase58());
+	const { grantPks, grants } = useBarnGrantProgram(publicKey.toBase58());
 
-	if (!grantPks) {
+	if (!grantPks || !grants) {
 		return <></>;
 	}
 
 	return (
 		<>
-			{grantPks.map((pk) => {
-				return <GrantCard key={pk.toBase58()} publicKey={pk} />;
+			{grants.map((pk) => {
+				return <div>
+					{pk?.project.toBase58()}
+				</div>;
+				// return <GrantCard key={pk.toBase58()} publicKey={pk} />;
 			})}
 		</>
 	);

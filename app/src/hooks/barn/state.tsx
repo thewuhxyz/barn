@@ -1,6 +1,10 @@
 "use client";
 
-import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
+import {
+	useQuery,
+	QueryFunctionContext,
+	useQueries,
+} from "@tanstack/react-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useBarn } from "./client";
@@ -12,6 +16,7 @@ import {
 	ProfileURI,
 	ProjectURI,
 } from "@/lib/uri-schema";
+import { BarnGrantQuery } from "@/lib/query/barn/grant";
 
 export function useBarnUser() {
 	const barn = useBarn();
@@ -272,6 +277,18 @@ export function useBarnGrantProgram(grantProgramPk: string | null) {
 		uri: grantProgram.data?.uri || null,
 	});
 
+	const grants = useQueries({
+		queries: (grantPks.data ? grantPks.data : []).map((grantPk) => ({
+			...BarnGrantQuery.query(barn, grantPk.toBase58()),
+			staleTime: Infinity,
+		})),
+		combine: (results) => {
+			return {
+				data: results.map((result) => result.data),
+				pending: results.some((result) => result.isPending),
+			};
+		},
+	});
 	return {
 		grantProgram: grantProgram.data,
 		authority,
@@ -279,6 +296,7 @@ export function useBarnGrantProgram(grantProgramPk: string | null) {
 		profileUri,
 		grantProgramUri,
 		grantPks: grantPks.data,
+		grants: grants.data,
 	};
 }
 
@@ -303,7 +321,7 @@ export function useBarnGrant(grantPk: string | null) {
 		profile: sponsorProfile,
 		profileUri: sponsorProfileUri,
 		grantProgram,
-		grantProgramUri
+		grantProgramUri,
 	} = useBarnGrantProgram(grant.data?.program.toBase58() || null);
 
 	const milestonePks = useQuery({
@@ -344,7 +362,7 @@ export function useBarnGrant(grantPk: string | null) {
 		sponsorProfile,
 		sponsorProfileUri,
 		sponsorAuthority,
-		grantProgramUri
+		grantProgramUri,
 	};
 }
 
@@ -369,7 +387,7 @@ export function useBarnGrantMilestone(milestonePk: string) {
 		profileUri,
 		projectUri,
 		grantUri,
-		grantProgramUri
+		grantProgramUri,
 	} = useBarnGrant(milestone.data?.grant.toBase58() || null);
 
 	const milestoneUri = useFetchBarnURI<GrantMilestoneURI>({
@@ -387,7 +405,7 @@ export function useBarnGrantMilestone(milestonePk: string) {
 		projectUri,
 		grantUri,
 		milestoneUri,
-		grantProgramUri
+		grantProgramUri,
 	};
 }
 
