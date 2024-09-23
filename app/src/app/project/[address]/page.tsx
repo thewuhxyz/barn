@@ -13,7 +13,7 @@ export default function Project({ params }: { params: { address: string } }) {
 	);
 
 	return (
-		<main className="flex-1 flex flex-col items-center justify-center space-y-16">
+		<main className="flex-1 flex flex-col items-center  space-y-16">
 			<ProjectCard publicKey={new PublicKey(projectPk)} />
 			<div className="w-full">
 				<div>Grant</div>

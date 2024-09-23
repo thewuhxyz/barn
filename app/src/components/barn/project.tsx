@@ -28,14 +28,20 @@ import {
 import { MilestoneState } from "@barn/protocol";
 
 export function CreateUserProfile() {
-	const [userName, setUserName] = useState("");
+	const [createUserConfig, setCreateUserConfig] = useState<{
+		seed: string;
+		uri: string;
+	}>({
+		uri: "",
+		seed: "",
+	});
 	const { createUser } = useBarnRPC();
 	const wallet = useAnchorWallet();
 
-	function handleCreateUser() {
+	function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
-			return createUser({ seed: userName, uri: "", signer: wallet.publicKey });
+			return createUser({ ...createUserConfig, signer: wallet.publicKey });
 		} catch (e: any) {
 			toast.error(`Error occurred: ${e.message || e}`);
 		}
@@ -46,15 +52,26 @@ export function CreateUserProfile() {
 			<PopoverTrigger className={cn(buttonVariants())}>
 				Create User Profile
 			</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent className="space-y-4">
 				<Input
 					id="username"
 					type="text"
-					value={userName}
-					onChange={(e) => setUserName(e.target.value)}
-					className="col-span-3"
+					value={createUserConfig.seed}
+					onChange={(e) =>
+						setCreateUserConfig({ ...createUserConfig, seed: e.target.value })
+					}
+					placeholder="Enter username"
 				/>
-				<Button className="w-full" onClick={handleCreateUser}>
+				<Input
+					id="uri"
+					type="text"
+					value={createUserConfig.uri}
+					onChange={(e) =>
+						setCreateUserConfig({ ...createUserConfig, uri: e.target.value })
+					}
+					placeholder="Github url"
+				/>
+				<Button className="w-full" onClick={handleClick}>
 					Create
 				</Button>
 			</PopoverContent>
@@ -68,7 +85,7 @@ export function ApproveSponsor() {
 	const wallet = useAnchorWallet();
 	const barn = useBarn();
 
-	async function handleCreateUser() {
+	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
 			let signer = new PublicKey(sponsor);
@@ -88,7 +105,7 @@ export function ApproveSponsor() {
 			<PopoverTrigger className={cn(buttonVariants())}>
 				Approve Sponsor
 			</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent className="space-y-4">
 				<Input
 					id="approve"
 					type="text"
@@ -96,7 +113,7 @@ export function ApproveSponsor() {
 					onChange={(e) => setSponsor(e.target.value)}
 					placeholder="Enter Sponsor"
 				/>
-				<Button className="w-full" onClick={handleCreateUser}>
+				<Button className="w-full" onClick={handleClick}>
 					Approve
 				</Button>
 			</PopoverContent>
@@ -108,13 +125,14 @@ export function AddNewProject() {
 	const { addProject } = useBarnRPC();
 	const wallet = useAnchorWallet();
 	const { profile, authority } = useBarnUser();
+	const [uri, setUri] = useState("");
 
-	function handleAddProject() {
+	function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
 			if (!profile || !authority) throw "profile not created";
 			return addProject({
-				uri: "some.json",
+				uri,
 				signer: wallet.publicKey,
 				profile: authority.profile,
 			});
@@ -123,20 +141,39 @@ export function AddNewProject() {
 		}
 	}
 
-	return <Button onClick={handleAddProject}>Add New Project</Button>;
+	return (
+		<Popover>
+			<PopoverTrigger className={cn(buttonVariants())}>
+				Add New Project
+			</PopoverTrigger>
+			<PopoverContent className="space-y-4">
+				<Input
+					id="uri"
+					type="text"
+					value={uri}
+					onChange={(e) => setUri(e.target.value)}
+					placeholder="Project URI"
+				/>
+				<Button className="w-full" onClick={handleClick}>
+					Add New Project
+				</Button>
+			</PopoverContent>
+		</Popover>
+	);
 }
 
 export function AddGrantProgram() {
 	const { addGrantProgram } = useBarnRPC();
 	const wallet = useAnchorWallet();
 	const { authority, profile } = useBarnUser();
+	const [uri, setUri] = useState("");
 
-	function handleAddGrantProgram() {
+	function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
 			if (!profile || !authority) throw "profile not created";
 			return addGrantProgram({
-				uri: "some.json",
+				uri,
 				signer: wallet.publicKey,
 				profile: authority.profile,
 			});
@@ -145,14 +182,33 @@ export function AddGrantProgram() {
 		}
 	}
 
-	return <Button onClick={handleAddGrantProgram}>Add New Grant Program</Button>;
+	return (
+		<Popover>
+			<PopoverTrigger className={cn(buttonVariants())}>
+				Add Grant Program
+			</PopoverTrigger>
+			<PopoverContent className="space-y-4">
+				<Input
+					id="uri"
+					type="text"
+					value={uri}
+					onChange={(e) => setUri(e.target.value)}
+					placeholder="Grant Program URI"
+				/>
+				<Button className="w-full" onClick={handleClick}>
+					Add Grant Program
+				</Button>
+			</PopoverContent>
+		</Popover>
+	);
 }
 
 export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 	const [awardGrantConfig, setAwardGrantConfig] = useState<{
 		amount: string;
 		project: string;
-	}>({ amount: "", project: "" });
+		uri: string;
+	}>({ amount: "", project: "", uri: "" });
 
 	const wallet = useAnchorWallet();
 	const { connection } = useConnection();
@@ -160,9 +216,9 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 	const { authority, profile } = useBarnUser();
 	const { awardGrant } = useBarnRPC();
 
-	const { amount, project } = awardGrantConfig;
+	const { amount, project, uri } = awardGrantConfig;
 
-	async function handleAddProject() {
+	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
 			if (!profile || !authority) throw "no profile for user";
@@ -171,7 +227,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 			const decimals = (await getMint(connection, paymentMint)).decimals;
 
 			return awardGrant({
-				uri: "",
+				uri,
 				signer: wallet.publicKey,
 				grantProgram,
 				project: new PublicKey(project),
@@ -192,7 +248,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 			<PopoverContent className="space-y-4">
 				<Input
 					id="amount"
-					type="number"
+					type="string"
 					value={amount}
 					onChange={(e) =>
 						setAwardGrantConfig({ ...awardGrantConfig, amount: e.target.value })
@@ -212,7 +268,21 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 					}
 					placeholder="Enter Project"
 				/>
-				<Button onClick={handleAddProject}>Award Grant</Button>
+				<Input
+					id="uri"
+					type="text"
+					value={uri}
+					onChange={(e) =>
+						setAwardGrantConfig({
+							...awardGrantConfig,
+							uri: e.target.value,
+						})
+					}
+					placeholder="Enter Grant URI"
+				/>
+				<Button className="w-full" onClick={handleClick}>
+					Award Grant
+				</Button>
 			</PopoverContent>
 		</Popover>
 	);
@@ -221,7 +291,8 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 	const [awardGrantConfig, setAwardGrantConfig] = useState<{
 		amount: string;
-	}>({ amount: "" });
+		uri: string;
+	}>({ amount: "", uri: "" });
 
 	const wallet = useAnchorWallet();
 
@@ -231,16 +302,16 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 
 	const { addGrantMilestone } = useBarnRPC();
 
-	const { amount } = awardGrantConfig;
+	const { amount, uri } = awardGrantConfig;
 
-	async function handleAddProject() {
+	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
 			if (!profile || !authority) throw "no profile for user";
 			if (!grant) throw "no grant project for user";
 
 			return addGrantMilestone({
-				uri: "",
+				uri,
 				signer: wallet.publicKey,
 				project: grant.project,
 				amount: new BN(parseFloat(amount) * 10 ** grant.paymentDecimals),
@@ -273,19 +344,19 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 							placeholder="Amount"
 							className="col-span-3"
 						/>
-						{/* <Input
-					id="project"
-					type="text"
-					value={project}
-					onChange={(e) =>
-						setAwardGrantConfig({
-							...awardGrantConfig,
-							project: e.target.value,
-						})
-					}
-					placeholder="Enter Project"
-				/> */}
-						<Button className="w-full" onClick={handleAddProject}>
+						<Input
+							id="uri"
+							type="text"
+							value={uri}
+							onChange={(e) =>
+								setAwardGrantConfig({
+									...awardGrantConfig,
+									uri: e.target.value,
+								})
+							}
+							placeholder="Enter Grant URI"
+						/>
+						<Button className="w-full" onClick={handleClick}>
 							Add New Milestone
 						</Button>
 					</PopoverContent>
@@ -302,7 +373,8 @@ export function EditGrantMilestone({
 }) {
 	const [awardGrantConfig, setAwardGrantConfig] = useState<{
 		amount: string;
-	}>({ amount: "" });
+		uri: string;
+	}>({ amount: "", uri: "" });
 
 	const wallet = useAnchorWallet();
 
@@ -314,9 +386,9 @@ export function EditGrantMilestone({
 
 	const { editGrantMilestone } = useBarnRPC();
 
-	const { amount } = awardGrantConfig;
+	const { amount, uri } = awardGrantConfig;
 
-	async function handleAddProject() {
+	async function handleClick() {
 		try {
 			if (!wallet) throw "wallet not connected";
 			if (!profile || !authority) throw "no profile for user";
@@ -324,7 +396,7 @@ export function EditGrantMilestone({
 			if (!grant) throw "no grant project for user";
 
 			return editGrantMilestone({
-				uri: "",
+				uri,
 				signer: wallet.publicKey,
 				amount: new BN(parseFloat(amount) * 10 ** grant.paymentDecimals),
 				profile: authority.profile,
@@ -363,19 +435,19 @@ export function EditGrantMilestone({
 							placeholder="Amount"
 							className="col-span-3"
 						/>
-						{/* <Input
-					id="project"
-					type="text"
-					value={project}
-					onChange={(e) =>
-						setAwardGrantConfig({
-							...awardGrantConfig,
-							project: e.target.value,
-						})
-					}
-					placeholder="Enter Project"
-				/> */}
-						<Button className="w-full" onClick={handleAddProject}>
+						<Input
+							id="uri"
+							type="text"
+							value={uri}
+							onChange={(e) =>
+								setAwardGrantConfig({
+									...awardGrantConfig,
+									uri: e.target.value,
+								})
+							}
+							placeholder="Enter Milestone URI"
+						/>
+						<Button className="w-full" onClick={handleClick}>
 							Edit Milestone
 						</Button>
 					</PopoverContent>
