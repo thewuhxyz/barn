@@ -19,16 +19,11 @@ export const barnAuthorityQuery = {
 		};
 	},
 
-	pubkeysQueryKey(publicKey, count) {
-		return ["authority", { publicKey, keys: count }];
+	pubkeysQueryKey() {
+		throw "not implemented";
 	},
 
-	pubkeysQuery(barn, publicKey, count) {
-		return {
-			queryKey: this.pubkeysQueryKey(publicKey, count),
-			queryFn: () => {
-				throw "not implemented";
-			},
-		};
+	pubkeysQuery() {
+		throw "not implemented";
 	},
 } satisfies BarnAccountQuery<"authority", AuthorityAccount>;

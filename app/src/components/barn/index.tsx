@@ -15,7 +15,7 @@ import {
 } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
-import { AwardGrant } from "./project";
+import { AwardGrant } from "./project-page";
 import { useGithubRepo } from "@/hooks/barn/uri";
 
 export type ProjectCardProps = {};

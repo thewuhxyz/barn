@@ -20,15 +20,10 @@ export const barnProfileQuery = {
 	},
 
 	pubkeysQueryKey(publicKey, count) {
-		return ["profile", { publicKey, keys: count }];
+		throw "not implemented";
 	},
 
-	pubkeysQuery(barn, publicKey, count) {
-		return {
-			queryKey: this.pubkeysQueryKey(publicKey, count),
-			queryFn: () => {
-				throw "not implemented";
-			},
-		};
+	pubkeysQuery() {
+		throw "not implemented"
 	},
 } satisfies BarnAccountQuery<"profile", ProfileAccount>;

@@ -8,7 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { GrantProgramCard, ProjectCard } from ".";
+import { ProjectCard } from ".";
 import {
 	useBarnGrant,
 	useBarnGrantMilestone,
@@ -21,31 +21,33 @@ import {
 	AddGrantMilestone,
 	EditGrantMilestone,
 	UpdateMilestone,
-} from "./project";
+} from "./project-page";
 import Link from "next/link";
 import { MilestoneState } from "@barn/protocol";
 import { useGithubProfile } from "@/hooks/barn/uri";
 import Image from "next/image";
+import { ProjectCardFromGrantPubkey, ProjectCardFromPubkey } from "./project";
+import { GrantProgramCardFromPubkey } from "./program";
 
 export type ProjectCardProps = {};
 
 export function AllUserProjects() {
-	const { projectOrProgramPks: projectsPks } = useBarnUser();
+	const { projectPks } = useBarnUser();
 
-	if (!projectsPks || !projectsPks.length) return <p>No Projects For User</p>;
+	if (!projectPks || !projectPks) return <p>No Projects For User</p>;
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{projectsPks.map((pk) => {
+			{projectPks.map((pk) => {
 				console.log("pk:", pk.toBase58());
-				return <ProjectCard key={pk.toBase58()} publicKey={pk} />;
+				return <ProjectCardFromPubkey key={pk.toBase58()} publicKey={pk} />;
 			})}
 		</div>
 	);
 }
 
 export function AllUserGrantPrograms() {
-	const { projectOrProgramPks: grantProgramPks } = useBarnUser();
+	const { programPks: grantProgramPks } = useBarnUser();
 
 	if (!grantProgramPks || !grantProgramPks.length)
 		return <p>No Grant Programs For User</p>;
@@ -53,27 +55,24 @@ export function AllUserGrantPrograms() {
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{grantProgramPks.map((pk) => {
-				return <GrantProgramCard key={pk.toBase58()} publicKey={pk} />;
+				return (
+					<GrantProgramCardFromPubkey key={pk.toBase58()} publicKey={pk} />
+				);
 			})}
 		</div>
 	);
 }
 
 export function AllUserGrants() {
-	const { profile, projectOrProgramPks } = useBarnUser();
+	const { grantPks } = useBarnUser();
 
-	if (!profile || !projectOrProgramPks || !projectOrProgramPks.length)
-		return <p>No Projects For User</p>;
+	if (!grantPks || !grantPks.length) return <p>No Projects For User</p>;
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{projectOrProgramPks.map((pk) => {
-				return profile.sponsor ? (
-					<GrantsFromProgramCard key={pk.toBase58()} publicKey={pk} />
-				) : (
-					<GrantsFromProjectCard key={pk.toBase58()} publicKey={pk} />
-				);
-			})}
+			{grantPks.map((pk) => (
+				<ProjectCardFromGrantPubkey publicKey={pk} />
+			))}
 		</div>
 	);
 }
@@ -93,30 +92,25 @@ export function GrantsFromProjectCard({ publicKey }: { publicKey: PublicKey }) {
 }
 
 export function GrantsFromProgramCard({ publicKey }: { publicKey: PublicKey }) {
-	const { grantPks, grants } = useBarnGrantProgram(publicKey.toBase58());
+	const { grantPks } = useBarnGrantProgram(publicKey.toBase58());
 
-	if (!grantPks || !grants) {
+	if (!grantPks) {
 		return <></>;
 	}
 
 	return (
 		<>
-			{grants.map((pk) => {
-				return <div>
-					{pk?.project.toBase58()}
-				</div>;
-				// return <GrantCard key={pk.toBase58()} publicKey={pk} />;
+			{grantPks.map((pk) => {
+				return <GrantCard key={pk.toBase58()} publicKey={pk} />;
 			})}
 		</>
 	);
 }
 
 export function AllUserNotifications() {
-	const { profile, projectOrProgramPks, programPks, projectPks } =
-		useBarnUser();
+	const { profile, programPks, projectPks } = useBarnUser();
 
-	if (!profile || !projectOrProgramPks || !projectOrProgramPks.length)
-		return <p>No Notifications For User</p>;
+	if (!profile) return <p>No Notifications For User</p>;
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">

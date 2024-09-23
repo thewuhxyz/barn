@@ -14,7 +14,7 @@ import {
 	AddGrantProgram,
 	AddNewProject,
 	CreateUserProfile,
-} from "@/components/barn/project";
+} from "@/components/barn/project-page";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletButton } from "@/context";
 
