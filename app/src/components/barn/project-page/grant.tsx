@@ -132,7 +132,6 @@ export type GrantDetailsCardProps = {
 	paidOut: number;
 	description?: string;
 	discussion?: string | null;
-	// owner: string;
 	program?: string | null;
 	publicKey: string;
 	programKey?: string | null;

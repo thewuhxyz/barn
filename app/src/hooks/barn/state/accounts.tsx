@@ -11,12 +11,19 @@ export function useBarnAccount() {
 		},
 	});
 
-	const addGrantPrograms = useQuery({
+	const allGrantPrograms = useQuery({
 		queryKey: ["all-grant-programs"],
 		queryFn: () => {
 			return barn.program.account.grantProgram.all();
 		},
 	});
+	
+	const allProjects = useQuery({
+		queryKey: ["all-projects"],
+		queryFn: () => {
+			return barn.program.account.project.all();
+		},
+	});
 
-	return { allGrants: allGrants.data, allGrantPrograms: addGrantPrograms.data };
+	return { allGrants: allGrants.data, allGrantPrograms: allGrantPrograms.data, allProjects: allProjects.data };
 }

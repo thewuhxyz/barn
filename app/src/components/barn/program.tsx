@@ -6,11 +6,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { useBarnAccount, useBarnGrantProgram } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function AllGrantPrograms() {
 	const { allGrantPrograms } = useBarnAccount();
@@ -45,6 +46,8 @@ export function GrantProgramCardFromPubkey({
 		owner: profile.seed,
 		title: grantProgramUri?.name ?? `Untitled ${grantProgram.id}`,
 		count: grantProgram.count,
+		profileKey: grantProgram.profile.toBase58()
+
 	};
 
 	return <GrantProgramCard {...props} />;
@@ -54,14 +57,14 @@ export function GrantProgramCard(props: GrantProgramCardProps) {
 	return (
 		<Card className="w-full">
 			<Link href={`/program/${props.publicKey}`}>
-			<CardHeader>
-				<Image
-					src="/next.svg"
-					alt="Card image"
-					width={300}
-					height={300}
-					className="h-full w-full object-cover"
-				/>
+				<CardHeader>
+					<Image
+						src="/next.svg"
+						alt="Card image"
+						width={300}
+						height={300}
+						className="h-full w-full object-cover"
+					/>
 					<div className="flex justify-between">
 						<CardTitle>{props.title}</CardTitle>
 					</div>
@@ -71,9 +74,12 @@ export function GrantProgramCard(props: GrantProgramCardProps) {
 				</CardContent>
 			</Link>
 			<CardFooter className="flex justify-between">
-				<Button variant="outline" size="sm">
+				<Link
+					href={`/profile/${props.profileKey}`}
+					className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
+				>
 					@{props.owner}
-				</Button>
+				</Link>
 				<p>Grants awarded: {props.count}</p>
 			</CardFooter>
 		</Card>
@@ -86,4 +92,5 @@ export type GrantProgramCardProps = {
 	owner: string;
 	count: number;
 	publicKey: string;
+	profileKey: string
 };

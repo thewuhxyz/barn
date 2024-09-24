@@ -14,6 +14,18 @@ import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+export function AllProjects() {
+	const { allProjects } = useBarnAccount();
+	if (!allProjects) return <>No Granted Project</>;
+	return (
+		<div className="grid grid-cols-2 gap-8 w-full">
+			{allProjects.map(({ publicKey }, i) => (
+				<ProjectCardFromPubkey key={i} publicKey={publicKey} />
+			))}
+		</div>
+	);
+}
+
 export function AllGrantedProjects() {
 	const { allGrants } = useBarnAccount();
 	if (!allGrants) return <>No Granted Project</>;

@@ -8,31 +8,66 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	useBarnGrant,
-	useBarnGrantMilestone,
-	useBarnGrantProgram,
-	useBarnProject,
-	useBarnUser,
-} from "@/hooks/barn";
-import { PublicKey } from "@solana/web3.js";
-import {
-	AddGrantMilestone,
-	EditGrantMilestone,
-	UpdateMilestone,
-} from "./rpc";
+import { useBarnProfile, useBarnUser } from "@/hooks/barn";
 import Link from "next/link";
-import { MilestoneState } from "@barn/protocol";
 import { useGithubProfile } from "@/hooks/barn/uri";
 import Image from "next/image";
 import { ProjectCardFromGrantPubkey, ProjectCardFromPubkey } from "./project";
 import { GrantProgramCardFromPubkey } from "./program";
 import { NotificationCardFromGrantPubkey } from "./notification";
+import {
+	GitHubLogoIcon,
+	GlobeIcon,
+	TwitterLogoIcon,
+} from "@radix-ui/react-icons";
+import { buttonVariants } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 
 export type ProjectCardProps = {};
 
 export function AllUserProjects() {
-	const { projectPks } = useBarnUser();
+	const { profile } = useBarnUser();
+
+	return <AllProjectsForProfile profilePk={profile?.key.toBase58() ?? null} />
+}
+
+export function AllUserGrantPrograms() {
+	const { profile } = useBarnUser();
+
+	return <AllGrantsForProfile profilePk={profile?.key.toBase58() ?? null} />
+}
+
+export function AllUserGrants() {
+	const { profile } = useBarnUser();
+
+	return <AllGrantsForProfile profilePk={profile?.key.toBase58() ?? null} />;
+}
+
+export function AllUserNotifications() {
+	const { profile } = useBarnUser();
+
+	return (
+		<AllNotificationsForProfile profilePk={profile?.key.toBase58() ?? null} />
+	);
+}
+
+export function UserProfileCard() {
+	const { profile } = useBarnUser();
+
+	if (!profile) {
+		return "Create a Profile";
+	}
+
+	return <ProfileCardFromPubkey profilePk={profile.key.toBase58()} />;
+}
+
+export function AllProjectsForProfile({
+	profilePk,
+}: {
+	profilePk: string | null;
+}) {
+	const { projectPks } = useBarnProfile(profilePk);
 
 	if (!projectPks || !projectPks) return <p>No Projects For User</p>;
 
@@ -46,8 +81,12 @@ export function AllUserProjects() {
 	);
 }
 
-export function AllUserGrantPrograms() {
-	const { programPks: grantProgramPks } = useBarnUser();
+export function AllGrantProgramsForProfile({
+	profilePk,
+}: {
+	profilePk: string | null;
+}) {
+	const { programPks: grantProgramPks } = useBarnProfile(profilePk);
 
 	if (!grantProgramPks || !grantProgramPks.length)
 		return <p>No Grant Programs For User</p>;
@@ -63,8 +102,12 @@ export function AllUserGrantPrograms() {
 	);
 }
 
-export function AllUserGrants() {
-	const { grantPks } = useBarnUser();
+export function AllGrantsForProfile({
+	profilePk,
+}: {
+	profilePk: string | null;
+}) {
+	const { grantPks } = useBarnProfile(profilePk);
 
 	if (!grantPks || !grantPks.length) return <p>No Projects For User</p>;
 
@@ -77,8 +120,12 @@ export function AllUserGrants() {
 	);
 }
 
-export function AllUserNotifications() {
-	const { profile, grantPks } = useBarnUser();
+export function AllNotificationsForProfile({
+	profilePk,
+}: {
+	profilePk: string | null;
+}) {
+	const { profile, grantPks } = useBarnProfile(profilePk);
 
 	if (!profile || !grantPks) return <p>No Notifications For User</p>;
 
@@ -91,141 +138,106 @@ export function AllUserNotifications() {
 	);
 }
 
-export function ProfileCard() {
-	const { profile, authority, profileUri } = useBarnUser();
+export function ProfileCardFromPubkey({
+	profilePk,
+}: {
+	profilePk: string | null;
+}) {
+	const { profile, authority, profileUri } = useBarnProfile(profilePk);
 
-	const some = useGithubProfile({ user: profileUri?.github || null });
+	const githubUser = useGithubProfile({ user: profileUri?.github || null });
 
 	if (!profile || !authority) {
-		return "Create a Profile";
+		return "No Profile For User";
 	}
 
+	const props: ProfileCardProps = {
+		count: profile.count,
+		name: githubUser?.name,
+		publicKey: profile.key.toBase58(),
+		sponsor: profile.sponsor,
+		username: profile.seed,
+		bio: profileUri?.bio,
+		github: profileUri?.github
+			? `https://github.com/${profileUri?.github}`
+			: null,
+		twitter: profileUri?.twitter
+			? `https://github.com/${profileUri?.twitter}`
+			: null,
+		imageUrl: profileUri?.image_url ?? githubUser?.avatar_url,
+		website: profileUri?.website,
+	};
+
+	return <ProfileCard {...props}></ProfileCard>;
+}
+
+export function ProfileCard(props: ProfileCardProps) {
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				{some?.avatar_url && (
+				{props.imageUrl && (
 					<Image
 						width={120}
 						height={120}
-						src={some.avatar_url}
-						alt={some.twitter_username || profile.seed}
+						src={props.imageUrl}
+						alt={props.username}
 					/>
 				)}
-				<CardTitle>@{profile.seed}</CardTitle>
+				<div className="flex justify-between">
+					<CardTitle>@{props.username}</CardTitle>
+					<Badge>{props.sponsor ? "Sponsor" : "Developer"}</Badge>
+				</div>
 			</CardHeader>
 			<CardContent className="space-y-4">
-				<CardDescription>name: {profileUri?.name}</CardDescription>
-				<CardDescription>bio: {profileUri?.bio}</CardDescription>
-				<CardDescription>Pubkey: {authority.signer.toBase58()}</CardDescription>
-				<CardDescription>
-					Profile: {authority.profile.toBase58()}
+				<CardDescription className="text-lg">
+					{props.name ?? ""}
 				</CardDescription>
+				<CardDescription>{props.bio ?? ""}</CardDescription>
 				<CardDescription>
-					Account: {profile.sponsor ? "Sponsor" : "Developer"}
-				</CardDescription>
-				<CardDescription>
-					{profile.sponsor ? "Grant Programs" : "Projects"}: {profile.count}
+					{props.sponsor ? "Grant Programs" : "Projects"}: {props.count}
 				</CardDescription>
 			</CardContent>
 			<CardFooter className="space-x-4">
-				<Link href={`https://github.com/${profileUri?.github}`}>Github</Link>
-				<Link href={`https://twitter.com/${profileUri?.twitter}`}>Twitter</Link>
+				<div className="flex items-center space-x-4">
+					{props.github && (
+						<Link
+							href={props.github}
+							className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
+						>
+							<GitHubLogoIcon />
+						</Link>
+					)}
+					{props.website && (
+						<Link
+							href={props.website}
+							className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
+						>
+							<GlobeIcon />
+						</Link>
+					)}
+					{props.twitter && (
+						<Link
+							href={props.twitter}
+							className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
+						>
+							<TwitterLogoIcon />
+						</Link>
+					)}
+				</div>
 			</CardFooter>
 		</Card>
 	);
 }
 
-export function MilestoneCard({ publicKey }: { publicKey: PublicKey }) {
-	const {
-		grant,
-		project,
-		milestone,
-		milestoneUri,
-		projectUri,
-		profile,
-		grantProgramUri,
-	} = useBarnGrantMilestone(publicKey.toBase58());
-
-	if (!grant || !project || !milestone) return;
-	return (
-		<Card className="w-full">
-			<Link href={`/project/${grant.project}`}>
-				<CardHeader>
-					<CardTitle>{milestoneUri?.name}</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<CardDescription>
-						Description: {milestoneUri?.description}
-					</CardDescription>
-					<CardDescription>Project: {projectUri?.name}</CardDescription>
-					<CardDescription>
-						Grant Program: {grantProgramUri?.name}
-					</CardDescription>
-					<CardDescription>Owner: {profile?.seed}</CardDescription>
-					<CardDescription>
-						Amount: {milestone.amount.toNumber() / 10 ** grant.paymentDecimals}
-					</CardDescription>
-					<CardDescription>Milestone id: {milestone.id}</CardDescription>
-					<CardDescription>
-						Status: {MilestoneState.toStatus(milestone.state)}
-					</CardDescription>
-				</CardContent>
-			</Link>
-			<CardFooter className="flex flex-col space-y-4">
-				<UpdateMilestone grantMilestonePk={publicKey} />
-				<EditGrantMilestone grantMilestonePk={publicKey} />
-			</CardFooter>
-		</Card>
-	);
-}
-
-export function GrantCard({ publicKey }: { publicKey: PublicKey }) {
-	const {
-		grant,
-		project,
-		grantUri,
-		projectUri,
-		sponsorProfileUri,
-		profile,
-	} = useBarnGrant(publicKey.toBase58());
-	if (!grant || !project || !profile) return;
-	return (
-		<Card className="w-full">
-			<Link href={`/project/${grant.project}`}>
-				<CardHeader>
-					<CardTitle>
-						{projectUri?.name ?? `Untitled Project -${project.id}`} |{" "}
-						{grant.approvedAmount} SOL
-					</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					<CardDescription>
-						Desecription: {grantUri?.description}
-					</CardDescription>
-					<CardDescription>Project: {grant.project.toBase58()}</CardDescription>
-					<div className="space-y-1">
-						{grantUri?.objectives?.length &&
-							grantUri.objectives.map((obj, i) => (
-								<CardDescription key={i}>
-									Task {i + 1}: {obj}
-								</CardDescription>
-							))}
-					</div>
-					<CardDescription>
-						Grant Program: {grant.program.toBase58()}
-					</CardDescription>
-					<CardDescription>Owner: {`@${profile.seed}`}</CardDescription>
-					<CardDescription>
-						Sponsor: {`${sponsorProfileUri?.name}`}
-					</CardDescription>
-					<CardDescription>Amount paid out: {grant.paidOut} </CardDescription>
-					<CardDescription>Milestones: {grant.count}</CardDescription>
-				</CardContent>
-			</Link>
-			<CardFooter>
-				<AddGrantMilestone grantPk={publicKey} />
-			</CardFooter>
-		</Card>
-	);
-}
-
+export type ProfileCardProps = {
+	name?: string | null;
+	bio?: string | null;
+	username: string;
+	sponsor: boolean;
+	github?: string | null;
+	website?: string | null;
+	twitter?: string | null;
+	publicKey: string;
+	count: number;
+	imageUrl?: string | null;
+};
