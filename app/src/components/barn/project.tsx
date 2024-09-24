@@ -9,10 +9,22 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { useBarnGrant, useBarnProject } from "@/hooks/barn";
+import { useBarnAccount, useBarnGrant, useBarnProject } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+export function AllGrantedProjects() {
+	const { allGrants } = useBarnAccount();
+	if (!allGrants) return <>No Granted Project</>;
+	return (
+		<div className="grid grid-cols-2 gap-8 w-full">
+			{allGrants.map((grant, i) => (
+				<ProjectCardFromGrantPubkey key={i} publicKey={grant.key} />
+			))}
+		</div>
+	);
+}
 
 export function ProjectCardFromGrantPubkey({
 	publicKey,
@@ -81,11 +93,11 @@ export function ProjectCard(props: ProjectCardProps) {
 					href={`/profile/${props.profileKey}`}
 					className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
 				>
-					{props.owner}
+					@{props.owner}
 				</Link>
 				{props.program && (
 					<Link
-						href={`/profile/${props.programKey}`}
+						href={`/program/${props.programKey}`}
 						className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
 					>
 						{props.program}

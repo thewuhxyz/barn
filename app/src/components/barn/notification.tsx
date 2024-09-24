@@ -6,16 +6,15 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
 	useBarnGrant,
 	useBarnGrantMilestone,
-	useBarnProject,
 	useBarnUser,
 } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 import { MilestoneState } from "@barn/protocol";
+import Link from "next/link";
 
 export function NotificationCardFromGrantPubkey({
 	publicKey,
@@ -57,6 +56,7 @@ export function NotificationCardFromGrantPubkey({
 		program: grantProgramUri?.name || `Untitled Program ${grantProgram.id}`,
 		title: projectUri?.name ?? `Untitled Project ${project.id}`,
 		approvedAmount: grant.approvedAmount,
+		projectKey: project.key.toBase58()
 	};
 
 	if (!sponsor && status === "accepted") {
@@ -72,34 +72,32 @@ export function NotificationCardFromGrantPubkey({
 
 export function NotificationCard(props: NotificationCardProps) {
 	return (
-		<Card className="w-full">
-			<CardHeader>
-				<div className="flex justify-between">
-					<CardTitle>{props.title}</CardTitle>
-					<div className="flex space-x-4 items-center">
-						<Badge variant="secondary">{props.approvedAmount} SOL</Badge>
-						<Badge
-							className={`text-xs ${props.status === "accepted" ? "text-red-400" : "text-blue-400"}`}
-						>
-							{props.status === "accepted"
-								? "Awaiting payment"
-								: "Needs Review"}
-						</Badge>
+		<Link href={`/project/${props.projectKey}`}>
+			<Card className="w-full">
+				<CardHeader>
+					<div className="flex justify-between">
+						<CardTitle>{props.title}</CardTitle>
+						<div className="flex space-x-4 items-center">
+							<Badge variant="secondary">{props.approvedAmount} SOL</Badge>
+							<Badge
+								className={`text-xs ${props.status === "accepted" ? "text-red-400" : "text-blue-400"}`}
+							>
+								{props.status === "accepted"
+									? "Awaiting payment"
+									: "Needs Review"}
+							</Badge>
+						</div>
 					</div>
-				</div>
-			</CardHeader>
-			<CardContent>
-				<CardDescription>{props.description}</CardDescription>
-			</CardContent>
-			<CardFooter className="flex justify-between">
-				<Button variant="outline" size="sm">
-					{props.owner}
-				</Button>
-				<Button variant="ghost" size="sm">
-					{props.program}
-				</Button>
-			</CardFooter>
-		</Card>
+				</CardHeader>
+				<CardContent>
+					<CardDescription>{props.description}</CardDescription>
+				</CardContent>
+				<CardFooter className="flex justify-between">
+					<p className="text-sm text-muted-foreground">@{props.owner}</p>
+					<p className="text-sm text-muted-foreground">{props.program}</p>
+				</CardFooter>
+			</Card>
+		</Link>
 	);
 }
 
@@ -110,4 +108,5 @@ export type NotificationCardProps = {
 	description: string;
 	owner: string;
 	program: string;
+	projectKey: string
 };

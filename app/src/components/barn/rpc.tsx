@@ -416,7 +416,7 @@ export function EditGrantMilestone({
 				<Popover>
 					<PopoverTrigger
 						className={cn(
-							buttonVariants({ variant: "secondary", className: "w-full" })
+							buttonVariants({ variant: "secondary", className: "w-full", size: "sm" })
 						)}
 					>
 						Edit Milestone
@@ -447,7 +447,7 @@ export function EditGrantMilestone({
 							}
 							placeholder="Enter Milestone URI"
 						/>
-						<Button className="w-full" onClick={handleClick}>
+						<Button size="sm" className="w-full" onClick={handleClick}>
 							Edit Milestone
 						</Button>
 					</PopoverContent>
@@ -493,7 +493,7 @@ export function ReviseGrantMilestone({
 	}
 
 	return (
-		<Button className="w-full" onClick={handleClick}>
+		<Button size="sm" className="w-full" onClick={handleClick}>
 			Revise
 		</Button>
 	);
@@ -535,7 +535,7 @@ export function ReviewGrantMilestone({
 	}
 
 	return (
-		<Button className="w-full" onClick={handleClick}>
+		<Button size="sm" className="w-full" onClick={handleClick}>
 			Review
 		</Button>
 	);
@@ -577,7 +577,7 @@ export function AcceptGrantMilestone({
 	}
 
 	return (
-		<Button className="w-full" onClick={handleClick}>
+		<Button size="sm" className="w-full" onClick={handleClick}>
 			Accept
 		</Button>
 	);
@@ -619,7 +619,12 @@ export function RejectGrantMilestone({
 	}
 
 	return (
-		<Button className="w-full" variant="destructive" onClick={handleClick}>
+		<Button
+			size="sm"
+			className="w-full"
+			variant="destructive"
+			onClick={handleClick}
+		>
 			Reject
 		</Button>
 	);
@@ -677,7 +682,7 @@ export function SettleGrantMilestone({
 	}
 
 	return (
-		<Button className="w-full" onClick={handleClick}>
+		<Button size="sm" className="w-full" onClick={handleClick}>
 			Settle Payment
 		</Button>
 	);

@@ -1,6 +1,6 @@
 "use client";
 
-import { AllGrantPrograms } from "@/components/barn";
+import { AllGrantPrograms } from "@/components/barn/program";
 
 export default function Program() {
 	return (

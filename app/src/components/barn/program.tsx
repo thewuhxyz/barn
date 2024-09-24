@@ -8,8 +8,23 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useBarnGrantProgram } from "@/hooks/barn";
+import { useBarnAccount, useBarnGrantProgram } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
+
+export function AllGrantPrograms() {
+	const { allGrantPrograms } = useBarnAccount();
+	if (!allGrantPrograms) return <></>;
+	return (
+		<div className="grid grid-cols-2 gap-8 w-full">
+			{allGrantPrograms.map(({ publicKey }, i) => (
+				<GrantProgramCardFromPubkey
+					key={i}
+					publicKey={publicKey}
+				></GrantProgramCardFromPubkey>
+			))}
+		</div>
+	);
+}
 
 export function GrantProgramCardFromPubkey({
 	publicKey,
@@ -56,7 +71,7 @@ export function GrantProgramCard(props: GrantProgramCardProps) {
 				</CardContent>
 				<CardFooter className="flex justify-between">
 					<Button variant="outline" size="sm">
-						{props.owner}
+						@{props.owner}
 					</Button>
 					<p>Grants awarded: {props.count}</p>
 				</CardFooter>

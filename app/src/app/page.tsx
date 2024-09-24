@@ -1,6 +1,6 @@
 "use client";
 
-import { AllGrantedProjects } from "@/components/barn";
+import { AllGrantedProjects } from "@/components/barn/project";
 
 export default function Home() {
 	return (

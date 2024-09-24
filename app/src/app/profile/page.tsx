@@ -6,7 +6,6 @@ import {
 	AllUserGrants,
 	AllUserNotifications,
 	AllUserProjects,
-	Notifications,
 	ProfileCard,
 } from "@/components/barn/profile";
 import { useBarnUser } from "@/hooks/barn";
@@ -14,7 +13,7 @@ import {
 	AddGrantProgram,
 	AddNewProject,
 	CreateUserProfile,
-} from "@/components/barn/project-page";
+} from "@/components/barn/rpc";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletButton } from "@/context";
 
