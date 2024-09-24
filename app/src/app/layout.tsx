@@ -42,7 +42,7 @@ export default function RootLayout({
 								</ul>
 								<ul>
 									<Link href="/profile">
-										<p className="cursor-default hover:text-primary">Profile</p>
+										<p className="cursor-default hover:text-primary">My Profile</p>
 									</Link>
 								</ul>
 								<ul>

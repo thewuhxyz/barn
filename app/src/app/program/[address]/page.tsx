@@ -1,25 +1,37 @@
 "use client";
 
-import { GrantProgramCard } from "@/components/barn";
-import { GrantCard } from "@/components/barn/profile";
+import { GrantProgramCardFromPubkey } from "@/components/barn/program";
+import { ProjectCardFromGrantPubkey } from "@/components/barn/project";
 import { useBarnGrantProgram } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
 
 export default function Program({ params }: { params: { address: string } }) {
-	const projectPk = params.address;
-	const { grantPks } = useBarnGrantProgram(projectPk);
+	const grantProgramPk = params.address;
+	const { grantPks, grantProgram } = useBarnGrantProgram(grantProgramPk);
 
 	return (
 		<main className="flex-1 items-center justify-center space-y-16">
-			<GrantProgramCard publicKey={new PublicKey(projectPk)} />
-			<div className="w-full">
-				<div>Projects</div>
-				<div className="space-y-4">
-					{grantPks
-						? grantPks.map((m, i) => <GrantCard key={i} publicKey={m} />)
-						: "No milestones"}
-				</div>
-			</div>
+			{grantProgram ? (
+				<>
+					<GrantProgramCardFromPubkey
+						publicKey={new PublicKey(grantProgramPk)}
+					/>
+					<div className="w-full space-y-4">
+						<p className="text-center text-lg">All Awarded Projects</p>
+						{grantPks ? (
+							<div className="space-y-4 grid grid-cols-2 gap-8">
+								{grantPks.map((m, i) => (
+									<ProjectCardFromGrantPubkey key={i} publicKey={m} />
+								))}
+							</div>
+						) : (
+							"No Grants Awarded yet"
+						)}
+					</div>
+				</>
+			) : (
+				`Not Grant Program Found for address: ${grantProgramPk}`
+			)}
 		</main>
 	);
 }
