@@ -32,6 +32,13 @@ export function useBarnGrant(grantPk: string | null) {
 		),
 	});
 
+	const latestMilestone = grant.data?.count
+		? barn.account.grantMilestoneAddress(
+				grant.data.key,
+				grant.data.count - 1 ?? 0
+			)
+		: null;
+
 	const grantUri = useFetchBarnURI<GrantURI>({
 		pk: grantPk,
 		uri: grant.data?.uri || null,
@@ -51,6 +58,7 @@ export function useBarnGrant(grantPk: string | null) {
 		sponsorProfileUri,
 		sponsorAuthority,
 		grantProgramUri,
+		latestMilestone,
 	};
 }
 

@@ -10,7 +10,7 @@ import { GrantMilestoneURI } from "@/lib/uri-schema";
 import { useBarnGrant } from "./grant";
 import { PublicKey } from "@solana/web3.js";
 
-export function useBarnGrantMilestone(milestonePk: string) {
+export function useBarnGrantMilestone(milestonePk: string | null) {
 	const barn = useBarn();
 
 	const milestone = useQuery({

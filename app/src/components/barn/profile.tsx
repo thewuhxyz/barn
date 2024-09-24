@@ -28,6 +28,7 @@ import { useGithubProfile } from "@/hooks/barn/uri";
 import Image from "next/image";
 import { ProjectCardFromGrantPubkey, ProjectCardFromPubkey } from "./project";
 import { GrantProgramCardFromPubkey } from "./program";
+import { NotificationCardFromGrantPubkey } from "./notification";
 
 export type ProjectCardProps = {};
 
@@ -108,22 +109,15 @@ export function GrantsFromProgramCard({ publicKey }: { publicKey: PublicKey }) {
 }
 
 export function AllUserNotifications() {
-	const { profile, programPks, projectPks } = useBarnUser();
+	const { profile, grantPks } = useBarnUser();
 
-	if (!profile) return <p>No Notifications For User</p>;
+	if (!profile || !grantPks) return <p>No Notifications For User</p>;
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{profile.sponsor &&
-				programPks &&
-				programPks.map((pk) => (
-					<NotificationsFromProgramCard key={pk.toBase58()} publicKey={pk} />
-				))}
-			{!profile.sponsor &&
-				projectPks &&
-				projectPks.map((pk) => (
-					<NotificationsFromProjectCard key={pk.toBase58()} publicKey={pk} />
-				))}
+			{grantPks.map((pk) => (
+				<NotificationCardFromGrantPubkey key={pk.toBase58()} publicKey={pk} />
+			))}
 		</div>
 	);
 }
