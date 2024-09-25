@@ -2,31 +2,25 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-	AllUserGrantPrograms,
-	AllUserGrants,
-	AllUserNotifications,
-	AllUserProjects,
-	UserProfileCard,
+	AllGrantProgramsForProfile,
+	AllGrantsForProfile,
+	AllNotificationsForProfile,
+	AllProjectsForProfile,
+	ProfileCard,
+	ProfileCardFromPubkey,
 } from "@/components/barn/profile";
-import { useBarnUser } from "@/hooks/barn";
-import {
-	AddGrantProgram,
-	AddNewProject,
-	CreateUserProfile,
-} from "@/components/barn/rpc";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletButton } from "@/context";
+import { useBarnProfile } from "@/hooks/barn";
 
-export default function Profile() {
-	const { publicKey } = useWallet();
-	const { profile } = useBarnUser();
+export default function Profile({ params }: { params: { address: string } }) {
+	const profilePk = params.address;
+
+	const { profile } = useBarnProfile(profilePk);
 
 	return (
 		<main className="flex flex-col items-center space-y-16">
 			{profile ? (
 				<>
-					<UserProfileCard />
-					{profile.sponsor ? <AddGrantProgram /> : <AddNewProject />}
+					<ProfileCardFromPubkey profilePk={profilePk} />
 					<Tabs
 						defaultValue="grants"
 						className="flex w-full flex-col items-center justify-center space-y-8 max-w-6xl"
@@ -39,22 +33,23 @@ export default function Profile() {
 							<TabsTrigger value="notifications">Nofications</TabsTrigger>
 						</TabsList>
 						<TabsContent className="w-full" value="projects">
-							{profile.sponsor ? <AllUserGrantPrograms /> : <AllUserProjects />}
+							{profile.sponsor ? (
+								<AllGrantProgramsForProfile profilePk={profilePk} />
+							) : (
+								<AllProjectsForProfile profilePk={profilePk} />
+							)}
 						</TabsContent>
 						<TabsContent className="w-full" value="grants">
-							<AllUserGrants />
+							<AllGrantsForProfile profilePk={profilePk} />
 						</TabsContent>
 						<TabsContent className="w-full" value="notifications">
-							<AllUserNotifications />
+							<AllNotificationsForProfile profilePk={profilePk} />
 						</TabsContent>
 					</Tabs>
 				</>
-			) : publicKey ? (
-				<CreateUserProfile />
 			) : (
 				<>
-					<p>Connect wallet to create a profile</p>
-					<WalletButton />
+					<p>Cannot find profile with address: {profilePk}</p>
 				</>
 			)}
 		</main>

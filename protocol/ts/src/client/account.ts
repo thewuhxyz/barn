@@ -132,13 +132,13 @@ export class BarnAccount {
 
 	async getAllProjectAccounts(): Promise<ProjectAccount[]> {
 		const projects = await this.barn.account.project.all();
-		return projects.map((p) => p.account);
+		return projects.map((p) => ({ ...p.account, key: p.publicKey }));
 	}
 
 	async getAllGrantAccount(): Promise<GrantAccount[]> {
 		const grants = await this.barn.account.grant.all();
 		return await Promise.all(
-			grants.map(async ({ account: grant }) => {
+			grants.map(async ({ account: grant, publicKey }) => {
 				const { paymentMint } = grant;
 
 				const { decimals } = await getMint(
@@ -148,6 +148,7 @@ export class BarnAccount {
 
 				return {
 					...grant,
+					key: publicKey,
 					paymentDecimals: decimals,
 					approvedAmount: toUiAmount(grant.approvedAmount, decimals),
 					paidOut: toUiAmount(grant.paidOut, decimals),
@@ -160,17 +161,20 @@ export class BarnAccount {
 		const authority = await this.barn.account.authority.fetchNullable(
 			authorityPk
 		);
-		return authority;
+		if (!authority) return authority;
+		return { ...authority, key: authorityPk };
 	}
 
 	async profile(profilePk: PublicKey): Promise<ProfileAccount | null> {
 		const profile = await this.barn.account.profile.fetchNullable(profilePk);
-		return profile;
+		if (!profile) return profile;
+		return { ...profile, key: profilePk };
 	}
 
 	async project(projectPk: PublicKey): Promise<ProjectAccount | null> {
 		const project = await this.barn.account.project.fetchNullable(projectPk);
-		return project;
+		if (!project) return project;
+		return { ...project, key: projectPk };
 	}
 
 	async grantProgram(
@@ -179,7 +183,8 @@ export class BarnAccount {
 		const grantProgram = await this.barn.account.grantProgram.fetchNullable(
 			grantProgramPk
 		);
-		return grantProgram;
+		if (!grantProgram) return grantProgram;
+		return { ...grantProgram, key: grantProgramPk };
 	}
 
 	async grant(grantPk: PublicKey): Promise<GrantAccount | null> {
@@ -195,6 +200,7 @@ export class BarnAccount {
 
 		return {
 			...grant,
+			key: grantPk,
 			paymentDecimals: decimals,
 			approvedAmount: toUiAmount(grant.approvedAmount, decimals),
 			paidOut: toUiAmount(grant.paidOut, decimals),
@@ -207,7 +213,8 @@ export class BarnAccount {
 		const grantMilestone = await this.barn.account.grantMilestone.fetchNullable(
 			grantMilestonePk
 		);
-		return grantMilestone;
+		if (!grantMilestone) return grantMilestone;
+		return { ...grantMilestone, key: grantMilestonePk };
 	}
 
 	getProjectOrGrantProgramAddress(
@@ -285,12 +292,14 @@ export class BarnAccount {
 }
 
 export type AuthorityAccount = {
+	key: PublicKey;
 	signer: PublicKey;
 	profile: PublicKey;
 	bump: number;
 };
 
 export type ProfileAccount = {
+	key: PublicKey;
 	authority: PublicKey;
 	uri: string;
 	seed: string;
@@ -300,6 +309,7 @@ export type ProfileAccount = {
 };
 
 export type ProjectAccount = {
+	key: PublicKey;
 	profile: PublicKey;
 	grant: PublicKey | null;
 	id: number;
@@ -308,6 +318,7 @@ export type ProjectAccount = {
 };
 
 export type GrantProgramAccount = {
+	key: PublicKey;
 	profile: PublicKey;
 	uri: string;
 	id: number;
@@ -316,6 +327,7 @@ export type GrantProgramAccount = {
 };
 
 export type GrantMilestoneAccount = {
+	key: PublicKey;
 	amount: BN;
 	bump: number;
 	grant: PublicKey;
@@ -325,6 +337,7 @@ export type GrantMilestoneAccount = {
 };
 
 export type GrantAccount = {
+	key: PublicKey;
 	approvedAmount: number;
 	bump: number;
 	count: number;

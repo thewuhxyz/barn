@@ -15,7 +15,7 @@ export type ProjectURI = {
 	name?: string | null;
 	description?: string | null;
 	image_url?: string | null;
-	objectives?: string | null;
+	objectives?: string[] | null;
 	website?: string | null;
 	github?: string | null;
 	twitter?: string | null;
@@ -40,6 +40,7 @@ export type GrantURI = {
 export type GrantMilestoneURI = {
 	name?: string | null;
 	description?: string | null;
+	discussion?: string | null;
 	pr?: string[];
 	additional_info?: string[];
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { ApproveSponsor } from "@/components/barn/project";
+import { ApproveSponsor } from "@/components/barn/rpc";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletButton } from "@/context";
 
@@ -13,7 +13,7 @@ export default function Admin() {
 				<ApproveSponsor />
 			) : (
 				<>
-					<p>Connect wallet to create a profile</p>
+					<p>Connect wallet</p>
 					<WalletButton />
 				</>
 			)}
