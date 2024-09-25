@@ -24,18 +24,16 @@ import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 
-export type ProjectCardProps = {};
-
 export function AllUserProjects() {
 	const { profile } = useBarnUser();
 
-	return <AllProjectsForProfile profilePk={profile?.key.toBase58() ?? null} />
+	return <AllProjectsForProfile profilePk={profile?.key.toBase58() ?? null} />;
 }
 
 export function AllUserGrantPrograms() {
 	const { profile } = useBarnUser();
 
-	return <AllGrantsForProfile profilePk={profile?.key.toBase58() ?? null} />
+	return <AllGrantsForProfile profilePk={profile?.key.toBase58() ?? null} />;
 }
 
 export function AllUserGrants() {
@@ -73,10 +71,9 @@ export function AllProjectsForProfile({
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{projectPks.map((pk) => {
-				console.log("pk:", pk.toBase58());
-				return <ProjectCardFromPubkey key={pk.toBase58()} publicKey={pk} />;
-			})}
+			{projectPks.map((pk, i) => (
+				<ProjectCardFromPubkey key={i} publicKey={pk} />
+			))}
 		</div>
 	);
 }
@@ -93,11 +90,9 @@ export function AllGrantProgramsForProfile({
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{grantProgramPks.map((pk) => {
-				return (
-					<GrantProgramCardFromPubkey key={pk.toBase58()} publicKey={pk} />
-				);
-			})}
+			{grantProgramPks.map((pk, i) => (
+				<GrantProgramCardFromPubkey key={i} publicKey={pk} />
+			))}
 		</div>
 	);
 }
@@ -113,8 +108,8 @@ export function AllGrantsForProfile({
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{grantPks.map((pk) => (
-				<ProjectCardFromGrantPubkey publicKey={pk} />
+			{grantPks.map((pk, i) => (
+				<ProjectCardFromGrantPubkey key={i} publicKey={pk} />
 			))}
 		</div>
 	);
@@ -131,8 +126,8 @@ export function AllNotificationsForProfile({
 
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
-			{grantPks.map((pk) => (
-				<NotificationCardFromGrantPubkey key={pk.toBase58()} publicKey={pk} />
+			{grantPks.map((pk, i) => (
+				<NotificationCardFromGrantPubkey key={i} publicKey={pk} />
 			))}
 		</div>
 	);
