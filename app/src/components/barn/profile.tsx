@@ -157,7 +157,7 @@ export function ProfileCardFromPubkey({
 			? `https://github.com/${profileUri?.github}`
 			: null,
 		twitter: profileUri?.twitter
-			? `https://github.com/${profileUri?.twitter}`
+			? `https://twitter.com/${profileUri?.twitter}`
 			: null,
 		imageUrl: profileUri?.image_url ?? githubUser?.avatar_url,
 		website: profileUri?.website,

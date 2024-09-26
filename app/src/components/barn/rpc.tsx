@@ -416,7 +416,11 @@ export function EditGrantMilestone({
 				<Popover>
 					<PopoverTrigger
 						className={cn(
-							buttonVariants({ variant: "secondary", className: "w-full", size: "sm" })
+							buttonVariants({
+								variant: "secondary",
+								className: "w-full",
+								size: "sm",
+							})
 						)}
 					>
 						Edit Milestone
@@ -693,43 +697,56 @@ export function UpdateMilestone({
 }: {
 	grantMilestonePk: PublicKey;
 }) {
-	const { profile } = useBarnUser();
-	const { milestone } = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { profile: userProfile } = useBarnUser();
+	const { milestone, profile, grantProgram, project } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
-	if (!profile || !milestone) return <></>;
+	if (!profile || !milestone || !project || !grantProgram) return <></>;
+
+	const userIsInvolved = !userProfile
+		? false
+		: userProfile?.key.equals(project.profile) ||
+			userProfile?.key.equals(grantProgram.profile)
 
 	return (
 		<>
-			{!profile.sponsor &&
+			{userIsInvolved &&
+				!profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inProgress" && (
 					<ReviewGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
-			{!profile.sponsor &&
+			{userIsInvolved &&
+				!profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inReview" && (
 					<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
-			{profile.sponsor &&
+			{userIsInvolved &&
+				profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inReview" && (
 					<div className="flex w-full space-x-4">
 						<AcceptGrantMilestone grantMilestonePk={grantMilestonePk} />
 						<RejectGrantMilestone grantMilestonePk={grantMilestonePk} />
 					</div>
 				)}
-			{profile.sponsor &&
+			{userIsInvolved &&
+				profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "accepted" && (
 					<SettleGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
-			{profile.sponsor &&
+			{userIsInvolved &&
+				profile.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "rejected" && (
 					<Button disabled={true} className="w-full">
 						Settle Payment
 					</Button>
 				)}
-			{MilestoneState.toStatus(milestone.state) === "paid" && (
-				<Button disabled={true} className="w-full">
-					Paid
-				</Button>
-			)}
+			{userIsInvolved &&
+				MilestoneState.toStatus(milestone.state) === "paid" && (
+					<Button disabled={true} className="w-full">
+						Paid
+					</Button>
+				)}
 		</>
 	);
 }

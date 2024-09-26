@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { UpdateMilestone } from "../rpc";
-import { toUiAmount } from "@barn/protocol";
+import { MilestoneState, toUiAmount } from "@barn/protocol";
 
 export function MilestoneDetailsFromPubkey({
 	publicKey,
@@ -35,6 +35,7 @@ export function MilestoneDetailsFromPubkey({
 		discussion: grantUri?.discussion,
 		publicKey: milestone.key,
 		id: milestone.id,
+		status: MilestoneState.toStatus(milestone.state),
 	};
 
 	return <MilestoneDetailsCard {...props} />;
@@ -46,7 +47,9 @@ export function MilestoneDetailsCard(props: MilestoneDetailsCardProps) {
 			<CardHeader>
 				<div className="flex justify-between">
 					<CardTitle>{props.title}</CardTitle>
-					<Badge className="max-w">{props.amount} SOL</Badge>
+					<Badge className="max-w">
+						{props.amount} SOL - {props.status}
+					</Badge>
 				</div>
 				<div className="flex justify-between">
 					<p className="text-muted-foreground text-xs">id: {props.id}</p>
@@ -87,4 +90,5 @@ export type MilestoneDetailsCardProps = {
 	programKey?: string | null;
 	objectives?: string[] | null;
 	additionalInfo?: string[] | null;
+	status: string;
 };

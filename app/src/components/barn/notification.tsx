@@ -7,13 +7,9 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-	useBarnGrant,
-	useBarnGrantMilestone,
-	useBarnUser,
-} from "@/hooks/barn";
+import { useBarnGrant, useBarnGrantMilestone, useBarnUser } from "@/hooks/barn";
 import { PublicKey } from "@solana/web3.js";
-import { MilestoneState } from "@barn/protocol";
+import { MilestoneState, toUiAmount } from "@barn/protocol";
 import Link from "next/link";
 
 export function NotificationCardFromGrantPubkey({
@@ -55,8 +51,8 @@ export function NotificationCardFromGrantPubkey({
 		status,
 		program: grantProgramUri?.name || `Untitled Program ${grantProgram.id}`,
 		title: projectUri?.name ?? `Untitled Project ${project.id}`,
-		approvedAmount: grant.approvedAmount,
-		projectKey: project.key.toBase58()
+		amount: toUiAmount(milestone.amount, grant.paymentDecimals),
+		projectKey: project.key.toBase58(),
 	};
 
 	if (!sponsor && status === "accepted") {
@@ -78,10 +74,8 @@ export function NotificationCard(props: NotificationCardProps) {
 					<div className="flex justify-between">
 						<CardTitle>{props.title}</CardTitle>
 						<div className="flex space-x-4 items-center">
-							<Badge variant="secondary">{props.approvedAmount} SOL</Badge>
-							<Badge
-								className={`text-xs ${props.status === "accepted" ? "text-red-400" : "text-blue-400"}`}
-							>
+							<Badge variant="secondary">{props.amount} SOL</Badge>
+							<Badge>
 								{props.status === "accepted"
 									? "Awaiting payment"
 									: "Needs Review"}
@@ -103,10 +97,10 @@ export function NotificationCard(props: NotificationCardProps) {
 
 export type NotificationCardProps = {
 	title: string;
-	approvedAmount: number;
+	amount: number;
 	status: string;
 	description: string;
 	owner: string;
 	program: string;
-	projectKey: string
+	projectKey: string;
 };
