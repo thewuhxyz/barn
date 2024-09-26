@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { MilestoneDetailsFromPubkey } from "./milestone";
+import { AddGrantMilestone } from "../rpc";
 
 export function GrantDetailsFromPubkey({
 	publicKey,
@@ -34,7 +35,7 @@ export function GrantDetailsFromPubkey({
 
 	const props: GrantDetailsCardProps = {
 		description: grantUri?.description ?? undefined,
-		publicKey: grant.key.toBase58(),
+		publicKey: grant.key,
 		title: grantUri?.name ?? projectUri?.name ?? `Untitled Grant - ${grant.id}`,
 		approvedAmount: grant.approvedAmount,
 		paidOut: grant.paidOut,
@@ -115,13 +116,14 @@ export function GrantDetailsCard(props: GrantDetailsCardProps) {
 					)}
 				</div>
 			</CardContent>
-			{props.milestones && (
-				<CardFooter className="flex flex-col space-y-4">
-					{props.milestones.map((pk, i) => (
+
+			<CardFooter className="flex flex-col space-y-4">
+				{props.milestones &&
+					props.milestones.map((pk, i) => (
 						<MilestoneDetailsFromPubkey key={i} publicKey={pk} />
 					))}
-				</CardFooter>
-			)}
+				<AddGrantMilestone grantPk={props.publicKey} />
+			</CardFooter>
 		</Card>
 	);
 }
@@ -133,7 +135,7 @@ export type GrantDetailsCardProps = {
 	description?: string;
 	discussion?: string | null;
 	program?: string | null;
-	publicKey: string;
+	publicKey: PublicKey;
 	programKey?: string | null;
 	objectives?: string[] | null;
 	additionalInfo?: string[] | null;

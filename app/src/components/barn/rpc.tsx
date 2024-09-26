@@ -242,7 +242,9 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 
 	return (
 		<Popover>
-			<PopoverTrigger className={cn(buttonVariants({size: "sm", variant: "ghost"}))}>
+			<PopoverTrigger
+				className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
+			>
 				Award Grant
 			</PopoverTrigger>
 			<PopoverContent className="space-y-4">
@@ -253,7 +255,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 					onChange={(e) =>
 						setAwardGrantConfig({ ...awardGrantConfig, amount: e.target.value })
 					}
-					placeholder="Amount"
+					placeholder="Amount in SOL"
 					className="col-span-3"
 				/>
 				<Input
@@ -298,11 +300,33 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 
 	const { authority, profile } = useBarnUser();
 
-	const { grant } = useBarnGrant(grantPk.toBase58());
+	const {
+		grant,
+		latestMilestone: lastMilestonePk,
+		project,
+		grantProgram,
+	} = useBarnGrant(grantPk.toBase58());
+
+	const { milestone } = useBarnGrantMilestone(
+		lastMilestonePk?.toBase58() || null
+	);
 
 	const { addGrantMilestone } = useBarnRPC();
 
+	if (!profile) return <></>;
+
 	const { amount, uri } = awardGrantConfig;
+
+	const isInvolved = !!(
+		project?.profile.equals(profile.key) ||
+		grantProgram?.profile.equals(profile.key)
+	);
+
+	const canAddMilestone =
+		isInvolved &&
+		(!milestone || MilestoneState.toStatus(milestone.state) === "paid");
+
+	if (!profile) return <></>;
 
 	async function handleClick() {
 		try {
@@ -325,7 +349,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 
 	return (
 		<>
-			{profile?.sponsor === false && (
+			{canAddMilestone && (
 				<Popover>
 					<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
 						Add New Milestone
@@ -341,7 +365,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 									amount: e.target.value,
 								})
 							}
-							placeholder="Amount"
+							placeholder="Amount in SOL"
 							className="col-span-3"
 						/>
 						<Input
@@ -497,7 +521,12 @@ export function ReviseGrantMilestone({
 	}
 
 	return (
-		<Button size="sm" className="w-full" onClick={handleClick}>
+		<Button
+			size="sm"
+			variant="secondary"
+			className="w-full"
+			onClick={handleClick}
+		>
 			Revise
 		</Button>
 	);
@@ -707,35 +736,36 @@ export function UpdateMilestone({
 	const userIsInvolved = !userProfile
 		? false
 		: userProfile?.key.equals(project.profile) ||
-			userProfile?.key.equals(grantProgram.profile)
+			userProfile?.key.equals(grantProgram.profile);
 
 	return (
 		<>
 			{userIsInvolved &&
-				!profile.sponsor &&
+				!userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inProgress" && (
 					<ReviewGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
 			{userIsInvolved &&
-				!profile.sponsor &&
+				!userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inReview" && (
 					<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
 			{userIsInvolved &&
-				profile.sponsor &&
+				userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inReview" && (
 					<div className="flex w-full space-x-4">
 						<AcceptGrantMilestone grantMilestonePk={grantMilestonePk} />
+						<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
 						<RejectGrantMilestone grantMilestonePk={grantMilestonePk} />
 					</div>
 				)}
 			{userIsInvolved &&
-				profile.sponsor &&
+				userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "accepted" && (
 					<SettleGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
 			{userIsInvolved &&
-				profile.sponsor &&
+				userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "rejected" && (
 					<Button disabled={true} className="w-full">
 						Settle Payment
@@ -743,7 +773,7 @@ export function UpdateMilestone({
 				)}
 			{userIsInvolved &&
 				MilestoneState.toStatus(milestone.state) === "paid" && (
-					<Button disabled={true} className="w-full">
+					<Button disabled={true} variant="secondary" className="w-full">
 						Paid
 					</Button>
 				)}
