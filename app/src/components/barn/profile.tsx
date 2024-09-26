@@ -159,7 +159,7 @@ export function ProfileCardFromPubkey({
 		twitter: profileUri?.twitter
 			? `https://twitter.com/${profileUri?.twitter}`
 			: null,
-		imageUrl: profileUri?.image_url ?? githubUser?.avatar_url,
+		image: profileUri?.image_url ?? githubUser?.avatar_url,
 		website: profileUri?.website,
 	};
 
@@ -170,14 +170,17 @@ export function ProfileCard(props: ProfileCardProps) {
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				{props.imageUrl && (
-					<Image
-						width={120}
-						height={120}
-						src={props.imageUrl}
-						alt={props.username}
-					/>
-				)}
+				<div className="w-full h-24">
+					{props.image && (
+						<Image
+							src={props.image}
+							alt={props.username}
+							width={120}
+							height={120}
+							className="object-cover h-24 w-24 pb-4"
+						/>
+					)}
+				</div>
 				<div className="flex justify-between">
 					<CardTitle>@{props.username}</CardTitle>
 					<Badge>{props.sponsor ? "Sponsor" : "Developer"}</Badge>
@@ -234,5 +237,5 @@ export type ProfileCardProps = {
 	twitter?: string | null;
 	publicKey: string;
 	count: number;
-	imageUrl?: string | null;
+	image?: string | null;
 };

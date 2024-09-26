@@ -242,7 +242,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 
 	return (
 		<Popover>
-			<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
+			<PopoverTrigger className={cn(buttonVariants({size: "sm", variant: "ghost"}))}>
 				Award Grant
 			</PopoverTrigger>
 			<PopoverContent className="space-y-4">
@@ -280,7 +280,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 					}
 					placeholder="Enter Grant URI"
 				/>
-				<Button className="w-full" onClick={handleClick}>
+				<Button className="w-full" size="sm" onClick={handleClick}>
 					Award Grant
 				</Button>
 			</PopoverContent>

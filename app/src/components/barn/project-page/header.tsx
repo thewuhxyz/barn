@@ -24,9 +24,8 @@ export function ProjectPageHeaderFromPubkey({
 }: {
 	publicKey: PublicKey;
 }) {
-	const { project, projectUri, authority, profile } = useBarnProject(
-		publicKey.toBase58()
-	);
+	const { project, projectUri, authority, profile, profileUri } =
+		useBarnProject(publicKey.toBase58());
 
 	const { grantProgramUri, grant } = useBarnGrant(
 		project?.grant?.toBase58() || null
@@ -62,15 +61,17 @@ export function ProjectPageHeader(props: ProjectPageHeaderProps) {
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				{props.image && (
-					<Image
-						src={props.image}
-						alt="Card image"
-						width={120}
-						height={120}
-						className="object-fill pb-4"
-					/>
-				)}
+				<div className="w-full h-24">
+					{props.image && (
+						<Image
+							src={props.image}
+							alt={props.publicKey}
+							width={120}
+							height={120}
+							className="object-cover h-24 w-24 pb-4"
+						/>
+					)}
+				</div>
 				<div className="flex justify-between">
 					<CardTitle className="text-xl">{props.title}</CardTitle>
 					{props.approvedAmount && <Badge>{props.approvedAmount} SOL</Badge>}
