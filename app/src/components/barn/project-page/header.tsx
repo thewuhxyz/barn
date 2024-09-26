@@ -19,7 +19,11 @@ import {
 	TwitterLogoIcon,
 } from "@radix-ui/react-icons";
 
-export function ProjectPageHeaderFromPubkey({ publicKey }: { publicKey: PublicKey }) {
+export function ProjectPageHeaderFromPubkey({
+	publicKey,
+}: {
+	publicKey: PublicKey;
+}) {
 	const { project, projectUri, authority, profile } = useBarnProject(
 		publicKey.toBase58()
 	);
@@ -42,8 +46,13 @@ export function ProjectPageHeaderFromPubkey({ publicKey }: { publicKey: PublicKe
 		profileKey: profile.key.toBase58(),
 		programKey: grant?.program.toBase58(),
 		website: projectUri?.website,
-		github: projectUri?.github ? `https://github.com/${projectUri.github}` : null,
-		twitter: projectUri?.twitter ? `https://twitter.com/${projectUri.twitter}` : null,
+		github: projectUri?.github
+			? `https://github.com/${projectUri.github}`
+			: null,
+		twitter: projectUri?.twitter
+			? `https://twitter.com/${projectUri.twitter}`
+			: null,
+		image: projectUri?.image_url,
 	};
 
 	return <ProjectPageHeader {...props} />;
@@ -53,15 +62,17 @@ export function ProjectPageHeader(props: ProjectPageHeaderProps) {
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<Image
-					src="/next.svg"
-					alt="Card image"
-					width={120}
-					height={120}
-					className="h-full w-full object-cover"
-				/>
+				{props.image && (
+					<Image
+						src={props.image}
+						alt="Card image"
+						width={120}
+						height={120}
+						className="object-fill pb-4"
+					/>
+				)}
 				<div className="flex justify-between">
-					<CardTitle>{props.title}</CardTitle>
+					<CardTitle className="text-xl">{props.title}</CardTitle>
 					{props.approvedAmount && <Badge>{props.approvedAmount} SOL</Badge>}
 				</div>
 			</CardHeader>
@@ -118,4 +129,5 @@ export type ProjectPageHeaderProps = {
 	publicKey: string;
 	profileKey: string;
 	programKey?: string | null;
+	image?: string | null;
 };
