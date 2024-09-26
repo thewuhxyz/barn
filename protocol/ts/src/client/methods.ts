@@ -6,7 +6,6 @@ import {
 	TransactionInstruction,
 } from "@solana/web3.js";
 import {
-	AcceptGrantMilestoneArgs,
 	AddGrantMilestoneArgs,
 	AddGrantProgramArgs,
 	AddProjectArgs,
@@ -14,9 +13,6 @@ import {
 	AwardGrantArgs,
 	CreateUserArgs,
 	EditGrantMilestoneArgs,
-	RejectGrantMilestoneArgs,
-	ReviewGrantMilestoneArgs,
-	ReviseGrantMilestoneArgs,
 	SettleGrantMilestoneArgs,
 	UpdateGrantMilestoneArgs,
 } from "./types";
@@ -96,14 +92,12 @@ export class BarnMethods {
 			.editGrantMilestone({ uri: args.uri, amount: args.amount })
 			.accountsPartial(args);
 	}
-	
+
 	static reviseGrantMilestone(
 		program: Program<Barn>,
 		args: UpdateGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods
-			.reviseGrantMilestone()
-			.accountsPartial(args);
+		return program.methods.reviseGrantMilestone().accountsPartial(args);
 	}
 
 	static reviewGrantMilestone(
@@ -131,7 +125,7 @@ export class BarnMethods {
 		program: Program<Barn>,
 		args: SettleGrantMilestoneArgs
 	): BarnMethod {
-		return program.methods.settleGrantMilestone().accountsPartial({...args, });
+		return program.methods.settleGrantMilestone().accountsPartial({ ...args });
 	}
 }
 

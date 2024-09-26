@@ -13,7 +13,7 @@ pub struct Authority {
 #[derive(InitSpace)]
 pub struct Profile {
     pub authority: Pubkey,
-    #[max_len(200)]
+    #[max_len(256)]
     pub uri: String,
     #[max_len(32)]
     pub seed: String,
@@ -76,7 +76,7 @@ impl Profile {
 #[derive(InitSpace)]
 pub struct GrantProgram {
     pub profile: Pubkey,
-    #[max_len(200)]
+    #[max_len(256)]
     pub uri: String,
     pub id: u32,
     pub count: u32,
@@ -100,7 +100,7 @@ pub struct Grant {
     pub program: Pubkey,
     pub id: u32,
     pub count: u32,
-    #[max_len(200)]
+    #[max_len(256)]
     pub uri: String,
     pub payment_mint: Pubkey,
     pub approved_amount: u64,
@@ -140,7 +140,7 @@ pub struct Project {
     pub profile: Pubkey,
     pub grant: Option<Pubkey>,
     pub id: u32,
-    #[max_len(200)]
+    #[max_len(256)]
     pub uri: String,
     pub bump: u8,
 }
@@ -163,7 +163,7 @@ pub struct GrantMilestone {
     pub grant: Pubkey,
     pub id: u32,
     pub amount: u64,
-    #[max_len(200)]
+    #[max_len(256)]
     pub uri: String,
     pub state: MilestoneState, // todo: u8
     pub bump: u8,
@@ -223,12 +223,8 @@ impl GrantMilestone {
     }
 
     pub fn settle(&mut self) -> Result<()> {
-        // make sure it is not rejected already
+        // make sure it is accepted
         require!(self.is_accepted(), BarnError::MilestoneNotAccepted);
-        // // make sure it is not paid already
-        // require!(self.is_paid(), BarnError::MilestoneAlreadyPaid);
-        // // make sure it is accepted
-        // require!(self.state.confirmed(), BarnError::MilestoneNotConfirmed);
 
         self.state = MilestoneState::Paid;
         Ok(())

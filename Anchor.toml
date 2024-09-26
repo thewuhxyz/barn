@@ -19,7 +19,7 @@ wallet = "~/.config/solana/deployer.json"
 
 [scripts]
 test = "ts-mocha -p ./protocol/ts/tsconfig.json -t 1000000 protocol/ts/tests/**/*.test.ts"
-barn = "ts-mocha -p ./protocol/ts/tsconfig.json -t 1000000 protocol/ts/tests/demo-program.test.ts"
+barn = "ts-mocha -p ./protocol/ts/tsconfig.json -t 1000000 protocol/ts/tests/barn.test.ts"
 
 [workspace]
 members = [ "protocol/programs/*" ]

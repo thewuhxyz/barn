@@ -69,7 +69,7 @@ export function CreateUserProfile() {
 					onChange={(e) =>
 						setCreateUserConfig({ ...createUserConfig, uri: e.target.value })
 					}
-					placeholder="Github url"
+					placeholder="Enter Profile URI"
 				/>
 				<Button className="w-full" onClick={handleClick}>
 					Create
@@ -93,7 +93,7 @@ export function ApproveSponsor() {
 			return approveSponsor({
 				admin: wallet.publicKey,
 				signer: new PublicKey(sponsor),
-				profile: profile!.profile,
+				profile: profile!.key,
 			});
 		} catch (e: any) {
 			toast.error(`Error occurred: ${e.message || e}`);
@@ -242,7 +242,9 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 
 	return (
 		<Popover>
-			<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
+			<PopoverTrigger
+				className={cn(buttonVariants({ size: "sm", variant: "ghost" }))}
+			>
 				Award Grant
 			</PopoverTrigger>
 			<PopoverContent className="space-y-4">
@@ -253,7 +255,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 					onChange={(e) =>
 						setAwardGrantConfig({ ...awardGrantConfig, amount: e.target.value })
 					}
-					placeholder="Amount"
+					placeholder="Amount in SOL"
 					className="col-span-3"
 				/>
 				<Input
@@ -280,7 +282,7 @@ export function AwardGrant({ grantProgram }: { grantProgram: PublicKey }) {
 					}
 					placeholder="Enter Grant URI"
 				/>
-				<Button className="w-full" onClick={handleClick}>
+				<Button className="w-full" size="sm" onClick={handleClick}>
 					Award Grant
 				</Button>
 			</PopoverContent>
@@ -298,11 +300,33 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 
 	const { authority, profile } = useBarnUser();
 
-	const { grant } = useBarnGrant(grantPk.toBase58());
+	const {
+		grant,
+		latestMilestone: lastMilestonePk,
+		project,
+		grantProgram,
+	} = useBarnGrant(grantPk.toBase58());
+
+	const { milestone } = useBarnGrantMilestone(
+		lastMilestonePk?.toBase58() || null
+	);
 
 	const { addGrantMilestone } = useBarnRPC();
 
+	if (!profile) return <></>;
+
 	const { amount, uri } = awardGrantConfig;
+
+	const isInvolved = !!(
+		project?.profile.equals(profile.key) ||
+		grantProgram?.profile.equals(profile.key)
+	);
+
+	const canAddMilestone =
+		isInvolved &&
+		(!milestone || MilestoneState.toStatus(milestone.state) === "paid");
+
+	if (!profile) return <></>;
 
 	async function handleClick() {
 		try {
@@ -325,7 +349,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 
 	return (
 		<>
-			{profile?.sponsor === false && (
+			{canAddMilestone && (
 				<Popover>
 					<PopoverTrigger className={`${cn(buttonVariants())} w-full`}>
 						Add New Milestone
@@ -341,7 +365,7 @@ export function AddGrantMilestone({ grantPk }: { grantPk: PublicKey }) {
 									amount: e.target.value,
 								})
 							}
-							placeholder="Amount"
+							placeholder="Amount in SOL"
 							className="col-span-3"
 						/>
 						<Input
@@ -416,7 +440,11 @@ export function EditGrantMilestone({
 				<Popover>
 					<PopoverTrigger
 						className={cn(
-							buttonVariants({ variant: "secondary", className: "w-full", size: "sm" })
+							buttonVariants({
+								variant: "secondary",
+								className: "w-full",
+								size: "sm",
+							})
 						)}
 					>
 						Edit Milestone
@@ -493,7 +521,12 @@ export function ReviseGrantMilestone({
 	}
 
 	return (
-		<Button size="sm" className="w-full" onClick={handleClick}>
+		<Button
+			size="sm"
+			variant="secondary"
+			className="w-full"
+			onClick={handleClick}
+		>
 			Revise
 		</Button>
 	);
@@ -693,43 +726,57 @@ export function UpdateMilestone({
 }: {
 	grantMilestonePk: PublicKey;
 }) {
-	const { profile } = useBarnUser();
-	const { milestone } = useBarnGrantMilestone(grantMilestonePk.toBase58());
+	const { profile: userProfile } = useBarnUser();
+	const { milestone, profile, grantProgram, project } = useBarnGrantMilestone(
+		grantMilestonePk.toBase58()
+	);
 
-	if (!profile || !milestone) return <></>;
+	if (!profile || !milestone || !project || !grantProgram) return <></>;
+
+	const userIsInvolved = !userProfile
+		? false
+		: userProfile?.key.equals(project.profile) ||
+			userProfile?.key.equals(grantProgram.profile);
 
 	return (
 		<>
-			{!profile.sponsor &&
+			{userIsInvolved &&
+				!userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inProgress" && (
 					<ReviewGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
-			{!profile.sponsor &&
+			{userIsInvolved &&
+				!userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inReview" && (
 					<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
-			{profile.sponsor &&
+			{userIsInvolved &&
+				userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "inReview" && (
 					<div className="flex w-full space-x-4">
 						<AcceptGrantMilestone grantMilestonePk={grantMilestonePk} />
+						<ReviseGrantMilestone grantMilestonePk={grantMilestonePk} />
 						<RejectGrantMilestone grantMilestonePk={grantMilestonePk} />
 					</div>
 				)}
-			{profile.sponsor &&
+			{userIsInvolved &&
+				userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "accepted" && (
 					<SettleGrantMilestone grantMilestonePk={grantMilestonePk} />
 				)}
-			{profile.sponsor &&
+			{userIsInvolved &&
+				userProfile?.sponsor &&
 				MilestoneState.toStatus(milestone.state) === "rejected" && (
 					<Button disabled={true} className="w-full">
 						Settle Payment
 					</Button>
 				)}
-			{MilestoneState.toStatus(milestone.state) === "paid" && (
-				<Button disabled={true} className="w-full">
-					Paid
-				</Button>
-			)}
+			{userIsInvolved &&
+				MilestoneState.toStatus(milestone.state) === "paid" && (
+					<Button disabled={true} variant="secondary" className="w-full">
+						Paid
+					</Button>
+				)}
 		</>
 	);
 }

@@ -25,6 +25,7 @@ export function useBarnGrantMilestone(milestonePk: string | null) {
 		profileUri,
 		projectUri,
 		grantUri,
+		grantProgram,
 		grantProgramUri,
 	} = useBarnGrant(milestone.data?.grant.toBase58() || null);
 
@@ -43,6 +44,7 @@ export function useBarnGrantMilestone(milestonePk: string | null) {
 		projectUri,
 		grantUri,
 		milestoneUri,
+		grantProgram,
 		grantProgramUri,
 	};
 }

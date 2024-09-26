@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 export function AllProjects() {
 	const { allProjects } = useBarnAccount();
-	if (!allProjects) return <>No Granted Project</>;
+	if (!allProjects) return <>No Project</>;
 	return (
 		<div className="grid grid-cols-2 gap-8 w-full">
 			{allProjects.map(({ publicKey }, i) => (
@@ -53,13 +53,16 @@ export function ProjectCardFromGrantPubkey({
 }
 
 export function ProjectCardFromPubkey({ publicKey }: { publicKey: PublicKey }) {
-	const { project, projectUri, authority, profile } = useBarnProject(
-		publicKey.toBase58()
-	);
+	const { project, projectUri, authority, profile } =
+		useBarnProject(publicKey.toBase58());
 
 	const { grantProgramUri, grant } = useBarnGrant(
 		project?.grant?.toBase58() || null
 	);
+
+	if (project === undefined) {
+		return "..."
+	}
 
 	if (!project || !authority || !profile) {
 		return <></>;
@@ -68,12 +71,17 @@ export function ProjectCardFromPubkey({ publicKey }: { publicKey: PublicKey }) {
 	const props: ProjectCardProps = {
 		description: projectUri?.description ?? undefined,
 		owner: profile.seed,
-		program: grantProgramUri?.name,
+		program: grantProgramUri?.name
+			? grantProgramUri?.name
+			: project.grant
+				? "Untitled Program"
+				: null,
 		title: projectUri?.name ?? `Untitled ${project.id}`,
 		approvedAmount: grant?.approvedAmount,
 		publicKey: project.key.toBase58(),
 		profileKey: profile.key.toBase58(),
 		programKey: grant?.program.toBase58(),
+		image: projectUri?.image_url,
 	};
 
 	return <ProjectCard {...props} />;
@@ -84,13 +92,17 @@ export function ProjectCard(props: ProjectCardProps) {
 		<Card className="w-full">
 			<Link href={`/project/${props.publicKey}`}>
 				<CardHeader>
-					<Image
-						src="/next.svg"
-						alt="Card image"
-						width={120}
-						height={120}
-						className="h-full w-full object-cover"
-					/>
+					<div className="w-full h-24">
+						{props.image && (
+							<Image
+								src={props.image}
+								alt={props.publicKey}
+								width={120}
+								height={120}
+								className="object-cover h-24 w-24 pb-4"
+							/>
+						)}
+					</div>
 					<div className="flex justify-between">
 						<CardTitle>{props.title}</CardTitle>
 						{props.approvedAmount && <Badge>{props.approvedAmount} SOL</Badge>}
@@ -129,4 +141,5 @@ export type ProjectCardProps = {
 	publicKey: string;
 	profileKey: string;
 	programKey?: string | null;
+	image?: string | null;
 };
