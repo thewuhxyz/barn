@@ -93,7 +93,7 @@ export function ApproveSponsor() {
 			return approveSponsor({
 				admin: wallet.publicKey,
 				signer: new PublicKey(sponsor),
-				profile: profile!.profile,
+				profile: profile!.key,
 			});
 		} catch (e: any) {
 			toast.error(`Error occurred: ${e.message || e}`);

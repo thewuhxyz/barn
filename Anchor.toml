@@ -14,7 +14,7 @@ barn = "Aoofv5iGzdDeyySpT9QsiFaK7Db7SKyycb7nTEU1oTYE"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/deployer.json"
 
 [scripts]
