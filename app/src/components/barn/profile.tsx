@@ -33,7 +33,7 @@ export function AllUserProjects() {
 export function AllUserGrantPrograms() {
 	const { profile } = useBarnUser();
 
-	return <AllGrantsForProfile profilePk={profile?.key.toBase58() ?? null} />;
+	return <AllGrantProgramsForProfile profilePk={profile?.key.toBase58() ?? null} />;
 }
 
 export function AllUserGrants() {
@@ -148,7 +148,7 @@ export function ProfileCardFromPubkey({
 
 	const props: ProfileCardProps = {
 		count: profile.count,
-		name: githubUser?.name,
+		name: profileUri?.name ?? githubUser?.name,
 		publicKey: profile.key.toBase58(),
 		sponsor: profile.sponsor,
 		username: profile.seed,

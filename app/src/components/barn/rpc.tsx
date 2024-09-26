@@ -69,7 +69,7 @@ export function CreateUserProfile() {
 					onChange={(e) =>
 						setCreateUserConfig({ ...createUserConfig, uri: e.target.value })
 					}
-					placeholder="Github url"
+					placeholder="Enter Profile URI"
 				/>
 				<Button className="w-full" onClick={handleClick}>
 					Create
