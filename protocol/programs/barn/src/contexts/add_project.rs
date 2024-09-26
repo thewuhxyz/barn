@@ -23,7 +23,7 @@ pub struct AddProject<'info> {
     pub profile: Account<'info, Profile>,
 
     #[account(
-        init_if_needed,
+        init,
         payer=signer,
         space=8+Project::INIT_SPACE,
         seeds=[b"project", profile.key().as_ref(), profile.count.to_le_bytes().as_ref()],

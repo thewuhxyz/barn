@@ -37,10 +37,6 @@ export class BarnClient {
 		return this.provider.publicKey;
 	}
 
-	generateRandomSeed(): string {
-		return Keypair.generate().publicKey.toBase58().slice(0, 32);
-	}
-
 	async getMintAccount(mint: PublicKey): Promise<Mint> {
 		return getMint(this.connection, mint);
 	}

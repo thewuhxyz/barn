@@ -8,8 +8,8 @@ use anchor_spl::{
     token::spl_token::native_mint,
     token_2022::spl_token_2022::native_mint as native_mint_2022,
     token_interface::{
-        sync_native, transfer_checked, Mint, SyncNative, TokenAccount, TokenInterface,
-        TransferChecked,
+        transfer_checked, Mint, TokenAccount, TokenInterface,
+        TransferChecked, /* SyncNative, sync_native, */
     },
 };
 
@@ -110,21 +110,21 @@ impl<'info> SettleGrantMilestone<'info> {
     fn transfer_sol(&mut self) -> Result<()> {
         let cpi_accounts = Transfer {
             from: self.signer.to_account_info(),
-            to: self.to_token_account.to_account_info(),
+            to: self.to.to_account_info(),
         };
 
         let cpi_program = self.system_program.to_account_info();
 
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
-        transfer(cpi_ctx, self.grant_milestone.amount)?;
+        transfer(cpi_ctx, self.grant_milestone.amount)
 
-        sync_native(CpiContext::new(
-            self.token_program.to_account_info(),
-            SyncNative {
-                account: self.to_token_account.to_account_info(),
-            },
-        ))
+        // sync_native(CpiContext::new(
+        //     self.token_program.to_account_info(),
+        //     SyncNative {
+        //         account: self.to_token_account.to_account_info(),
+        //     },
+        // ))
     }
 }
 

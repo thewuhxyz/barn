@@ -37,7 +37,7 @@ pub struct AddGrantMilestone<'info> {
     pub grant: Account<'info, Grant>,
 
     #[account(
-        init_if_needed,
+        init,
         payer=signer,
         space=8+GrantMilestone::INIT_SPACE,
         seeds=[b"grant-milestone", grant.key().as_ref(), grant.count.to_le_bytes().as_ref()],

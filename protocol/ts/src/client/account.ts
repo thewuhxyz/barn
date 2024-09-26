@@ -112,13 +112,13 @@ export class BarnAccount {
 
 	async getUserProfile(
 		user: PublicKey
-	): Promise<(ProfileAccount & AuthorityAccount) | null> {
+	): Promise<(ProfileAccount & { signer: PublicKey }) | null> {
 		const authority = await this.getUserAuthority(user);
 		if (!authority) return authority;
 		const { profile } = authority;
 		const profileAccount = await this.profile(profile);
 		if (!profileAccount) return profileAccount;
-		return { ...profileAccount, ...authority };
+		return { ...profileAccount, signer: authority.signer };
 	}
 
 	async getUserAuthority(signer: PublicKey): Promise<AuthorityAccount | null> {
@@ -241,7 +241,7 @@ export class BarnAccount {
 
 	profileAddress(seed: string): PublicKey {
 		return PublicKey.findProgramAddressSync(
-			[Buffer.from("proflle"), Buffer.from(seed)],
+			[Buffer.from("profile"), Buffer.from(seed)],
 			this.barn.programId
 		)[0];
 	}
