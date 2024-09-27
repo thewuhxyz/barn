@@ -4,19 +4,23 @@ OpenFund is an open funding protocol for Solana based development.
 
 ### Objectives
 
-- [x]  Grants  - Manage grants openly and on-chain
-- [ ]  Donations - Directly donate to a project / user
-- [ ]  Help & Contributions - Get paid for assisting with milestones for funded projects
-- [ ]  Idea Loot - Get paid for building out funded suggestion by the community
-- [ ]  RPGF - Funding protocols and Individual based on their impact to the growth of the ecosystem. See Optimism.
-- [ ]  SocialFI
+- [x] Grants - Manage grants openly and on-chain
+- [ ] Donations - Directly donate to a project / user
+- [ ] Help & Contributions - Get paid for assisting with milestones for funded projects
+- [ ] Idea Loot - Get paid for building out funded suggestion by the community
+- [ ] RPGF - Funding protocols and Individual based on their impact to the growth of the ecosystem. See Optimism.
+- [ ] SocialFI
+
+<br/>
 
 # User Profile
 
 There is two `Profile`s associated with OpenFund.
 
-- `Sponsor`  - grants funding.
-- `Developer`  - receives funding.
+- `Sponsor` - grants funding.
+- `Developer` - receives funding.
+
+<br/>
 
 ### Creating a Profile
 
@@ -24,23 +28,33 @@ To create a `Profile`, you need to include a URI pointing to the metadata of the
 
 Every `Profile` created is a `Developer` by default. Becoming a `Sponsor` will require approval by the DAO.
 
+<br/>
+
 # Project
 
 A `Developer` can register a `Project` that represents what they are working on. Every `Project` is eligible for funding.
+
+<br/>
 
 ### Creating a Project
 
 To create a `Project`, you need to include a URI pointing to the metadata of the Project. See URI specification here
 
+<br/>
+
 # Grants
 
 OpenFund protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
+
+<br/>
 
 ### Creating a Grant Program
 
 A Grant Program is created by a Sponsor. This helps the Sponsor organise the type of grants awarded to Projects
 
 To create a Grant Program, you need to include a URI pointing to the metadata of the Grant Program. See URI specification here
+
+<br/>
 
 ### Awarding a Grant
 
@@ -49,14 +63,18 @@ A Grant is awarded by a Sponsor to a Project under a Grant Program. A Grant need
 - A URI that point to the metadata about the Grant. See Grant spec here
 - The amount of specified token to be awarded
 
+<br/>
+
 ### Setting a Grant Milestone
 
-Either the Developer or Sponsor can settle a Milestone for an awarded grant. For every milestone achieved by the Developer, the approved amount associated with the success of that milestone will be release from Sponsor to the Developer. 
+Either the Developer or Sponsor can settle a Milestone for an awarded grant. For every milestone achieved by the Developer, the approved amount associated with the success of that milestone will be release from Sponsor to the Developer.
 
 To set a milestone, you need:
 
 - The URI for the associated Milestone. See Spec.
 - The approved amount of token to be released on completion of said milestone.
+
+<br/>
 
 ### Updating a Grant Milestone
 
@@ -74,54 +92,55 @@ A few things to note:
 - `rejected` and `paid` are final states. They cannot be undone unlike `in-review` and `in-progress` .
 - `accepted` state only ever moves to `paid` state once the milestone payment has been settled
 
+<br/>
+
 # URI JSON Specifications
 
-The following are specifications for your off-chain data
+The following is the JSON schema specification that each account type must adhere to:
+
+<br/>
 
 ## `Profile`
 
-This is the metadata specification for Profile.
-
 ```json
 {
-  "type":"object",
-  "properties":{
-    "name":{
-      "type":"string",
-      "required":true
-    },
-    "bio":{
-      "type":"string",
-    },
-    "image_url":{
-      "type": "string",
-    },
-    "website":{
-      "type": "string",
-    },
-    "github": {
-	    "type": "string",
-	  },
-	  "twitter": {
-		  "type": "string",
-	  },
-	  "discord": {
-		  "type": "string",
-	  },
-	  "telegram": {
-		  "type": "string",
-	  },
-	  "linkedin": {
-		  "type": "string",
-	  },
-	  "additional_info": {
-		  "type": "array",
-		  "items": {
-			  "type": "string"
-		  }
-	  }
-	  
-  }
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"required": true
+		},
+		"bio": {
+			"type": "string"
+		},
+		"image_url": {
+			"type": "string"
+		},
+		"website": {
+			"type": "string"
+		},
+		"github": {
+			"type": "string"
+		},
+		"twitter": {
+			"type": "string"
+		},
+		"discord": {
+			"type": "string"
+		},
+		"telegram": {
+			"type": "string"
+		},
+		"linkedin": {
+			"type": "string"
+		},
+		"additional_info": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		}
+	}
 }
 ```
 
@@ -130,8 +149,10 @@ This is the metadata specification for Profile.
 - `image_url` : image url for the user profile.: https://some.image.png
 - `website`: the user’s personal website. example: https://thewuh.xyz
 - `github`: the github username of the user. NOT the full url. e.g: thewuhxyz
-- `twitter`: the twitter username of the user. NOT the full url e.g _thewuh
+- `twitter`: the twitter username of the user. NOT the full url e.g \_thewuh
 - `additional_info` : Any additional info
+
+<br/>
 
 ## `Project` Specification
 
@@ -174,7 +195,7 @@ This is the metadata specification for Profile.
 			  "type": "string"
 		  }
 	  }
-	  
+
   }
 }
 ```
@@ -182,38 +203,39 @@ This is the metadata specification for Profile.
 - `name`: This is the name of the project.
 - `description`: A description of the project.
 - `image_url` : image url for the project.: https://some.image.png
-- `discussion` :  url to where discussion is happening. Recommended to use Github discussion associated with the project
+- `discussion` : url to where discussion is happening. Recommended to use Github discussion associated with the project
 - `objectives` : Item-able objectives to achieve with the project
 - `website`: the project’s website. example: https://openfund.thewuh.xyz
 - `github`: the GitHub repo name of the project. NOT the full url. e.g: thewuhxyz/barn
 - `twitter`: the twitter username of the user. NOT the full url e.g openfundonsol
 - `additional_info` : Any additional info
 
+<br/>
+
 ## `GrantProgram` Specification
 
 ```json
 {
-  "type":"object",
-  "properties":{
-    "name":{
-      "type":"string",
-      "required":true
-    },
-    "description":{
-      "type":"string",
-      "required":true
-    },
-    "image_url":{
-      "type": "number",
-    },
-	  "additional_info": {
-		  "type": "array",
-		  "items": {
-			  "type": "string"
-		  }
-	  }
-	  
-  }
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"required": true
+		},
+		"description": {
+			"type": "string",
+			"required": true
+		},
+		"image_url": {
+			"type": "number"
+		},
+		"additional_info": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		}
+	}
 }
 ```
 
@@ -222,7 +244,9 @@ This is the metadata specification for Profile.
 - `image_url` : image url for the project.: https://some.image.png
 - `additional_info` : Any additional info
 
-## `Grant`  Specification
+<br/>
+
+## `Grant` Specification
 
 ```json
 {
@@ -251,16 +275,18 @@ This is the metadata specification for Profile.
 			  "type": "string"
 		  }
 	  }
-	  
+
   }
 }
 ```
 
 - `name`: This is the name of the grant.
 - `description`: A description of the grant.
-- `discussion` :  url to where discussion is happening. Recommended to use Github discussion associated with the project
+- `discussion` : url to where discussion is happening. Recommended to use Github discussion associated with the project
 - `objectives` : Itemable objectives to achieve with the grant.
 - `additional_info` : Any additional info
+
+<br/>
 
 ## `GrantMilestone` Specification
 
@@ -291,33 +317,39 @@ This is the metadata specification for Profile.
 			  "type": "string"
 		  }
 	  }
-	  
+
   }
 }
 ```
 
 - `name`: This is the name of the project.
 - `description`: A description of the project.
-- `discussion` :  url to where discussion is happening. Recommended to use Github discussion associated with the project
+- `discussion` : url to where discussion is happening. Recommended to use Github discussion associated with the project
 - `objectives` : Item-able objectives to achieve with the project.
 - `additional_info` : Any additional info
 
-## Run locally
+<br/>
+
+# Run locally
 
 in your project directory, run:
 
 ```sh
 solana-test-validator
 ```
+
 ```sh
 pnpm program:deploy-all
 ```
+
 ```sh
 pnpm program:test-all
 ```
+
 ```sh
 pnpm build:protocol
 ```
+
 ```sh
 pnpm dev:app
 ```
