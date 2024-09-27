@@ -20,25 +20,17 @@ There is two `Profile`s associated with OpenFund.
 - `Sponsor` - grants funding.
 - `Developer` - receives funding.
 
-<br/>
-
 ### Creating a Profile
 
-To create a `Profile`, you need to include a URI pointing to the metadata of the Profile following the Profile URI specification.
-
-Every `Profile` created is a `Developer` by default. Becoming a `Sponsor` will require approval by the DAO.
-
-<br/>
+To create a `Profile`, you need to include a URI pointing to the metadata of the Profile following the Profile URI specification [here](#profile-specification). Every `Profile` created is a `Developer` by default. Becoming a `Sponsor` will require approval by the DAO.
 
 # Project
 
 A `Developer` can register a `Project` that represents what they are working on. Every `Project` is eligible for funding.
 
-<br/>
-
 ### Creating a Project
 
-To create a `Project`, you need to include a URI pointing to the metadata of the Project. See URI specification here
+To create a `Project`, you need to include a URI pointing to the metadata of the Project. See URI specification [here](#project-specification)
 
 <br/>
 
@@ -46,24 +38,18 @@ To create a `Project`, you need to include a URI pointing to the metadata of the
 
 OpenFund protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
 
-<br/>
-
 ### Creating a Grant Program
 
 A Grant Program is created by a Sponsor. This helps the Sponsor organise the type of grants awarded to Projects
 
-To create a Grant Program, you need to include a URI pointing to the metadata of the Grant Program. See URI specification here
-
-<br/>
+To create a Grant Program, you need to include a URI pointing to the metadata of the Grant Program. See URI specification [here](#grantprogram-specification)
 
 ### Awarding a Grant
 
 A Grant is awarded by a Sponsor to a Project under a Grant Program. A Grant needs to be provided:
 
-- A URI that point to the metadata about the Grant. See Grant spec here
+- A URI that point to the metadata about the Grant. See Grant spec [here](#grant-specification)
 - The amount of specified token to be awarded
-
-<br/>
 
 ### Setting a Grant Milestone
 
@@ -71,10 +57,8 @@ Either the Developer or Sponsor can settle a Milestone for an awarded grant. For
 
 To set a milestone, you need:
 
-- The URI for the associated Milestone. See Spec.
+- The URI for the associated Milestone. See specification [here](#grantmilestone-specification).
 - The approved amount of token to be released on completion of said milestone.
-
-<br/>
 
 ### Updating a Grant Milestone
 
@@ -100,7 +84,7 @@ The following is the JSON schema specification that each account type must adher
 
 <br/>
 
-## `Profile`
+## `Profile` Specification
 
 ```json
 {
