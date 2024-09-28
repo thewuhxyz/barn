@@ -7,8 +7,8 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Barn",
-	description: "Solana Grants Manager",
+	title: "OpenFunds",
+	description: "Funding solana projects in the open",
 };
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
 					<main className="mx-auto max-w-6xl p-2 min-h-screen flex flex-col">
 						<header className="mx-auto flex w-full max-w-6xl justify-between py-4 pb-16">
 							<Link href="/">
-								<p className="text-3xl cursor-default">OG|</p>
+								<p className="text-3xl cursor-default">OF|</p>
 							</Link>
 							<nav className="flex space-x-8 items-center text-sm text-muted-foreground">
 								<ul>
