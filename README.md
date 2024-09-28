@@ -13,6 +13,10 @@ OpenFund is an open funding protocol for Solana based development.
 
 <br/>
 
+# How it works
+
+OpenFund runs entirely on its on-chain program, which makes it truely open to everyone. [Protocol Breakdown](/protocol/README.md).
+
 # User Profile
 
 There is two `Profile`s associated with OpenFund.
@@ -34,7 +38,7 @@ To create a `Project`, you need to include a URI pointing to the metadata of the
 
 <br/>
 
-# Grants
+# Grant
 
 OpenFund protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
 
