@@ -1,6 +1,6 @@
-# OpenFund
+# OpenFunds
 
-OpenFund is an open funding protocol for Solana based development.
+OpenFunds is an open funding protocol for Solana based development.
 
 ### Objectives
 
@@ -15,13 +15,13 @@ OpenFund is an open funding protocol for Solana based development.
 
 # How it works
 
-OpenFund runs entirely on its on-chain program, which makes it truely open to everyone. [Protocol Breakdown](/protocol/README.md).
+OpenFunds runs entirely on its on-chain program, which makes it truely open to everyone. [Protocol Breakdown](/protocol/README.md).
 
 Program ID: Aoofv5iGzdDeyySpT9QsiFaK7Db7SKyycb7nTEU1oTYE
 
 # User Profile
 
-There is two `Profile`s associated with OpenFund.
+There is two `Profile`s associated with OpenFunds.
 
 - `Sponsor` - grants funding.
 - `Developer` - receives funding.
@@ -42,7 +42,7 @@ To create a `Project`, you need to include a URI pointing to the metadata of the
 
 # Grant
 
-OpenFund protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
+OpenFunds protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
 
 ### Creating a Grant Program
 
@@ -195,9 +195,9 @@ The following is the JSON schema specification that each account type must adher
 - `image_url` : image url for the project.: https://some.image.png
 - `discussion` : url to where discussion is happening. Recommended to use Github discussion associated with the project
 - `objectives` : Item-able objectives to achieve with the project
-- `website`: the project’s website. example: https://openfund.thewuh.xyz
+- `website`: the project’s website. example: https://OpenFunds.thewuh.xyz
 - `github`: the GitHub repo name of the project. NOT the full url. e.g: thewuhxyz/barn
-- `twitter`: the twitter username of the user. NOT the full url e.g openfundonsol
+- `twitter`: the twitter username of the user. NOT the full url e.g OpenFundsonsol
 - `additional_info` : Any additional info
 
 <br/>
