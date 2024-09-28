@@ -8,7 +8,7 @@ OpenFunds is an open funding protocol for Solana based development.
 - [ ] Donations - Directly donate to a project / user
 - [ ] Help & Contributions - Get paid for assisting with milestones for funded projects
 - [ ] Idea Loot - Get paid for building out funded suggestion by the community
-- [ ] RPGF - Funding protocols and Individual based on their impact to the growth of the ecosystem. See Optimism.
+- [ ] RPGF - Funding protocols and Individual based on their impact to the growth of the ecosystem. [See Retrofunding on Optimism](https://retrofunding.optimism.io/).
 - [ ] SocialFI
 
 <br/>
