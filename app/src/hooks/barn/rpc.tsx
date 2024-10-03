@@ -15,6 +15,7 @@ import type {
 	UpdateGrantMilestoneArgs,
 } from "@barn/protocol";
 import { useBarn } from "./client";
+import { Cluster } from "@solana/web3.js";
 
 export function useBarnRPC() {
 	const barn = useBarn();
@@ -90,7 +91,15 @@ function useSendBarnTransaction<T = undefined>(
 		mutationFn: rpc,
 		onSuccess: (tx) => {
 			toast.success("Transaction successful!", {
-				action: <GoToExplorer tx={tx} cluster="custom" />,
+				action: (
+					<GoToExplorer
+						tx={tx}
+						cluster={
+							(process.env.NEXT_PUBLIC_RPC_CLUSTER as Cluster | "custom") ??
+							"devnet"
+						}
+					/>
+				),
 				className: "w-max",
 			});
 		},
