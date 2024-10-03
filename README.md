@@ -1,27 +1,22 @@
-# OpenFunds
+# OpenGrants
 
-OpenFunds is an open funding protocol for Solana based development.
+OpenGrants is an open infrastructure for managing grants and funding on-chain.
 
-### Objectives
+### Roadmap
 
-- [x] Grants - Manage grants openly and on-chain
-- [ ] Donations - Directly donate to a project / user
-- [ ] Help & Contributions - Get paid for assisting with milestones for funded projects
-- [ ] Idea Loot - Get paid for building out funded suggestion by the community
-- [ ] RPGF - Funding protocols and Individual based on their impact to the growth of the ecosystem. [See Retrofunding on Optimism](https://retrofunding.optimism.io/).
-- [ ] SocialFI
+[OpenGrants Objectives](/TODO.md).
 
 <br/>
 
 # How it works
 
-OpenFunds runs entirely on its on-chain program, which makes it truely open to everyone. [Protocol Breakdown](/protocol/README.md).
+OpenGrants runs entirely on its on-chain program, which makes it truely open to everyone. [Protocol Breakdown](/protocol/README.md).
 
 Program ID: Aoofv5iGzdDeyySpT9QsiFaK7Db7SKyycb7nTEU1oTYE
 
 # User Profile
 
-There is two `Profile`s associated with OpenFunds.
+There is two `Profile`s associated with OpenGrants.
 
 - `Sponsor` - grants funding.
 - `Developer` - receives funding.
@@ -42,7 +37,7 @@ To create a `Project`, you need to include a URI pointing to the metadata of the
 
 # Grant
 
-OpenFunds protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
+OpenGrants protocol can be used for managing grants. A Project can receive a grant through a Grant Program owned by a sponsor.
 
 ### Creating a Grant Program
 
@@ -195,9 +190,9 @@ The following is the JSON schema specification that each account type must adher
 - `image_url` : image url for the project.: https://some.image.png
 - `discussion` : url to where discussion is happening. Recommended to use Github discussion associated with the project
 - `objectives` : Item-able objectives to achieve with the project
-- `website`: the project’s website. example: https://OpenFunds.thewuh.xyz
+- `website`: the project’s website. example: https://OpenGrants.thewuh.xyz
 - `github`: the GitHub repo name of the project. NOT the full url. e.g: thewuhxyz/barn
-- `twitter`: the twitter username of the user. NOT the full url e.g OpenFundsonsol
+- `twitter`: the twitter username of the user. NOT the full url e.g OpenGrantsonsol
 - `additional_info` : Any additional info
 
 <br/>

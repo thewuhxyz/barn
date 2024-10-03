@@ -1,4 +1,4 @@
-# OpenFunds Protocol
+# OpenGrants Protocol
 
 ![program-architecture](/program-architecture.svg)
 

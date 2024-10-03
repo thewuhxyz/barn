@@ -7,7 +7,7 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "OpenFunds",
+	title: "OpenGrants",
 	description: "Funding solana projects in the open",
 };
 
@@ -28,9 +28,7 @@ export default function RootLayout({
 							<nav className="flex space-x-8 items-center text-sm text-muted-foreground">
 								<ul>
 									<Link href="/project">
-										<p className="cursor-default hover:text-primary">
-											Project
-										</p>
+										<p className="cursor-default hover:text-primary">Project</p>
 									</Link>
 								</ul>
 								<ul>
@@ -42,7 +40,9 @@ export default function RootLayout({
 								</ul>
 								<ul>
 									<Link href="/profile">
-										<p className="cursor-default hover:text-primary">My Profile</p>
+										<p className="cursor-default hover:text-primary">
+											My Profile
+										</p>
 									</Link>
 								</ul>
 								<ul>
