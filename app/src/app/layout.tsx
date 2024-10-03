@@ -8,7 +8,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "OpenGrants",
-	description: "Funding solana projects in the open",
+	description: "Manage solana grants on-chain",
+	icons: { icon: "favicon.ico" },
 };
 
 export default function RootLayout({
@@ -23,7 +24,12 @@ export default function RootLayout({
 					<main className="mx-auto max-w-6xl p-2 min-h-screen flex flex-col">
 						<header className="mx-auto flex w-full max-w-6xl justify-between py-4 pb-16">
 							<Link href="/">
-								<p className="text-3xl cursor-default">OF|</p>
+								<p className="text-3xl cursor-default">
+									<b>
+										<i>OG</i>
+									</b>
+									<span> |</span>
+								</p>
 							</Link>
 							<nav className="flex space-x-8 items-center text-sm text-muted-foreground">
 								<ul>

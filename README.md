@@ -14,6 +14,8 @@ OpenGrants runs entirely on its on-chain program, which makes it truely open to 
 
 Program ID: Aoofv5iGzdDeyySpT9QsiFaK7Db7SKyycb7nTEU1oTYE
 
+<br/>
+
 # User Profile
 
 There is two `Profile`s associated with OpenGrants.
@@ -24,6 +26,8 @@ There is two `Profile`s associated with OpenGrants.
 ### Creating a Profile
 
 To create a `Profile`, you need to include a URI pointing to the metadata of the Profile following the Profile URI specification [here](#profile-specification). Every `Profile` created is a `Developer` by default. Becoming a `Sponsor` will require approval by the DAO.
+
+<br/>
 
 # Project
 
