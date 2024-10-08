@@ -74,11 +74,13 @@ export function NotificationCard(props: NotificationCardProps) {
 					<div className="flex justify-between">
 						<CardTitle>{props.title}</CardTitle>
 						<div className="flex space-x-4 items-center">
-							<Badge variant="secondary">{props.amount} SOL</Badge>
+							{props.status === "accepted" && (
+								<Badge variant="secondary">{props.amount} SOL</Badge>
+							)}
 							<Badge>
 								{props.status === "accepted"
-									? "Awaiting payment"
-									: "Needs Review"}
+									? "Payment pending"
+									: "Review required"}
 							</Badge>
 						</div>
 					</div>
